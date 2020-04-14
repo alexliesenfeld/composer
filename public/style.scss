@@ -1,0 +1,41 @@
+@import "~@blueprintjs/core/lib/css/blueprint.css";
+@import "~@blueprintjs/icons/lib/css/blueprint-icons.css";
+@import "~@blueprintjs/core/lib/scss/variables.scss";
+
+
+
+/* VARIABLES */
+
+$sidenav-width: 14em;
+
+body {
+  background: $dark-gray3;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  display: flex;
+  box-sizing: border-box;
+}
+
+#app {
+  width: 100%;
+
+  main.content {
+    padding: 1em;
+  }
+
+  .bp3-dark .logo svg {
+    fill: #bfccd6;
+  }
+
+  .logo svg {
+    fill: #394b59;
+  }
+}

@@ -1,0 +1,27 @@
+# Editors
+.idea
+*.iml
+.vscode/
+
+# Build
+dist/
+node_modules/
+out/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Caches and build managers
+.yarn-integrity
+.grunt
+.npm
+.eslintcache
+
+# OS specific files
+Thumbs.db
+.DS_Store
+._*
