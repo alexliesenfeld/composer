@@ -1,21 +1,24 @@
-import {ipcRenderer, remote, webFrame} from 'electron';
+import {ipcRenderer, remote, webFrame, dialog, shell} from 'electron';
 
-import {ExecutionContext} from "@/lib/context";
-import * as fs from 'fs';
-import * as util from 'util';
-import * as childProcess from 'child_process';
+import {ExecutionContext} from "@/lib/execution-context";
 import Shell = Electron.Shell;
 import Dialog = Electron.Dialog;
-const electron = require("electron");
 
-export class ElectronContext implements ExecutionContext {
-    ipcRenderer: typeof ipcRenderer = ipcRenderer;
-    webFrame: typeof webFrame = webFrame;
-    remote: typeof remote = remote;
-    shell: Shell = electron.shell;
-    dialog: Dialog = electron.dialog;
-    childProcess: typeof childProcess = childProcess;
-    fs: typeof fs = require('fs');
-    util: typeof util = require('util');
+
+export class ElectronContext extends ExecutionContext {
+    readonly ipcRenderer: typeof ipcRenderer;
+    readonly webFrame: typeof webFrame;
+    readonly remote: typeof remote;
+    readonly shell: Shell;
+    readonly dialog: Dialog;
+
+    constructor(){
+        super();
+        this.ipcRenderer = require('electron').ipcRenderer;
+        this.webFrame = require('electron').webFrame;
+        this.remote = require('electron').remote;
+        this.shell = require('electron').shell;
+        this.dialog = require('electron').remote.dialog;
+    }
 }
 

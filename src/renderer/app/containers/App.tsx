@@ -18,11 +18,23 @@ import {
 } from "@blueprintjs/core";
 
 import '@public/style.scss';
+import WelcomePage from "@/renderer/app/containers/pages/WelcomePage";
+import {ConfigStore} from "@/renderer/app/stores/configStore";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-const App = (props: { appStore?: AppStore }) => {
+const App = (props: { appStore?: AppStore, configStore?: ConfigStore }) => {
     let history = useHistory();
+    let {userConfig} = props.configStore!;
+
+    if (!userConfig) {
+        return (
+            <div className='bp3-dark'>
+                <WelcomePage/>
+            </div>
+        );
+    }
+
     return (
         <div className='bp3-dark'>
             <Navbar>
@@ -31,6 +43,8 @@ const App = (props: { appStore?: AppStore }) => {
                         <Icon icon={LAYERS} iconSize={20} className='logo'/>
                         <span> Composer</span>
                     </NavbarHeading>
+                    <NavbarDivider/>
+                    <span> {userConfig.projectName}</span>
                     <NavbarDivider/>
                     <Button onClick={() => history.push("/projects")} className={Classes.MINIMAL} icon={APPLICATION}
                             text="Project"/>
@@ -44,7 +58,7 @@ const App = (props: { appStore?: AppStore }) => {
                 </NavbarGroup>
 
                 <NavbarGroup align={Alignment.RIGHT}>
-                    <Button icon={PLAY} text="Open IDE" intent={"success"}/>
+                    <Button icon={PLAY} text="Open in Visual Studio" intent={"success"}/>
                 </NavbarGroup>
             </Navbar>
 
@@ -65,4 +79,4 @@ const App = (props: { appStore?: AppStore }) => {
     );
 };
 
-export default inject('appStore')(observer(App))
+export default inject('appStore', 'configStore')(observer(App))
