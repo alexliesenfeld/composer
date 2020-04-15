@@ -59,7 +59,7 @@ jobs:
       uses: actions/upload-artifact@v2-preview
       with:
         name: windows-installer
-        path: out/Composer*Setup*.exe
+        path: out/Composer-*.exe
 
     - name: Upload macOS installer artifact
       if: matrix.os == 'macos-latest'

@@ -14,6 +14,7 @@
   "build": {
     "appId": "com.github.alexliesenfeld.composer",
     "productName": "Composer",
+    "artifactName": "Composer-${version}.${ext}",
     "directories": {
       "app": "./dist/",
       "output": "./out/"
