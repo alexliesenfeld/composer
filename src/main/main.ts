@@ -1,8 +1,10 @@
-import { app, BrowserWindow, dialog } from 'electron';
+import { app, ipcMain, BrowserWindow, Menu } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import {buildMenuTemplate, SAVE_MENU_ITEM_ID} from "@main/menu";
+import {IPCRendererEvents} from "@common/constants";
 
-let mainWindow: Electron.BrowserWindow | null;
+let mainWindow: BrowserWindow | null;
 
 function createWindow(): void {
     mainWindow = new BrowserWindow({
@@ -15,6 +17,9 @@ function createWindow(): void {
         }
     });
 
+    const menu = Menu.buildFromTemplate(buildMenuTemplate(mainWindow));
+    Menu.setApplicationMenu(menu);
+
     mainWindow.loadURL(
         url.format({
             pathname: path.join(__dirname, './index.html'),
@@ -25,6 +30,14 @@ function createWindow(): void {
 
     mainWindow.on('closed', () => {
         mainWindow = null;
+    });
+
+    registerRendererEventListeners(mainWindow, menu);
+}
+
+function registerRendererEventListeners(mainWindow: BrowserWindow, menu: Electron.Menu) {
+    ipcMain.on(IPCRendererEvents.INIT_SET_CAN_SAVE, (event, enabled: boolean) => {
+        menu.getMenuItemById(SAVE_MENU_ITEM_ID).enabled = enabled;
     });
 }
 

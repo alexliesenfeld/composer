@@ -56,12 +56,10 @@ const App = (props: { appStore?: AppStore, configStore?: ConfigStore }) => {
                     <Button onClick={() => history.push("/installer")} className={Classes.MINIMAL} icon={COG}
                             text="Settings"/>
                 </NavbarGroup>
-
                 <NavbarGroup align={Alignment.RIGHT}>
                     <Button icon={PLAY} text="Open in Visual Studio" intent={"success"}/>
                 </NavbarGroup>
             </Navbar>
-
             <main className='content'>
                 <Switch>
                     <Route path="/projects">

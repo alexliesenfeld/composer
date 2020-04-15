@@ -22,16 +22,11 @@ import {ADD, CARET_DOWN} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 import {inject, observer} from "mobx-react";
 import {AppStore} from "@/renderer/app/stores/appStore";
 
-// Electron
 const FilesPage = (props: { appStore?: AppStore, filesStore?: FilesStore }) => {
-
-
     return (
         <div>
-            <H3>
-                Files
-            </H3>
-            <p className={'muted'}>
+            <H3>Files</H3>
+            <p>
                 User interfaces that enable people to interact smoothly with data, ask better questions, and
                 make better decisions.
             </p>
@@ -70,7 +65,6 @@ export const FileMenu = (props: IProps) => (
         <MenuItem text="Image" icon="media" {...props} />
     </Menu>
 );
-
 
 export const SourceFileList = (props: IProps & { paths: string[] }) => {
     return (<div>

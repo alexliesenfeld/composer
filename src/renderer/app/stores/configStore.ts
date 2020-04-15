@@ -1,6 +1,8 @@
 import {action, observable} from "mobx";
-import {ElectronContext} from "@/renderer/app/support/electron-context";
+import {ElectronContext} from "@/renderer/app/support/model/electron-context";
 import {UserConfig} from "@/lib/model/user-config";
+import * as userConfigHandlers from "@/lib/handlers/user-config"
+import {NotInitializedError} from "@/lib/model/errors";
 
 export class ConfigStore {
     @observable electronContext: ElectronContext = new ElectronContext();
@@ -16,24 +18,13 @@ export class ConfigStore {
             }],
             defaultPath: 'composer.json'
         });
+
         if (result.canceled || !result.filePath) {
             return;
         }
 
         this.writeConfigToPath(result.filePath, {projectName: 'New Project'});
         this.loadConfigFromPath(result.filePath);
-    }
-
-    @action.bound
-    public async writeConfigToPath(path: string, config: UserConfig): Promise<void> {
-        await this.electronContext.promisifiedFs.writeFile(path, JSON.stringify(config));
-    }
-
-    @action.bound
-    public async loadConfigFromPath(path: string): Promise<void> {
-        const fileContent = await this.electronContext.promisifiedFs.readFile(path, {encoding: 'utf-8'});
-        this.userConfig = JSON.parse(fileContent);
-        this.configPath = path;
     }
 
     @action.bound
@@ -48,4 +39,26 @@ export class ConfigStore {
 
         this.loadConfigFromPath(result.filePaths[0]);
     }
+
+    @action.bound
+    public async save(): Promise<void> {
+        if (!this.userConfig || !this.configPath) {
+            throw new NotInitializedError("No config was loaded yet");
+        }
+
+        await this.writeConfigToPath(this.configPath, this.userConfig);
+    }
+
+    @action.bound
+    public async writeConfigToPath(path: string, config: UserConfig): Promise<void> {
+        await userConfigHandlers.writeConfigToPath(this.electronContext, path, config);
+    }
+
+    @action.bound
+    public async loadConfigFromPath(path: string): Promise<void> {
+        this.userConfig = await userConfigHandlers.loadConfigFromPath(this.electronContext, path);
+        this.configPath = path;
+        this.electronContext.enableSaveItemInWindowMenu(true);
+    }
+
 }

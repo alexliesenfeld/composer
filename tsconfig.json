@@ -5,6 +5,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
+      "@common/*": ["src/common/*"],
       "@public/*": ["public/*"],
       "@main/*": ["src/main/*"],
       "@models/*": ["src/models/*"],

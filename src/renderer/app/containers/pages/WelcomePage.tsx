@@ -4,7 +4,6 @@ import {DOCUMENT_OPEN, NEW_OBJECT} from "@blueprintjs/icons/lib/esm/generated/ic
 import {inject, observer} from "mobx-react";
 import {ConfigStore} from "@/renderer/app/stores/configStore";
 
-// Electron
 const WelcomePage = (props: { configStore?: ConfigStore }) => {
     const {createNewUserConfig, openConfigFromDialog} = props.configStore!;
     return (

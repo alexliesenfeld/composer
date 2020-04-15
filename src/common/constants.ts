@@ -1,5 +1,9 @@
-namespace events {
+export enum IPCMainEvents {
+    INIT_CREATE_NEW_PROJECT = "INIT_CREATE_NEW_PROJECT",
+    INIT_OPEN_PROJECT = "INIT_OPEN_PROJECT",
+    INIT_SAVE_PROJECT = "INIT_SAVE_PROJECT"
+}
 
-    export const INIT_CREATE_NEW_PROJECT = 'INIT_CREATE_NEW_PROJECT';
-
+export enum IPCRendererEvents {
+    INIT_SET_CAN_SAVE = "INIT_SET_CAN_SAVE"
 }

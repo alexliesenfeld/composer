@@ -1,5 +1,5 @@
 import { observable, action, computed } from "mobx";
-import {ElectronContext} from "@/renderer/app/support/electron-context";
+import {ElectronContext} from "@/renderer/app/support/model/electron-context";
 
 export enum ProjectsTab {
     SOURCE_FILES_TAB,
