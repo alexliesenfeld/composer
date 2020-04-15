@@ -1,4 +1,5 @@
 import {IPCMainEvents} from "@common/constants";
+
 const electron = require('electron');
 
 import BrowserWindow = Electron.BrowserWindow;
@@ -7,7 +8,7 @@ import MenuItem = Electron.MenuItem;
 
 export const SAVE_MENU_ITEM_ID = 'save-item';
 
-export const buildMenuTemplate  = (app: BrowserWindow): Array<(MenuItemConstructorOptions) | (MenuItem)> => {
+export const buildMenuTemplate = (app: BrowserWindow): Array<(MenuItemConstructorOptions) | (MenuItem)> => {
     const template: Array<(MenuItemConstructorOptions) | (MenuItem)> = [
         {
             label: 'Help',
@@ -73,7 +74,7 @@ export const buildMenuTemplate  = (app: BrowserWindow): Array<(MenuItemConstruct
                 }
             },
             {
-                id : SAVE_MENU_ITEM_ID,
+                id: SAVE_MENU_ITEM_ID,
                 accelerator: 'CmdOrCtrl+S',
                 label: 'Save',
                 enabled: false,

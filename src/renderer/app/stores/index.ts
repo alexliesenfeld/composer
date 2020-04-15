@@ -1,4 +1,4 @@
-import { AppStore } from "./appStore";
+import {AppStore} from "./appStore";
 import {ProjectStore} from "@/renderer/app/stores/projectStore";
 import {FilesStore} from "@/renderer/app/stores/filesStore";
 import {ConfigStore} from "@/renderer/app/stores/configStore";

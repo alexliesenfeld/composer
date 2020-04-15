@@ -5,13 +5,12 @@ import * as userConfigHandlers from "@/lib/handlers/user-config"
 import {NotInitializedError} from "@/lib/model/errors";
 
 export class ConfigStore {
-    @observable electronContext: ElectronContext = new ElectronContext();
     @observable userConfig: UserConfig | undefined = undefined;
     @observable configPath: string | undefined = undefined;
 
     @action.bound
     public async createNewUserConfig(): Promise<void> {
-        const result = await this.electronContext.dialog.showSaveDialog({
+        const result = await ElectronContext.dialog.showSaveDialog({
             filters: [{
                 name: 'JSON',
                 extensions: ['json']
@@ -29,7 +28,7 @@ export class ConfigStore {
 
     @action.bound
     public async openConfigFromDialog(): Promise<void> {
-        const result = await this.electronContext.dialog.showOpenDialog({
+        const result = await ElectronContext.dialog.showOpenDialog({
             filters: [{extensions: ["json"], name: 'composer.json'}]
         });
 
@@ -51,14 +50,14 @@ export class ConfigStore {
 
     @action.bound
     public async writeConfigToPath(path: string, config: UserConfig): Promise<void> {
-        await userConfigHandlers.writeConfigToPath(this.electronContext, path, config);
+        await userConfigHandlers.writeConfigToPath(path, config);
     }
 
     @action.bound
     public async loadConfigFromPath(path: string): Promise<void> {
-        this.userConfig = await userConfigHandlers.loadConfigFromPath(this.electronContext, path);
+        this.userConfig = await userConfigHandlers.loadConfigFromPath(path);
         this.configPath = path;
-        this.electronContext.enableSaveItemInWindowMenu(true);
+        ElectronContext.enableSaveItemInWindowMenu(true);
     }
 
 }

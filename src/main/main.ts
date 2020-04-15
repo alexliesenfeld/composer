@@ -1,4 +1,4 @@
-import { app, ipcMain, BrowserWindow, Menu } from 'electron';
+import {app, BrowserWindow, ipcMain, Menu} from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import {buildMenuTemplate, SAVE_MENU_ITEM_ID} from "@main/menu";

@@ -85,7 +85,7 @@ rendererConfig.plugins = [
     }),
     /* This is a workaround to the following blueprint.js problem: https://github.com/palantir/blueprint/issues/3739 */
     new webpack.DefinePlugin({
-        'global' : {},
+        'global': {},
         'process.env': {}
     })
 ];

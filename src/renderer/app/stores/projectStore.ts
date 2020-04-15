@@ -1,5 +1,4 @@
-import { observable, action, computed } from "mobx";
-import {ElectronContext} from "@/renderer/app/support/model/electron-context";
+import {action, observable} from "mobx";
 
 export enum ProjectsTab {
     SOURCE_FILES_TAB,
@@ -7,12 +6,10 @@ export enum ProjectsTab {
 }
 
 export class ProjectStore {
-    private electronContext = new ElectronContext();
-
-    @observable activeTab : ProjectsTab = ProjectsTab.SOURCE_FILES_TAB;
+    @observable activeTab: ProjectsTab = ProjectsTab.SOURCE_FILES_TAB;
 
     @action.bound
-    public setActiveTab(tab : ProjectsTab): void {
+    public setActiveTab(tab: ProjectsTab): void {
         this.activeTab = tab;
     }
 }

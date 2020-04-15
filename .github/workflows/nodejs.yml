@@ -18,16 +18,16 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - run: npm ci
-    - run: npm run prod
-    - run: npm test
-      env:
-        CI: true
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: npm ci
+      - run: npm run prod
+      - run: npm test
+        env:
+          CI: true
 
   package:
     needs: [build]
@@ -38,35 +38,35 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12.x
-    - run: npm ci
-    - run: npm run prod
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - run: npm ci
+      - run: npm run prod
 
-    - name: Build Windows installer
-      if: matrix.os == 'windows-latest'
-      run: npm run build:win
+      - name: Build Windows installer
+        if: matrix.os == 'windows-latest'
+        run: npm run build:win
 
-    - name: Build macOS installer
-      if: matrix.os == 'macos-latest'
-      run: npm run build:mac
+      - name: Build macOS installer
+        if: matrix.os == 'macos-latest'
+        run: npm run build:mac
 
-    - name: Upload Windows installer artifact
-      if: matrix.os == 'windows-latest'
-      uses: actions/upload-artifact@v2-preview
-      with:
-        name: windows-installer
-        path: out/Composer-*.exe
+      - name: Upload Windows installer artifact
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v2-preview
+        with:
+          name: windows-installer
+          path: out/Composer-*.exe
 
-    - name: Upload macOS installer artifact
-      if: matrix.os == 'macos-latest'
-      uses: actions/upload-artifact@v2-preview
-      with:
-        name: macos-installer
-        path: out/Composer-*.pkg
+      - name: Upload macOS installer artifact
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v2-preview
+        with:
+          name: macos-installer
+          path: out/Composer-*.pkg
 
 
 

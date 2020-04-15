@@ -11,8 +11,10 @@ const WelcomePage = (props: { configStore?: ConfigStore }) => {
             <Card>
                 <h3>Welcome to Composer!</h3>
                 <p>Please load or create a new project to get started.</p>
-                <Button icon={NEW_OBJECT} fill={true} onClick={createNewUserConfig} intent={"primary"}>New Project</Button>
-                <Button icon={DOCUMENT_OPEN} fill={true} onClick={openConfigFromDialog} intent={"warning"}>Open Project</Button>
+                <Button icon={NEW_OBJECT} fill={true} onClick={createNewUserConfig} intent={"primary"}>New
+                    Project</Button>
+                <Button icon={DOCUMENT_OPEN} fill={true} onClick={openConfigFromDialog} intent={"warning"}>Open
+                    Project</Button>
             </Card>
         </div>
     );

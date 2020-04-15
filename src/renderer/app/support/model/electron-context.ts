@@ -1,36 +1,37 @@
-import {ipcRenderer, remote, shell, webFrame} from 'electron';
-
-import {ExecutionContext} from "@/lib/execution-context";
+import {ipcRenderer, remote} from 'electron';
 import {IPCMainEvents, IPCRendererEvents} from "@common/constants";
-import {ConfigStore} from "@/renderer/app/stores/configStore";
-import Shell = Electron.Shell;
-import Dialog = Electron.Dialog;
 
-export class ElectronContext extends ExecutionContext {
-    readonly ipcRenderer: typeof ipcRenderer = ipcRenderer;
-    readonly webFrame: typeof webFrame = webFrame;
-    readonly remote: typeof remote = remote;
-    readonly shell: Shell = shell;
-    readonly dialog: Dialog = remote.dialog;
+export abstract class ElectronContext {
+    static readonly remote = remote;
+    static readonly dialog = remote.dialog;
 
-    constructor() {
-        super();
+    static enableSaveItemInWindowMenu(enable: boolean) {
+        ipcRenderer.send(IPCRendererEvents.INIT_SET_CAN_SAVE, enable);
     }
 
-    enableSaveItemInWindowMenu(enable: boolean) {
-        this.ipcRenderer.send(IPCRendererEvents.INIT_SET_CAN_SAVE, enable);
+    static registerSaveProjectEventListener(listener: () => void) {
+        ipcRenderer.on(IPCMainEvents.INIT_SAVE_PROJECT, listener);
     }
 
-    static registerEventListeners(handlingConfigStore: ConfigStore) {
-        ipcRenderer.on(IPCMainEvents.INIT_SAVE_PROJECT, handlingConfigStore.save);
-        ipcRenderer.on(IPCMainEvents.INIT_CREATE_NEW_PROJECT, handlingConfigStore.createNewUserConfig);
-        ipcRenderer.on(IPCMainEvents.INIT_OPEN_PROJECT, handlingConfigStore.openConfigFromDialog);
+    static registerCreateNewProjectEventListener(listener: () => void) {
+        ipcRenderer.on(IPCMainEvents.INIT_CREATE_NEW_PROJECT, listener);
     }
 
-    static deregisterEventListeners(handlingConfigStore: ConfigStore) {
-        ipcRenderer.removeListener(IPCMainEvents.INIT_SAVE_PROJECT, handlingConfigStore.save);
-        ipcRenderer.removeListener(IPCMainEvents.INIT_CREATE_NEW_PROJECT, handlingConfigStore.createNewUserConfig);
-        ipcRenderer.removeListener(IPCMainEvents.INIT_OPEN_PROJECT, handlingConfigStore.openConfigFromDialog);
+    static registerOpenProjectEventListener(listener: () => void) {
+        ipcRenderer.on(IPCMainEvents.INIT_OPEN_PROJECT, listener);
     }
+
+    static deregisterSaveProjectEventListener(listener: () => void) {
+        ipcRenderer.removeListener(IPCMainEvents.INIT_SAVE_PROJECT, listener);
+    }
+
+    static deregisterCreateNewProjectEventListener(listener: () => void) {
+        ipcRenderer.removeListener(IPCMainEvents.INIT_CREATE_NEW_PROJECT, listener);
+    }
+
+    static deregisterOpenProjectEventListener(listener: () => void) {
+        ipcRenderer.removeListener(IPCMainEvents.INIT_OPEN_PROJECT, listener);
+    }
+
 }
 

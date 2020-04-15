@@ -4,13 +4,27 @@
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@common/*": ["src/common/*"],
-      "@public/*": ["public/*"],
-      "@main/*": ["src/main/*"],
-      "@models/*": ["src/models/*"],
-      "@renderer*/": ["src/renderer/*"],
-      "@utils/*": ["src/utils/*"]
+      "@/*": [
+        "src/*"
+      ],
+      "@common/*": [
+        "src/common/*"
+      ],
+      "@public/*": [
+        "public/*"
+      ],
+      "@main/*": [
+        "src/main/*"
+      ],
+      "@models/*": [
+        "src/models/*"
+      ],
+      "@renderer*/": [
+        "src/renderer/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ]
     },
     "module": "commonjs",
     "moduleResolution": "node",
@@ -21,5 +35,7 @@
     "target": "esnext",
     "experimentalDecorators": true
   },
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }
