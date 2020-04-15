@@ -45,15 +45,51 @@ jobs:
         node-version: 12.x
     - run: npm ci
     - run: npm run prod
+      
     - name: Build Windows installer
       if: matrix.os == 'windows-latest'
       run: npm run build:win  
-      env:
-        CI: true 
+
     - name: Build macOS installer
       if: matrix.os == 'macos-latest'
       run: npm run build:mac
-      env:
-        CI: true
+
+    - name: Upload Windows installer artifact
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v1
+      with:
+        name: windows-installer
+        path: out/Composer Setup *.exe  
+
+    - name: Upload macOS installer artifact
+      if: matrix.os == 'macos-latest'
+      uses: actions/upload-artifact@v1
+      with:
+        name: macos-installer
+        path: out/Composer-*.pkg           
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
   
       
