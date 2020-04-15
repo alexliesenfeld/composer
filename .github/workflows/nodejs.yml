@@ -13,7 +13,7 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]  
+        os: [windows-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -25,7 +25,7 @@ jobs:
         node-version: 12.x
     - run: npm ci
     - run: npm run prod
-    - run: npm test  
+    - run: npm test
       env:
         CI: true
 
@@ -33,7 +33,7 @@ jobs:
     needs: [build]
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]  
+        os: [windows-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -45,10 +45,10 @@ jobs:
         node-version: 12.x
     - run: npm ci
     - run: npm run prod
-      
+
     - name: Build Windows installer
       if: matrix.os == 'windows-latest'
-      run: npm run build:win  
+      run: npm run build:win
 
     - name: Build macOS installer
       if: matrix.os == 'macos-latest'
@@ -59,37 +59,37 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: windows-installer
-        path: out/Composer Setup *.exe  
+        path: out/Composer*Setup*.exe
 
     - name: Upload macOS installer artifact
       if: matrix.os == 'macos-latest'
       uses: actions/upload-artifact@v1
       with:
         name: macos-installer
-        path: out/Composer-*.pkg           
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-  
-      
+        path: out/Composer-*.pkg
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
