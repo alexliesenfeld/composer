@@ -24,6 +24,35 @@ body {
 }
 
 /*****************************************************************
+Generic
+******************************************************************/
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex: 1;
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
+
+.left-column {
+  @extend .column;
+  padding-right: 0.5em;
+}
+
+.right-column {
+  @extend .column;
+  padding-left: 0.5em;
+}
+
+/*****************************************************************
 App
 ******************************************************************/
 .App {
