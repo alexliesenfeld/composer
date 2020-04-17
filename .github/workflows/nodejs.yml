@@ -4,8 +4,9 @@
 name: Build
 
 on:
-  push:
-    branches: [ master ]
+  # Turned off for now
+  # push:
+  #  branches: [ master ]
   pull_request:
     branches: [ master ]
 
