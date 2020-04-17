@@ -68,7 +68,7 @@ export const buildMenuTemplate = (app: BrowserWindow): Array<(MenuItemConstructo
             },
             {
                 label: 'Open',
-                accelerator: 'CmdOrCtrl+O',
+                accelerator: 'CmdOrCtrl+P',
                 click(menuItem, browserWindow) {
                     browserWindow.webContents.send(IPCMainEvents.INIT_OPEN_PROJECT)
                 }

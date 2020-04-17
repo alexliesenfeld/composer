@@ -2,7 +2,7 @@ import * as React from 'react';
 import {inject, observer} from "mobx-react";
 import {AppStore} from "@/renderer/app/stores/appStore";
 import {Route, Switch, useHistory} from "react-router-dom"
-import ProjectsPage from "@/renderer/app/containers/pages/ProjectsPage";
+import ProjectsPage from "@/renderer/app/containers/pages/ProjectPage";
 import FilesPage from "@/renderer/app/containers/pages/FilesPage";
 import {APPLICATION, ARCHIVE, COG, DOCUMENT, LAYERS, PLAY} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 import {

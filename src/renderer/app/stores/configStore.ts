@@ -1,6 +1,6 @@
 import {action, observable} from "mobx";
 import {ElectronContext} from "@/renderer/app/support/model/electron-context";
-import {UserConfig} from "@/lib/model/user-config";
+import {Prototype, UserConfig} from "@/lib/model/user-config";
 import * as userConfigHandlers from "@/lib/handlers/user-config"
 import {NotInitializedError} from "@/lib/model/errors";
 
@@ -22,7 +22,7 @@ export class ConfigStore {
             return;
         }
 
-        this.writeConfigToPath(result.filePath, {projectName: 'New Project'});
+        this.writeConfigToPath(result.filePath, {projectName: 'New Project', prototype: Prototype.IPLIGEFFECT} as UserConfig);
         this.loadConfigFromPath(result.filePath);
     }
 

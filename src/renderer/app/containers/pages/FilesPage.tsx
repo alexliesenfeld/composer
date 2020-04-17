@@ -21,8 +21,12 @@ import {
 import {ADD, CARET_DOWN} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 import {inject, observer} from "mobx-react";
 import {AppStore} from "@/renderer/app/stores/appStore";
+import {toasted} from "@/renderer/app/support/components/app-toaster";
 
-const FilesPage = (props: { appStore?: AppStore, filesStore?: FilesStore }) => {
+const FilesPage = (props: {filesStore?: FilesStore }) => {
+    const {sourceFilesList} = props.filesStore!;
+    const [refreshSourceFilesList] = toasted([props.filesStore!.refreshSourceFilesList]);
+
     return (
         <div>
             <H3>Files</H3>
@@ -45,14 +49,13 @@ const FilesPage = (props: { appStore?: AppStore, filesStore?: FilesStore }) => {
                         <Popover content={<FileMenu/>} position={"bottom"}>
                             <Button rightIcon={CARET_DOWN} icon={ADD} intent={"primary"}>Add</Button>
                         </Popover>
-                        <Button icon="refresh"
-                                onClick={() => props.filesStore!.refreshSourceFilesList()}>Refresh</Button>
+                        <Button icon="refresh" onClick={refreshSourceFilesList}>Refresh</Button>
                     </ButtonGroup>
                 </Navbar.Group>
             </Navbar>
 
             <Card elevation={Elevation.TWO}>
-                <SourceFileList paths={props.filesStore!.sourceFilesList}/>
+                <SourceFileList paths={sourceFilesList}/>
             </Card>
         </div>
     );
@@ -74,4 +77,4 @@ export const SourceFileList = (props: IProps & { paths: string[] }) => {
     </div>);
 };
 
-export default inject('filesStore', 'appStore')(observer(FilesPage))
+export default inject('filesStore')(observer(FilesPage))
