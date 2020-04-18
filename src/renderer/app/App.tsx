@@ -2,8 +2,8 @@ import * as React from 'react';
 import {inject, observer} from "mobx-react";
 import {AppStore} from "@/renderer/app/stores/appStore";
 import {Route, Switch, useHistory} from "react-router-dom"
-import ProjectsPage from "@/renderer/app/containers/pages/ProjectPage";
-import FilesPage from "@/renderer/app/containers/pages/FilesPage";
+import ProjectsPage from "@/renderer/app/pages/project/ProjectPage";
+import FilesPage from "@/renderer/app/pages/files/FilesPage";
 import {APPLICATION, ARCHIVE, COG, DOCUMENT, LAYERS, PLAY} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 import {
     Alignment,
@@ -18,7 +18,7 @@ import {
 } from "@blueprintjs/core";
 
 import '@public/style.scss';
-import WelcomePage from "@/renderer/app/containers/pages/WelcomePage";
+import WelcomePage from "@/renderer/app/pages/welcome/WelcomePage";
 import {ConfigStore} from "@/renderer/app/stores/configStore";
 
 FocusStyleManager.onlyShowFocusOnTabs();

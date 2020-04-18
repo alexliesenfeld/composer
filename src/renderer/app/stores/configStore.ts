@@ -1,12 +1,17 @@
 import {action, observable} from "mobx";
 import {ElectronContext} from "@/renderer/app/support/model/electron-context";
-import {Prototype, UserConfig} from "@/lib/model/user-config";
+import {PluginFormat, Prototype, UserConfig} from "@/lib/model/user-config";
 import * as userConfigHandlers from "@/lib/handlers/user-config"
 import {NotInitializedError} from "@/lib/model/errors";
 
 export class ConfigStore {
     @observable userConfig: UserConfig | undefined = undefined;
     @observable configPath: string | undefined = undefined;
+
+    @action.bound
+    public setUserConfig(config: UserConfig): void {
+        this.userConfig = config;
+    }
 
     @action.bound
     public async createNewUserConfig(): Promise<void> {
@@ -22,7 +27,16 @@ export class ConfigStore {
             return;
         }
 
-        this.writeConfigToPath(result.filePath, {projectName: 'New Project', prototype: Prototype.IPLIGEFFECT} as UserConfig);
+        this.writeConfigToPath(result.filePath, {
+            projectName: 'New Project',
+            prototype: Prototype.IPLIGEFFECT,
+            uiEnabled: true,
+            fps: 60,
+            formats: [PluginFormat.AU2, PluginFormat.VST3],
+            uiHeight: 600,
+            uiWidth: 600,
+            version: '0.0.0',
+        } as UserConfig);
         this.loadConfigFromPath(result.filePath);
     }
 

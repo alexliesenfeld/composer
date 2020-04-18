@@ -1,4 +1,5 @@
 import {action, observable} from "mobx";
+import {PluginFormat, Prototype} from "@/lib/model/user-config";
 
 export enum ProjectsTab {
     SOURCE_FILES_TAB,
@@ -7,12 +8,5 @@ export enum ProjectsTab {
 
 
 export class ProjectStore {
-    @observable activeTab: ProjectsTab = ProjectsTab.SOURCE_FILES_TAB;
-
-
-    @action.bound
-    public setActiveTab(tab: ProjectsTab): void {
-        this.activeTab = tab;
-    }
 
 }

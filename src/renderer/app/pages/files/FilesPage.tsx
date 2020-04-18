@@ -21,7 +21,7 @@ import {
 import {ADD, CARET_DOWN} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 import {inject, observer} from "mobx-react";
 import {AppStore} from "@/renderer/app/stores/appStore";
-import {toasted} from "@/renderer/app/support/components/app-toaster";
+import {toasted} from "@/renderer/app/support/util/app-toaster";
 
 const FilesPage = (props: {filesStore?: FilesStore }) => {
     const {sourceFilesList} = props.filesStore!;
