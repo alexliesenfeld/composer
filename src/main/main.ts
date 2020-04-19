@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as url from 'url';
 import {buildMenuTemplate, SAVE_MENU_ITEM_ID} from "@main/menu";
 import {IPCRendererEvents} from "@common/constants";
+import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-installer';
 
 let mainWindow: BrowserWindow | null;
 
@@ -56,3 +57,11 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+if (process.env.NODE_ENV !== 'production') {
+    app.whenReady().then(() => {
+        installExtension(REACT_DEVELOPER_TOOLS)
+            .then((name) => console.log(`Added Extension:  ${name}`))
+            .catch((err) => console.log('An error occurred: ', err));
+    });
+}

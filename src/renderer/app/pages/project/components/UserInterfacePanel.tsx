@@ -15,9 +15,10 @@ export interface UserInterfacePanelProps {
     setUiEnabled: (value: boolean) => void
 }
 
-export const UserInterfacePanel = (props: UserInterfacePanelProps) => {
+const UserInterfacePanel = (props: UserInterfacePanelProps) => {
     return (
         <Card elevation={Elevation.TWO}>
+            <input value={new Date().toString()}/>
             <div style={{display: 'flow-root'}}>
                 <H5>User Interface</H5>
             </div>
@@ -52,3 +53,5 @@ export const UserInterfacePanel = (props: UserInterfacePanelProps) => {
         </Card>
     );
 };
+
+export default React.memo(UserInterfacePanel);

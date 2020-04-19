@@ -15,8 +15,8 @@ import {
 } from "@blueprintjs/core";
 import {ConfigStore} from "@/renderer/app/stores/configStore";
 import {SelectInput} from "@/renderer/app/support/components/SelectInput";
-import {GeneralPanel} from "@/renderer/app/pages/project/components/GeneralPanel";
-import {UserInterfacePanel} from "@/renderer/app/pages/project/components/UserInterfacePanel";
+import GeneralPanel from "@/renderer/app/pages/project/components/GeneralPanel";
+import UserInterfacePanel from "@/renderer/app/pages/project/components/UserInterfacePanel";
 
 const ProjectPage = (props: { configStore?: ConfigStore }) => {
     const {userConfig, setUserConfig} = props.configStore!;
@@ -33,8 +33,8 @@ const ProjectPage = (props: { configStore?: ConfigStore }) => {
                               setPrototype={(value) => setUserConfig({...userConfig!, prototype: value})}
                               formats={userConfig!.formats}
                               setFormats={(value) => setUserConfig({...userConfig!, formats: value})}
-                              version={userConfig!.version}
-                              setVersion={(value) => setUserConfig({...userConfig!, version: value})}
+                              version={userConfig!.pluginVersion}
+                              setVersion={(value) => setUserConfig({...userConfig!, pluginVersion: value})}
                 />
             </section>
 

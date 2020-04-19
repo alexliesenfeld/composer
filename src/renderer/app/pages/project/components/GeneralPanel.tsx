@@ -15,9 +15,10 @@ export interface GeneralPanelProps {
     setFormats: (value: PluginFormat[]) => void,
 }
 
-export const GeneralPanel = (props: GeneralPanelProps) => {
+const GeneralPanel = (props: GeneralPanelProps) => {
     return (
         <Card elevation={Elevation.TWO}>
+            <input value={new Date().toString()}/>
             <H5>General</H5>
             <Divider/>
             <div className='row'>
@@ -47,3 +48,5 @@ export const GeneralPanel = (props: GeneralPanelProps) => {
         </Card>
     );
 };
+
+export default React.memo(GeneralPanel);

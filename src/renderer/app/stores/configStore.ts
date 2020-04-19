@@ -14,6 +14,16 @@ export class ConfigStore {
     }
 
     @action.bound
+    public setProjectName(config: string): void {
+        this.userConfig!.projectName = config;
+    }
+
+    @action.bound
+    public setUiWidth(v: number): void {
+        this.userConfig!.uiWidth = v;
+    }
+
+    @action.bound
     public async createNewUserConfig(): Promise<void> {
         const result = await ElectronContext.dialog.showSaveDialog({
             filters: [{
@@ -35,7 +45,7 @@ export class ConfigStore {
             formats: [PluginFormat.AU2, PluginFormat.VST3],
             uiHeight: 600,
             uiWidth: 600,
-            version: '0.0.0',
+            pluginVersion: '0.0.0',
         } as UserConfig);
         this.loadConfigFromPath(result.filePath);
     }

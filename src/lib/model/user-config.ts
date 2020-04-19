@@ -17,7 +17,7 @@ export interface UserConfig {
     projectName: string;
     prototype: Prototype;
     formats: PluginFormat[];
-    version: string;
+    pluginVersion: string;
     uiWidth: number
     uiHeight: number
     fps: number
