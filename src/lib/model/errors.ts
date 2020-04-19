@@ -11,27 +11,14 @@ export class CustomError extends Error {
     }
 }
 
-
-export class EmptyFileError extends CustomError {
-    constructor(public filePath?: string) {
-        super(EmptyFileError, "File is empty" + (filePath ? ": " + filePath : '') + ".");
+export class DirectoryNotEmptyError extends CustomError {
+    constructor(public customMessage?: string, public filePath?: string) {
+        super(DirectoryNotEmptyError, customMessage ? customMessage : `Directory is not empty${filePath ? ': ' + filePath : ''}.`);
     }
 }
 
 export class FileNotFoundError extends CustomError {
     constructor(public filePath?: string) {
         super(FileNotFoundError, "File was not found" + (filePath ? ": " + filePath : '')  + ".");
-    }
-}
-
-export class IllegalStateError extends CustomError {
-    constructor(public errorMessage?: string) {
-        super(IllegalStateError, errorMessage);
-    }
-}
-
-export class NotInitializedError extends CustomError {
-    constructor(public errorMessage?: string) {
-        super(NotInitializedError, errorMessage);
     }
 }

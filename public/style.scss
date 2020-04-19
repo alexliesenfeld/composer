@@ -17,7 +17,6 @@ body {
   margin: 0;
   display: flex;
   box-sizing: border-box;
-  background: $dark-gray3;
 }
 
 /*****************************************************************
@@ -78,23 +77,33 @@ Generic
 /*****************************************************************
 Custom Scrollbar Colors
 ******************************************************************/
-/* width */
 .custom-scrollbar::-webkit-scrollbar {
   width: 1em;
 }
 
-/* Track */
+// Light Theme
 .custom-scrollbar::-webkit-scrollbar-track {
+  background: $gray4;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: $gray2;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: $gray1;
+}
+
+// Dark Theme
+.bp3-dark .custom-scrollbar::-webkit-scrollbar-track {
   background: $dark-gray2;
 }
 
-/* Handle */
-.custom-scrollbar::-webkit-scrollbar-thumb {
+.bp3-dark .custom-scrollbar::-webkit-scrollbar-thumb {
   background: $dark-gray1;
 }
 
-/* Handle on hover */
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+.bp3-dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: $black;
 }
 
@@ -110,8 +119,9 @@ SelectInput Component
 App
 ******************************************************************/
 .App {
-  @extend .custom-scrollbar;
+
   width: 100%;
+  background-color: $light-gray2;
 
   main.content {
     padding: 1em;
@@ -126,6 +136,18 @@ App
   .logo svg {
     fill: #394b59;
   }
+
+  .bp3-dark {
+    background: $dark-gray3;
+  }
+}
+
+/*****************************************************************
+ThemeProvider
+******************************************************************/
+.ThemeProvider {
+  width: 100vw;
+  height: 100vh;
 }
 
 /*****************************************************************

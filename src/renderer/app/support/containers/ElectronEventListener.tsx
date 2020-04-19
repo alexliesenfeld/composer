@@ -1,27 +1,38 @@
 import * as React from 'react';
-import {useEffect} from 'react';
 import {inject, observer} from "mobx-react";
 import {ConfigStore} from "@/renderer/app/stores/configStore";
 import {ElectronContext} from "@/renderer/app/support/model/electron-context";
+import {ToastedFunction, toasted} from "@/renderer/app/support/util/app-toaster";
 
-const ElectronEventLister = (props: { configStore?: ConfigStore }) => {
-    const {save, openConfigFromDialog, createNewUserConfig} = props.configStore!;
+@inject('configStore')
+@observer
+class ElectronEventLister extends React.Component<{ configStore?: ConfigStore }> {
+    save: ToastedFunction;
+    createNewUserConfig: ToastedFunction;
+    openConfigFromDialog: ToastedFunction;
 
-    // ~ componentDidMount
-    useEffect(() => {
-        ElectronContext.registerSaveProjectEventListener(save);
-        ElectronContext.registerOpenProjectEventListener(openConfigFromDialog);
-        ElectronContext.registerCreateNewProjectEventListener(createNewUserConfig);
+    constructor(props: { configStore?: ConfigStore }) {
+        super(props);
+        this.save = toasted(this.props.configStore!.save);
+        this.createNewUserConfig = toasted(this.props.configStore!.createNewUserConfig);
+        this.openConfigFromDialog = toasted(this.props.configStore!.openConfigFromDialog);
+    }
 
-        // ~ componentWillUnmount
-        return () => {
-            ElectronContext.deregisterSaveProjectEventListener(save);
-            ElectronContext.deregisterOpenProjectEventListener(openConfigFromDialog);
-            ElectronContext.deregisterCreateNewProjectEventListener(createNewUserConfig);
-        }
-    }, []);
+    componentDidMount(): void {
+        ElectronContext.registerSaveProjectEventListener(this.save);
+        ElectronContext.registerOpenProjectEventListener(this.openConfigFromDialog);
+        ElectronContext.registerCreateNewProjectEventListener(this.createNewUserConfig);
+    }
 
-    return <div className='ElectronEventLister' style={{display: 'none'}}/>;
-};
+    componentWillUnmount(): void {
+        ElectronContext.deregisterSaveProjectEventListener(this.save);
+        ElectronContext.deregisterOpenProjectEventListener(this.openConfigFromDialog);
+        ElectronContext.deregisterCreateNewProjectEventListener(this.createNewUserConfig);
+    }
 
-export default inject('configStore')(observer(ElectronEventLister))
+    render() {
+        return <div>{this.props.children}</div>;
+    }
+}
+
+export default ElectronEventLister;

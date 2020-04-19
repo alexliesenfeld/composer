@@ -32,15 +32,11 @@ const App = (props: { configStore?: ConfigStore }) => {
     };
 
     if (!userConfig) {
-        return (
-            <div className='bp3-dark'>
-                <WelcomePage/>
-            </div>
-        );
+        return <WelcomePage/>;
     }
 
     return (
-        <div className='bp3-dark'>
+        <div>
             <Navbar>
                 <NavbarGroup align={Alignment.LEFT}>
                     <NavbarHeading>

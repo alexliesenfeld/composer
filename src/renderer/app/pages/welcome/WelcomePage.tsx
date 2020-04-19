@@ -3,9 +3,10 @@ import {Button, Card} from "@blueprintjs/core";
 import {DOCUMENT_OPEN, NEW_OBJECT} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 import {inject, observer} from "mobx-react";
 import {ConfigStore} from "@/renderer/app/stores/configStore";
+import {allToasted} from "@/renderer/app/support/util/app-toaster";
 
 const WelcomePage = (props: { configStore?: ConfigStore }) => {
-    const {createNewUserConfig, openConfigFromDialog} = props.configStore!;
+    const [createNewUserConfig, openConfigFromDialog] = allToasted([props.configStore!.createNewUserConfig, props.configStore!.openConfigFromDialog]) ;
     return (
         <div className='WelcomePage'>
             <Card>
