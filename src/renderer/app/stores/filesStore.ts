@@ -1,4 +1,4 @@
-import {action, observable} from "mobx";
+import {action, observable, runInAction} from "mobx";
 import {ElectronContext} from "@/renderer/app/support/model/electron-context";
 import {Fs} from "@/lib/helpers/fs";
 import {FileNotFoundError} from "@/lib/model/errors";
@@ -16,7 +16,10 @@ export class FilesStore {
     @action.bound
     public async refreshSourceFilesList(): Promise<void> {
         const appPath = ElectronContext.remote.app.getAppPath();
-        this.sourceFilesList = await Fs.readdir(appPath);
+        const sourceFilesList = await Fs.readdir(appPath);
+        runInAction(() => {
+            this.sourceFilesList = sourceFilesList;
+        })
     }
 
     @action.bound

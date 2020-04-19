@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Card, Checkbox, Divider, Elevation, FormGroup, H5, InputGroup} from "@blueprintjs/core";
 import {PluginFormat, Prototype} from "@/lib/model/user-config";
 import {SelectInput} from "@/renderer/app/support/components/SelectInput";
-import {enumValues} from "@/renderer/app/support/util/enum-utils";
+import {enumEntries, enumValues} from "@/renderer/app/support/util/enum-utils";
 
 export interface GeneralPanelProps {
     projectName: string,
@@ -18,7 +18,6 @@ export interface GeneralPanelProps {
 const GeneralPanel = (props: GeneralPanelProps) => {
     return (
         <Card elevation={Elevation.TWO}>
-            <input value={new Date().toString()}/>
             <H5>General</H5>
             <Divider/>
             <div className='row'>
@@ -35,18 +34,26 @@ const GeneralPanel = (props: GeneralPanelProps) => {
             </div>
             <div className='row'>
                 <FormGroup className='left-column' label="Version" labelFor="text-input">
-                    <InputGroup id="text-input" placeholder="Please enter the version of the plug-in"/>
+                    <InputGroup placeholder="Please enter the name of the plug-in"
+                                value={props.version}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.setVersion(e.target.value)}/>
                 </FormGroup>
                 <FormGroup className='right-column' label="Formats" labelFor="text-input">
-                    <Checkbox label="VST2" inline={true}/>
-                    <Checkbox label="VST3" inline={true}/>
-                    <Checkbox label="AU2" inline={true}/>
-                    <Checkbox label="AAX" inline={true}/>
-                    <Checkbox label="iOS" inline={true}/>
+                    {enumEntries(PluginFormat).map(([key, format]) => {
+                        return (
+                            <Checkbox label={format.toString()} inline={true} key={format}
+                                      checked={props.formats.includes(format)}
+                                      onChange={() => props.formats.includes(format) ?
+                                          props.setFormats(props.formats.filter(e => e != format)) :
+                                          props.setFormats([...props.formats, format])
+                                      }
+                            />
+                        );
+                    })}
                 </FormGroup>
             </div>
         </Card>
     );
 };
 
-export default React.memo(GeneralPanel);
+export default GeneralPanel;

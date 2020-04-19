@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {inject, observer} from "mobx-react";
-import {AppStore} from "@/renderer/app/stores/appStore";
-import {Route, Switch, useHistory} from "react-router-dom"
+import {Redirect, Route, Switch, useHistory} from "react-router-dom"
 import ProjectsPage from "@/renderer/app/pages/project/ProjectPage";
 import FilesPage from "@/renderer/app/pages/files/FilesPage";
 import {APPLICATION, ARCHIVE, COG, DOCUMENT, LAYERS, PLAY} from "@blueprintjs/icons/lib/esm/generated/iconNames";
@@ -11,6 +10,7 @@ import {
     Classes,
     FocusStyleManager,
     Icon,
+    Intent,
     Navbar,
     NavbarDivider,
     NavbarGroup,
@@ -23,9 +23,13 @@ import {ConfigStore} from "@/renderer/app/stores/configStore";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-const App = (props: { appStore?: AppStore, configStore?: ConfigStore }) => {
+const App = (props: { configStore?: ConfigStore }) => {
     let history = useHistory();
     let {userConfig} = props.configStore!;
+
+    const getIntentForLocation = (linkLocation: string): Intent => {
+        return history.location.pathname === linkLocation ? "primary" : "none";
+    };
 
     if (!userConfig) {
         return (
@@ -46,23 +50,27 @@ const App = (props: { appStore?: AppStore, configStore?: ConfigStore }) => {
                     <NavbarDivider/>
                     <span> {userConfig.projectName}</span>
                     <NavbarDivider/>
-                    <Button onClick={() => history.push("/projects")} className={Classes.MINIMAL} icon={APPLICATION}
+                    <Button onClick={() => history.push("/project")} intent={getIntentForLocation("/project")}
+                            className={Classes.MINIMAL} icon={APPLICATION}
                             text="Project"/>
-                    <Button onClick={() => history.push("/files")} className={Classes.MINIMAL} icon={DOCUMENT}
+                    <Button onClick={() => history.push("/files")} intent={getIntentForLocation("/files")}
+                            className={Classes.MINIMAL} icon={DOCUMENT}
                             text="Files"/>
-                    <Button onClick={() => history.push("/installer")} className={Classes.MINIMAL} icon={ARCHIVE}
+                    <Button onClick={() => history.push("/installer")} intent={getIntentForLocation("/installer")}
+                            className={Classes.MINIMAL} icon={ARCHIVE}
                             text="Installer"/>
                     <NavbarDivider/>
-                    <Button onClick={() => history.push("/installer")} className={Classes.MINIMAL} icon={COG}
+                    <Button onClick={() => history.push("/settings")} intent={getIntentForLocation("/settings")}
+                            className={Classes.MINIMAL} icon={COG}
                             text="Settings"/>
                 </NavbarGroup>
                 <NavbarGroup align={Alignment.RIGHT}>
                     <Button icon={PLAY} text="Open in Visual Studio" intent={"success"}/>
                 </NavbarGroup>
             </Navbar>
-            <main className='content'>
+            <main className='content custom-scrollbar'>
                 <Switch>
-                    <Route path="/projects">
+                    <Route path="/project">
                         <ProjectsPage/>
                     </Route>
                     <Route path="/files">
@@ -71,10 +79,13 @@ const App = (props: { appStore?: AppStore, configStore?: ConfigStore }) => {
                     <Route path="/installer">
                         <a>INSTALLER</a>
                     </Route>
+                    <Route exact path="/" render={() => (
+                        <Redirect to="/project"/>
+                    )}/>
                 </Switch>
             </main>
         </div>
     );
 };
 
-export default inject('appStore', 'configStore')(observer(App))
+export default inject('configStore')(observer(App))

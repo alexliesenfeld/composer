@@ -1,6 +1,6 @@
-import {action, observable} from "mobx";
+import {action, observable, runInAction} from "mobx";
 import {ElectronContext} from "@/renderer/app/support/model/electron-context";
-import {PluginFormat, Prototype, UserConfig} from "@/lib/model/user-config";
+import {AudioUnitPluginType, PluginFormat, Prototype, UserConfig, Vst3Subcategory} from "@/lib/model/user-config";
 import * as userConfigHandlers from "@/lib/handlers/user-config"
 import {NotInitializedError} from "@/lib/model/errors";
 
@@ -38,7 +38,7 @@ export class ConfigStore {
         }
 
         this.writeConfigToPath(result.filePath, {
-            projectName: 'New Project',
+            projectName: 'NewProject',
             prototype: Prototype.IPLIGEFFECT,
             uiEnabled: true,
             fps: 60,
@@ -46,6 +46,25 @@ export class ConfigStore {
             uiHeight: 600,
             uiWidth: 600,
             pluginVersion: '0.0.0',
+            mpe: false,
+            midiOut: false,
+            midiIn: false,
+            stateChunks: false,
+            outputChannels: 2,
+            inputChannels: 2,
+            pluginLatency: 0,
+            manufacturerWebsite: "www.my-plugin-company.com",
+            manufacturerCopyrightNotice: "© www.my-plugin-company.com",
+            manufacturerEmail: "mail@my-plugin-company.com",
+            manufacturerName: "MyPlugInCompany",
+            audioUnitBundleManufacturer: "MyPlugInCompany",
+            audioUnitBundleDomain: "com",
+            audioUnitManufacturerId: "MPIC",
+            audioUnitBundleName: "NewProject",
+            audioUnitPluginType: AudioUnitPluginType.EFFECT_OR_MUSIC_EFFECT,
+            vst3Subcategory: Vst3Subcategory.FX,
+            vstUniqueId: "nprj",
+            uiResizable: false
         } as UserConfig);
         this.loadConfigFromPath(result.filePath);
     }
@@ -79,8 +98,13 @@ export class ConfigStore {
 
     @action.bound
     public async loadConfigFromPath(path: string): Promise<void> {
-        this.userConfig = await userConfigHandlers.loadConfigFromPath(path);
-        this.configPath = path;
+        const userConfig = await userConfigHandlers.loadConfigFromPath(path);
+
+        runInAction(() => {
+            this.userConfig = userConfig;
+            this.configPath = path;
+        });
+
         ElectronContext.enableSaveItemInWindowMenu(true);
     }
 

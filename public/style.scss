@@ -7,10 +7,6 @@
 
 $sidenav-width: 14em;
 
-body {
-  background: $dark-gray3;
-}
-
 html {
   min-height: 100%;
 }
@@ -21,6 +17,7 @@ body {
   margin: 0;
   display: flex;
   box-sizing: border-box;
+  background: $dark-gray3;
 }
 
 /*****************************************************************
@@ -61,26 +58,52 @@ Generic
   padding-right: 0.5em;
 }
 
-.custom-scrollbar {
-  /* width */
-  ::-webkit-scrollbar {
-    width: 1em;
+.page-sections-container section {
+  margin-bottom: 1em;
+}
+
+@media only screen and (min-width: 1200px) {
+  .page-sections-container {
+    width: calc(100% - 1em);
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-column-gap: 1em;
   }
 
-  /* Track */
-  ::-webkit-scrollbar-track {
-    background: $dark-gray2;
+  .page-sections-container section {
+    display: grid;
   }
+}
 
-  /* Handle */
-  ::-webkit-scrollbar-thumb {
-    background: $dark-gray1;
-  }
+/*****************************************************************
+Custom Scrollbar Colors
+******************************************************************/
+/* width */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 1em;
+}
 
-  /* Handle on hover */
-  ::-webkit-scrollbar-thumb:hover {
-    background: $black;
-  }
+/* Track */
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: $dark-gray2;
+}
+
+/* Handle */
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: $dark-gray1;
+}
+
+/* Handle on hover */
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: $black;
+}
+
+/*****************************************************************
+SelectInput Component
+******************************************************************/
+.height-constrained-popover {
+  max-height: $pt-grid-size * 50;
+  overflow-y: auto;
 }
 
 /*****************************************************************
@@ -126,7 +149,6 @@ ProjectPage
 ******************************************************************/
 .ProjectPage {
 
-  section {
-    margin-bottom: 1em;
-  }
 }
+
+

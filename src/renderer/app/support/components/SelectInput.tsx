@@ -19,7 +19,7 @@ const stringItemRenderer: ItemRenderer<SelectInputItem<any>> = (item: SelectInpu
             //label={itemText}
             key={item.key}
             onClick={handleClick}
-            text={item.text}
+            text={item.text} shouldDismissPopover={false}
         />
     );
 };
@@ -31,10 +31,11 @@ export const SelectInput = <T extends unknown>(props: { items: SelectInputItem<T
     const selectedItem = props.items.find(e => e.key == props.selectedItemKey);
 
     return (
-        <TypedSelect items={props.items}
+        <TypedSelect className='SelectInput'
+                     items={props.items}
                      onItemSelect={(item) => props.onClick(item)}
                      itemRenderer={stringItemRenderer}
-                     filterable={false} popoverProps={{fill: true, minimal: true}}
+                     filterable={false} popoverProps={{fill: true, minimal: true, popoverClassName: 'height-constrained-popover custom-scrollbar' }}
                      activeItem={selectedItem}>
             <Button
                 fill={true}
