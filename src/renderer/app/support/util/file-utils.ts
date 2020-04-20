@@ -1,7 +1,8 @@
 import * as request from "request";
 import * as AdmZip from "adm-zip";
-
-const fs = require('fs');
+import * as fs from "fs";
+import * as path from "path";
+import {Fs} from "@/lib/helpers/fs";
 
 export const downloadFile = (url: string, target: string) => {
     return new Promise(function (resolve, reject) {
@@ -12,30 +13,23 @@ export const downloadFile = (url: string, target: string) => {
 };
 
 export const unzipFile = async (zipFilePath: string, targetDir: string) => {
-    const zip = new AdmZip(zipFilePath);
-
-    return new Promise(function (resolve, reject) {
-        zip.extractAllToAsync(targetDir, true, (err: Error) => {
-            if(err) {
-                reject(err);
-            } else {
-                resolve();
-            }
-        })
+    return new Promise((resolve, reject) => {
+        const zip = new AdmZip(zipFilePath);
+        zip.extractAllToAsync(targetDir, true, (err: Error) => err ? reject(err) : resolve())
     });
-
 };
 
-export const deleteFolderRecursive = (path: string) => {
-    if (fs.existsSync(path)) {
-        fs.readdirSync(path).forEach((file: string) => {
-            const curPath = path + "/" + file;
-            if (fs.lstatSync(curPath).isDirectory()) { // recurse
-                deleteFolderRecursive(curPath);
+export const deleteFolderRecursive = async (dirPath: string) => {
+    if (await Fs.exists(dirPath)) {
+        const dirContents = await Fs.readdir(dirPath);
+        for (const file of dirContents) {
+            const curPath = path.join(dirPath, file);
+            if ((await Fs.lstat(curPath)).isDirectory()) { // recurse
+                await deleteFolderRecursive(curPath);
             } else { // delete file
-                fs.unlinkSync(curPath);
+                await Fs.unlink(curPath);
             }
-        });
-        fs.rmdirSync(path);
+        }
+        await Fs.rmdir(dirPath);
     }
 };

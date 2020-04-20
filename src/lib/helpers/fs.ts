@@ -11,5 +11,8 @@ export abstract class Fs {
     static readonly mkdir = util.promisify(fs.mkdir);
     static readonly exists = util.promisify(fs.exists);
     static readonly unlink = util.promisify(fs.unlink); // Asynchronously removes a file or symbolic link.
+    static readonly lstat = util.promisify(fs.lstat);
+    static readonly rmdir = util.promisify(fs.rmdir);
+    static readonly rename = util.promisify(fs.rename);
 }
 
