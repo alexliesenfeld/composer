@@ -22,7 +22,7 @@ const VstPanel = (props: VstPanelProps) => {
                                 value={props.vst3UniqueId}
                                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => props.setVst3UniqueId(e.target.value)}/>
                 </FormGroup>
-                <FormGroup className='right-column' label="Bundle Name" labelFor="text-input" >
+                <FormGroup className='right-column' label="Subcategory" labelFor="text-input" >
                     <SelectInput items={enumValues(Vst3Subcategory).map((e) => ({key: e, text: e}))}
                                  selectedItemKey={props.vst3Subcategory}
                                  onClick={(item) => props.setVst3Subcategory(item.key)}

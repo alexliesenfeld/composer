@@ -20,20 +20,27 @@ import {
 import '@public/style.scss';
 import WelcomePage from "@/renderer/app/pages/welcome/WelcomePage";
 import {ConfigStore} from "@/renderer/app/stores/configStore";
-import {SpinnerPanel} from "@/renderer/app/components/SpinnerPanel";
 import {AppStore} from "@/renderer/app/stores/appStore";
-import {downloadIPlug2FromGithub} from "@/renderer/app/controllers/workspace";
+import * as workspace from "@/renderer/app/controllers/workspace";
+import {allWithLoadingScreen} from "@/renderer/app/util/app-spinner";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-const App = (props: { appStore?: AppStore, configStore?: ConfigStore}) => {
+const App = (props: { appStore?: AppStore, configStore?: ConfigStore }) => {
     let history = useHistory();
     let {userConfig} = props.configStore!;
-    let {loading, loadingText} = props.appStore!;
 
     const getIntentForLocation = (linkLocation: string): Intent => {
         return history.location.pathname === linkLocation ? "primary" : "none";
     };
+
+    const [downloadIPlug2FromGithub, downloadIPlug2FromGithub2, downloadIPlug2FromGithu3, downloadIPlug2FromGithu4] =
+        allWithLoadingScreen([
+            [workspace.downloadIPlug2FromGithub, "Downloading iPlug2 from GitHub ..."],
+            [workspace.downloadIPlug2FromGithub, "Downloading iPlug2 from GitHub ..."],
+            [workspace.downloadIPlug2FromGithub, "Downloading iPlug2 from GitHub ..."],
+            [workspace.downloadIPlug2FromGithub, "Downloading iPlug2 from GitHub ..."],
+        ])(props.appStore!);
 
     if (!userConfig) {
         return <WelcomePage/>;
@@ -41,7 +48,6 @@ const App = (props: { appStore?: AppStore, configStore?: ConfigStore}) => {
 
     return (
         <div>
-            <SpinnerPanel loading={loading} loadingText={loadingText}/>
             <Navbar>
                 <NavbarGroup align={Alignment.LEFT}>
                     <NavbarHeading>
@@ -66,7 +72,7 @@ const App = (props: { appStore?: AppStore, configStore?: ConfigStore}) => {
                             text="Settings"/>
                 </NavbarGroup>
                 <NavbarGroup align={Alignment.RIGHT}>
-                    <Button icon={PLAY} text="Open in Visual Studio" intent={"success"} onClick={ () => {
+                    <Button icon={PLAY} text="Open in Visual Studio" intent={"success"} onClick={() => {
                         downloadIPlug2FromGithub(props.configStore!.configPath!, '2d8bccf670b983c20fd73cb9e47358255f50093e');
                     }}/>
                 </NavbarGroup>
@@ -86,6 +92,7 @@ const App = (props: { appStore?: AppStore, configStore?: ConfigStore}) => {
                         <Redirect to="/project"/>
                     )}/>
                 </Switch>
+
             </main>
         </div>
     );
