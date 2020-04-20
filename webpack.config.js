@@ -23,7 +23,6 @@ const commonConfig = {
             '@common': srcPaths('src/common'),
             '@public': srcPaths('public'),
             '@renderer': srcPaths('src/renderer'),
-            '@lib': srcPaths('src/lib'),
         },
         extensions: ['.js', '.json', '.ts', '.tsx'],
     },

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {Card, Divider, Elevation, FormGroup, H5, InputGroup} from "@blueprintjs/core";
-import {AudioUnitPluginType, Prototype} from "@/lib/model/user-config";
-import {SelectInput} from "@/renderer/app/support/components/SelectInput";
-import {enumValues} from "@/renderer/app/support/util/enum-utils";
+import {AudioUnitPluginType, Prototype} from "@/renderer/app/model/user-config";
+import {SelectInput} from "@/renderer/app/components/SelectInput";
+import {enumValues} from "@/renderer/app/util/enum-utils";
 
 export interface AudioUnitPanelProps {
     bundleName: string,

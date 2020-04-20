@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {inject, observer} from "mobx-react";
 import {ConfigStore} from "@/renderer/app/stores/configStore";
-import {ElectronContext} from "@/renderer/app/support/model/electron-context";
-import {ToastedFunction, toasted} from "@/renderer/app/support/util/app-toaster";
+import {ElectronContext} from "@/renderer/app/model/electron-context";
+import {ToastedFunction, toasted} from "@/renderer/app/util/app-toaster";
 
 @inject('configStore')
 @observer

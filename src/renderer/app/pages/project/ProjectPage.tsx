@@ -6,9 +6,10 @@ import GeneralPanel from "@/renderer/app/pages/project/components/GeneralPanel";
 import UserInterfacePanel from "@/renderer/app/pages/project/components/UserInterfacePanel";
 import InputOutputPanel from "@/renderer/app/pages/project/components/InputOutputPanel";
 import ManufacturerPanel from "@/renderer/app/pages/project/components/ManufacturerPanel";
-import {matchesVersion, removeSpaces} from "@/renderer/app/support/util/string-utils";
+import {matchesVersion, removeSpaces} from "@/renderer/app/util/string-utils";
 import AudioUnitPanel from "@/renderer/app/pages/project/components/AudioUnitPanel";
 import VstPanel from "@/renderer/app/pages/project/components/VstPanel";
+import {UserConfig} from "@/renderer/app/model/user-config";
 
 /*
 This component will rerender all children whenever this component is rendered. This is because it accepts
@@ -25,7 +26,8 @@ export default React.memo(GeneralPanel, (prevProps, nextProps) => {
 });
 */
 const ProjectPage = (props: { configStore?: ConfigStore }) => {
-    const {userConfig, setUserConfig} = props.configStore!;
+    const {userConfig} = props.configStore!;
+    const setUserConfig = (config: UserConfig) => props.configStore!.userConfig = config;
 
     return (
         <div className='ProjectPage'>

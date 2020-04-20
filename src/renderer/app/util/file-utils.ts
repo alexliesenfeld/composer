@@ -2,7 +2,7 @@ import * as request from "request";
 import * as AdmZip from "adm-zip";
 import * as fs from "fs";
 import * as path from "path";
-import {Fs} from "@/lib/helpers/fs";
+import {Fs} from "@/renderer/app/util/fs";
 
 export const downloadFile = (url: string, target: string) => {
     return new Promise(function (resolve, reject) {

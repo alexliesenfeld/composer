@@ -11,9 +11,9 @@ import {
     Popover,
     Position
 } from "@blueprintjs/core";
-import {PluginFormat, Prototype} from "@/lib/model/user-config";
-import {SelectInput} from "@/renderer/app/support/components/SelectInput";
-import {enumValues} from "@/renderer/app/support/util/enum-utils";
+import {PluginFormat, Prototype} from "@/renderer/app/model/user-config";
+import {SelectInput} from "@/renderer/app/components/SelectInput";
+import {enumValues} from "@/renderer/app/util/enum-utils";
 
 export interface InputOutputPanelProps {
     inputChannels: number,

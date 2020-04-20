@@ -20,13 +20,16 @@ import {
 import '@public/style.scss';
 import WelcomePage from "@/renderer/app/pages/welcome/WelcomePage";
 import {ConfigStore} from "@/renderer/app/stores/configStore";
-import {downloadIPlug2FromGithub} from "@/lib/handlers/build-environment";
+import {SpinnerPanel} from "@/renderer/app/components/SpinnerPanel";
+import {AppStore} from "@/renderer/app/stores/appStore";
+import {downloadIPlug2FromGithub} from "@/renderer/app/controllers/workspace";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-const App = (props: { configStore?: ConfigStore }) => {
+const App = (props: { appStore?: AppStore, configStore?: ConfigStore}) => {
     let history = useHistory();
     let {userConfig} = props.configStore!;
+    let {loading, loadingText} = props.appStore!;
 
     const getIntentForLocation = (linkLocation: string): Intent => {
         return history.location.pathname === linkLocation ? "primary" : "none";
@@ -38,6 +41,7 @@ const App = (props: { configStore?: ConfigStore }) => {
 
     return (
         <div>
+            <SpinnerPanel loading={loading} loadingText={loadingText}/>
             <Navbar>
                 <NavbarGroup align={Alignment.LEFT}>
                     <NavbarHeading>
@@ -87,4 +91,4 @@ const App = (props: { configStore?: ConfigStore }) => {
     );
 };
 
-export default inject('configStore')(observer(App))
+export default inject('appStore', 'configStore')(observer(App))

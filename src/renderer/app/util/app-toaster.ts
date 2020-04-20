@@ -1,5 +1,5 @@
 import {Position, Toaster} from "@blueprintjs/core";
-import {CustomError} from "@/lib/model/errors";
+import {CustomError} from "@/renderer/app/model/errors";
 import {Intent} from "@blueprintjs/core/lib/esm/common/intent";
 
 const toaster = Toaster.create({

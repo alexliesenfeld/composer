@@ -1,7 +1,7 @@
 import {action, observable, runInAction} from "mobx";
-import {ElectronContext} from "@/renderer/app/support/model/electron-context";
-import {Fs} from "@/lib/helpers/fs";
-import {FileNotFoundError} from "@/lib/model/errors";
+import {ElectronContext} from "@/renderer/app/model/electron-context";
+import {Fs} from "@/renderer/app/util/fs";
+import {FileNotFoundError} from "@/renderer/app/model/errors";
 
 export enum FilesTab {
     SOURCE_FILES_TAB,

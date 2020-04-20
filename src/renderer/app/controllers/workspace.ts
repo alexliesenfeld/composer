@@ -1,7 +1,7 @@
-import {Fs} from "@/lib/helpers/fs";
+import {Fs} from "@/renderer/app/util/fs";
 import * as path from "path";
-import {deleteFolderRecursive, downloadFile, unzipFile} from "@/renderer/app/support/util/file-utils";
-import * as fs from "fs";
+import {deleteFolderRecursive, downloadFile, unzipFile} from "@/renderer/app/util/file-utils";
+
 
 export const ensureDependenciesDirectoryExists = async (baseDirectory: string) => {
     const dir = path.join(baseDirectory, "dependencies");
@@ -11,7 +11,7 @@ export const ensureDependenciesDirectoryExists = async (baseDirectory: string) =
     return dir;
 };
 
-export const ensureIPlugDependencyDirectoryExists = async (dependenciesDirectory: string) => {
+export const ensureIPlugDependencyDirectoryExists = async (dependenciesDirectory: string): Promise<string> => {
     const dir = path.join(dependenciesDirectory, "iPlug2");
     if (await Fs.exists(dir)) {
         await deleteFolderRecursive(dir)

@@ -151,6 +151,33 @@ ThemeProvider
 }
 
 /*****************************************************************
+SpinnerPanel
+******************************************************************/
+.SpinnerPanel {
+  width: 100vw;
+  height: 100vh;
+  padding-top: 25vh;
+  position: absolute;
+  z-index: 100000000;
+
+  background: rgba(216, 225, 232, 0.85);
+  text-shadow: 1px 1px 1px white;
+  color: #293742;
+}
+
+.bp3-dark .SpinnerPanel {
+  background: rgba(24, 32, 38, 0.8);
+  text-shadow: 1px 1px 1px black;
+  color: #FFFFFF;
+}
+
+.SpinnerPanel .text {
+  max-width: 50%;
+  margin: 1em auto auto;
+  text-align: center;
+}
+
+/*****************************************************************
 WelcomePage
 ******************************************************************/
 .WelcomePage {

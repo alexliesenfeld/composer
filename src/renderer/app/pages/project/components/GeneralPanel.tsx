@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {Card, Checkbox, Divider, Elevation, FormGroup, H5, InputGroup} from "@blueprintjs/core";
-import {PluginFormat, Prototype} from "@/lib/model/user-config";
-import {SelectInput} from "@/renderer/app/support/components/SelectInput";
-import {enumEntries, enumValues} from "@/renderer/app/support/util/enum-utils";
+import {PluginFormat, Prototype} from "@/renderer/app/model/user-config";
+import {SelectInput} from "@/renderer/app/components/SelectInput";
+import {enumEntries, enumValues} from "@/renderer/app/util/enum-utils";
 
 export interface GeneralPanelProps {
     projectName: string,

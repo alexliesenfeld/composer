@@ -1,6 +1,3 @@
-import {values} from "mobx";
-
-
 export class CustomError extends Error {
     constructor(type: any, message?: string) {
         super(message);
