@@ -1,32 +1,41 @@
-const http = require('http');
-const https = require('https');
+import * as request from "request";
+import * as AdmZip from "adm-zip";
+
 const fs = require('fs');
 
-export const downloadFile = (url: string, dest: string) => {
-    const writeStream = fs.createWriteStream(dest);
-    return new Promise((resolve, reject) => {
-        let responseSent = false;
-        const _http = url.startsWith("https") ? https : http;
-
-        _http.get(url, (response: any) => {
-            response.pipe(writeStream);
-
-            writeStream.on('finish', () => {
-                writeStream.close(() => {
-                    if (responseSent) {
-                        return;
-                    }
-                    responseSent = true;
-                    resolve();
-                });
-            });
-
-        }).on('error', (err: any) => {
-            if (responseSent) {
-                return;
-            }
-            responseSent = true;
-            reject(err);
-        });
+export const downloadFile = (url: string, target: string) => {
+    return new Promise(function (resolve, reject) {
+        request.get(url).pipe(fs.createWriteStream(target))
+            .on('finish', resolve)
+            .on('error', reject)
     });
+};
+
+export const unzipFile = async (zipFilePath: string, targetDir: string) => {
+    const zip = new AdmZip(zipFilePath);
+
+    return new Promise(function (resolve, reject) {
+        zip.extractAllToAsync(targetDir, true, (err: Error) => {
+            if(err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        })
+    });
+
+};
+
+export const deleteFolderRecursive = (path: string) => {
+    if (fs.existsSync(path)) {
+        fs.readdirSync(path).forEach((file: string) => {
+            const curPath = path + "/" + file;
+            if (fs.lstatSync(curPath).isDirectory()) { // recurse
+                deleteFolderRecursive(curPath);
+            } else { // delete file
+                fs.unlinkSync(curPath);
+            }
+        });
+        fs.rmdirSync(path);
+    }
 };

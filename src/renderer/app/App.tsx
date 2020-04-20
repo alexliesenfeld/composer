@@ -20,7 +20,7 @@ import {
 import '@public/style.scss';
 import WelcomePage from "@/renderer/app/pages/welcome/WelcomePage";
 import {ConfigStore} from "@/renderer/app/stores/configStore";
-import {cloneIPlug2GitRepoFromGithub} from "@/lib/handlers/build-environment";
+import {downloadIPlug2FromGithub} from "@/lib/handlers/build-environment";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -63,7 +63,7 @@ const App = (props: { configStore?: ConfigStore }) => {
                 </NavbarGroup>
                 <NavbarGroup align={Alignment.RIGHT}>
                     <Button icon={PLAY} text="Open in Visual Studio" intent={"success"} onClick={ () => {
-                        cloneIPlug2GitRepoFromGithub(props.configStore!.configPath!, '2d8bccf670b983c20fd73cb9e47358255f50093e');
+                        downloadIPlug2FromGithub(props.configStore!.configPath!, '2d8bccf670b983c20fd73cb9e47358255f50093e');
                     }}/>
                 </NavbarGroup>
             </Navbar>
