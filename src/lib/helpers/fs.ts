@@ -8,5 +8,8 @@ export abstract class Fs {
     static readonly readFile = util.promisify(fs.readFile);
     static readonly writeFile = util.promisify(fs.writeFile);
     static readonly readdir = util.promisify(fs.readdir);
+    static readonly mkdir = util.promisify(fs.mkdir);
+    static readonly exists = util.promisify(fs.exists);
+    static readonly unlink = util.promisify(fs.unlink); // Asynchronously removes a file or symbolic link.
 }
 

@@ -22,3 +22,9 @@ export class FileNotFoundError extends CustomError {
         super(FileNotFoundError, "File was not found" + (filePath ? ": " + filePath : '')  + ".");
     }
 }
+
+export class OperationFailedError extends CustomError {
+    constructor(public customMessage?: string) {
+        super(OperationFailedError, customMessage ? customMessage : `Operation has failed.`);
+    }
+}
