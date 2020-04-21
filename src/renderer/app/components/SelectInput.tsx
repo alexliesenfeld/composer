@@ -35,7 +35,7 @@ export const SelectInput = <T extends unknown>(props: { items: SelectInputItem<T
                      items={props.items}
                      onItemSelect={(item) => props.onClick(item)}
                      itemRenderer={stringItemRenderer}
-                     filterable={false} popoverProps={{fill: true, minimal: true, popoverClassName: 'height-constrained-popover custom-scrollbar' }}
+                     filterable={false} popoverProps={{fill: true, minimal: true, popoverClassName: 'height-constrained-popover custom-scrollbar', usePortal: false }}
                      activeItem={selectedItem}>
             <Button
                 fill={true}

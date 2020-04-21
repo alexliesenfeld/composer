@@ -2,7 +2,6 @@ import {Fs} from "@/renderer/app/util/fs";
 import * as path from "path";
 import {deleteFolderRecursive, downloadFile, unzipFile} from "@/renderer/app/util/file-utils";
 
-
 export const ensureDependenciesDirectoryExists = async (baseDirectory: string) => {
     const dir = path.join(baseDirectory, "dependencies");
     if (!await Fs.exists(dir)) {

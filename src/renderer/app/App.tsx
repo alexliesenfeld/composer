@@ -54,9 +54,6 @@ const App = (props: { appStore?: AppStore, configStore?: ConfigStore }) => {
                         <Icon icon={LAYERS} iconSize={20} className='logo'/>
                         <span> Composer</span>
                     </NavbarHeading>
-                    <NavbarDivider/>
-                    <span> {userConfig.projectName}</span>
-                    <NavbarDivider/>
                     <Button onClick={() => history.push("/project")} intent={getIntentForLocation("/project")}
                             className={Classes.MINIMAL} icon={APPLICATION}
                             text="Project"/>
@@ -66,12 +63,12 @@ const App = (props: { appStore?: AppStore, configStore?: ConfigStore }) => {
                     <Button onClick={() => history.push("/installer")} intent={getIntentForLocation("/installer")}
                             className={Classes.MINIMAL} icon={ARCHIVE}
                             text="Installer"/>
-                    <NavbarDivider/>
+                </NavbarGroup>
+                <NavbarGroup align={Alignment.RIGHT}>
                     <Button onClick={() => history.push("/settings")} intent={getIntentForLocation("/settings")}
                             className={Classes.MINIMAL} icon={COG}
                             text="Settings"/>
-                </NavbarGroup>
-                <NavbarGroup align={Alignment.RIGHT}>
+                    <NavbarDivider/>
                     <Button icon={PLAY} text="Open in Visual Studio" intent={"success"} onClick={() => {
                         downloadIPlug2FromGithub(props.configStore!.configPath!, '2d8bccf670b983c20fd73cb9e47358255f50093e');
                     }}/>
