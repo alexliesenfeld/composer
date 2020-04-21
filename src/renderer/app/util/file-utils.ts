@@ -6,7 +6,8 @@ import {Fs} from "@/renderer/app/util/fs";
 
 export const downloadFile = (url: string, target: string) => {
     return new Promise(function (resolve, reject) {
-        request.get(url).pipe(fs.createWriteStream(target))
+        request.get(url)
+            .pipe(fs.createWriteStream(target))
             .on('finish', resolve)
             .on('error', reject)
     });

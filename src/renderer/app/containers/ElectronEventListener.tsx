@@ -2,32 +2,21 @@ import * as React from 'react';
 import {inject, observer} from "mobx-react";
 import {ConfigStore} from "@/renderer/app/stores/configStore";
 import {ElectronContext} from "@/renderer/app/model/electron-context";
-import {ToastedFunction, toasted} from "@/renderer/app/util/app-toaster";
 
 @inject('configStore')
 @observer
 class ElectronEventLister extends React.Component<{ configStore?: ConfigStore }> {
-    save: ToastedFunction;
-    createNewUserConfig: ToastedFunction;
-    openConfigFromDialog: ToastedFunction;
-
-    constructor(props: { configStore?: ConfigStore }) {
-        super(props);
-        this.save = toasted(this.props.configStore!.save);
-        this.createNewUserConfig = toasted(this.props.configStore!.createNewUserConfig);
-        this.openConfigFromDialog = toasted(this.props.configStore!.openConfigFromDialog);
-    }
 
     componentDidMount(): void {
-        ElectronContext.registerSaveProjectEventListener(this.save);
-        ElectronContext.registerOpenProjectEventListener(this.openConfigFromDialog);
-        ElectronContext.registerCreateNewProjectEventListener(this.createNewUserConfig);
+        ElectronContext.registerSaveProjectEventListener(this.props.configStore!.save);
+        ElectronContext.registerOpenProjectEventListener(this.props.configStore!.openConfigFromDialog);
+        ElectronContext.registerCreateNewProjectEventListener(this.props.configStore!.createNewUserConfig);
     }
 
     componentWillUnmount(): void {
-        ElectronContext.deregisterSaveProjectEventListener(this.save);
-        ElectronContext.deregisterOpenProjectEventListener(this.openConfigFromDialog);
-        ElectronContext.deregisterCreateNewProjectEventListener(this.createNewUserConfig);
+        ElectronContext.deregisterSaveProjectEventListener(this.props.configStore!.save);
+        ElectronContext.deregisterOpenProjectEventListener(this.props.configStore!.openConfigFromDialog);
+        ElectronContext.deregisterCreateNewProjectEventListener(this.props.configStore!.createNewUserConfig);
     }
 
     render() {

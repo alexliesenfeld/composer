@@ -51,7 +51,9 @@ const createInitialConfig = (): UserConfig => {
         audioUnitPluginType: AudioUnitPluginType.EFFECT_OR_MUSIC_EFFECT,
         vst3Subcategory: Vst3Subcategory.FX,
         vstUniqueId: "nprj",
-        uiResizable: false
+        uiResizable: false,
+        iPlug2GitSha: "044fd947051f1ef267870a565890263ce2f8a53c",
+
     };
 };
 

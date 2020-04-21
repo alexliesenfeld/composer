@@ -1,5 +1,3 @@
-import webpack from "webpack";
-
 export enum Prototype {
     IPLIGEFFECT = "IPlugEffect",
     IPLUGINSTRUMENT = "IPlugInstrument"
@@ -11,7 +9,8 @@ export enum PluginFormat {
     AU2 = "AU2",
     AAX = "AAX",
     IOS = "iOS",
-    APP = "App"
+    APP = "App",
+    WEB = "Web"
 }
 
 export enum AudioUnitPluginType {
@@ -88,4 +87,5 @@ export interface UserConfig {
     audioUnitPluginType: AudioUnitPluginType
     vst3Subcategory: Vst3Subcategory
     vstUniqueId: string
+    iPlug2GitSha: string
 }

@@ -13,7 +13,6 @@ import {
 } from "@blueprintjs/core";
 import {PluginFormat, Prototype} from "@/renderer/app/model/user-config";
 import {SelectInput} from "@/renderer/app/components/SelectInput";
-import {enumValues} from "@/renderer/app/util/enum-utils";
 
 export interface InputOutputPanelProps {
     inputChannels: number,

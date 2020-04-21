@@ -2,13 +2,13 @@ import * as React from 'react';
 import {inject, observer} from "mobx-react";
 import {H3} from "@blueprintjs/core";
 import {ConfigStore} from "@/renderer/app/stores/configStore";
-import GeneralPanel from "@/renderer/app/pages/project/components/GeneralPanel";
-import UserInterfacePanel from "@/renderer/app/pages/project/components/UserInterfacePanel";
-import InputOutputPanel from "@/renderer/app/pages/project/components/InputOutputPanel";
-import ManufacturerPanel from "@/renderer/app/pages/project/components/ManufacturerPanel";
+import GeneralPanel from "@/renderer/app/pages/properties/components/GeneralPanel";
+import UserInterfacePanel from "@/renderer/app/pages/properties/components/UserInterfacePanel";
+import InputOutputPanel from "@/renderer/app/pages/properties/components/InputOutputPanel";
+import ManufacturerPanel from "@/renderer/app/pages/properties/components/ManufacturerPanel";
 import {matchesVersion, removeSpaces} from "@/renderer/app/util/string-utils";
-import AudioUnitPanel from "@/renderer/app/pages/project/components/AudioUnitPanel";
-import VstPanel from "@/renderer/app/pages/project/components/VstPanel";
+import AudioUnitPanel from "@/renderer/app/pages/properties/components/AudioUnitPanel";
+import VstPanel from "@/renderer/app/pages/properties/components/VstPanel";
 import {UserConfig} from "@/renderer/app/model/user-config";
 
 /*
@@ -18,20 +18,20 @@ This causes child components to be rerendered even when using memoization (see R
 is poor, memoization can still be used here, but in combination with a change check in the child (see below).
 This will avoid rerendering this component if no actual value properties in props are changed:
 
-export default React.memo(GeneralPanel, (prevProps, nextProps) => {
+export default React.memo(DependenciesPanel, (prevProps, nextProps) => {
     return prevProps.formats == nextProps.formats
         && prevProps.projectName === nextProps.projectName
         && prevProps.prototype === nextProps.prototype
         && prevProps.version === nextProps.version;
 });
 */
-const ProjectPage = (props: { configStore?: ConfigStore }) => {
+const PropertiesPage = (props: { configStore?: ConfigStore }) => {
     const {userConfig} = props.configStore!;
     const setUserConfig = (config: UserConfig) => props.configStore!.userConfig = config;
 
     return (
-        <div className='ProjectPage'>
-            <H3>Project</H3>
+        <div className='PropertiesPage'>
+            <H3>Properties</H3>
             <p>You can set all general project information here.</p>
             <div className='page-sections-container'>
                 <section>
@@ -147,4 +147,4 @@ const ProjectPage = (props: { configStore?: ConfigStore }) => {
     );
 };
 
-export default inject('configStore')(observer(ProjectPage))
+export default inject('configStore')(observer(PropertiesPage))

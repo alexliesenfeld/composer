@@ -7,30 +7,84 @@ const toaster = Toaster.create({
     maxToasts: 3
 });
 
-export type ToastableFunction = ((...args: any) => Promise<any | void | unknown>);
-export type ToastedFunction = (...args: any[]) => void;
-
-export const allToasted = (fn: ToastableFunction[]) => {
-    return fn.map((f) => toasted(f));
-};
-
-export const toasted = (f: ToastableFunction) => {
-    return (...args: any[]): void => {
-        f(...args).catch((error) => {
-            toaster.show({
-                message: getMessageFor(error),
-                icon: "warning-sign",
-                intent: Intent.DANGER,
-                timeout: 10000
-            });
-            throw error;
-        });
-    };
-};
-
 const getMessageFor = (error: any) => {
     if (error instanceof CustomError) {
         return error.message;
     }
     return `An unexpected error occurred: ${error}`;
 };
+
+export function errorToast(description: string) {
+    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor): PropertyDescriptor {
+        const originalMethod = descriptor.value;
+
+        descriptor.value = function (...args: any[]) {
+            // Execute the actual / original method
+            try {
+                const result = originalMethod.apply(this, args);
+                // Promise.resolve creates a new promise object. If the value passed is itself a promise,
+                // it is resolved or rejected when the original one is. If it is anything else,
+                // the new promise is resolved immediately with that value.
+                const promisifiedResult = Promise.resolve(result);
+
+                // The description will be popped from the execution context once the promise resolves
+                promisifiedResult.catch((error) => {
+                    showErrorToast(description, error);
+                    throw error;
+                });
+
+                return promisifiedResult;
+            } catch (error) {
+                showErrorToast(description, error);
+                throw error;
+            }
+        };
+
+        return descriptor;
+    }
+}
+
+export function successToast(description: string) {
+    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor): PropertyDescriptor {
+        const originalMethod = descriptor.value;
+
+        descriptor.value = function (...args: any[]) {
+            // Execute the actual / original method
+            const result = originalMethod.apply(this, args);
+
+            // Promise.resolve creates a new promise object. If the value passed is itself a promise,
+            // it is resolved or rejected when the original one is. If it is anything else,
+            // the new promise is resolved immediately with that value.
+            const promisifiedResult = Promise.resolve(result);
+
+            // The description will be popped from the execution context once the promise resolves
+            promisifiedResult.then((...args: any[]) => {
+                showSuccessToast(description);
+                return args;
+            });
+
+            return promisifiedResult;
+        };
+
+        return descriptor;
+    }
+}
+
+
+export function showErrorToast(description: string, error: Error) {
+    toaster.show({
+        message: `${description}: ${getMessageFor(error)}`,
+        icon: "warning-sign",
+        intent: Intent.DANGER,
+        timeout: 30000
+    });
+}
+
+export function showSuccessToast(message: string) {
+    toaster.show({
+        message: `${message}${message.endsWith('.') ? '' : '.'}`,
+        icon: "tick-circle",
+        intent: Intent.SUCCESS,
+        timeout: 5000
+    });
+}

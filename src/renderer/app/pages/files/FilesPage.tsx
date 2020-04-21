@@ -20,11 +20,9 @@ import {
 } from "@blueprintjs/core";
 import {ADD, CARET_DOWN} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 import {inject, observer} from "mobx-react";
-import {allToasted} from "@/renderer/app/util/app-toaster";
 
 const FilesPage = (props: {filesStore?: FilesStore }) => {
     const {sourceFilesList} = props.filesStore!;
-    const [refreshSourceFilesList] = allToasted([props.filesStore!.refreshSourceFilesList]);
 
     return (
         <div>
@@ -48,7 +46,7 @@ const FilesPage = (props: {filesStore?: FilesStore }) => {
                         <Popover content={<FileMenu/>} position={"bottom"}>
                             <Button rightIcon={CARET_DOWN} icon={ADD} intent={"primary"}>Add</Button>
                         </Popover>
-                        <Button icon="refresh" onClick={refreshSourceFilesList}>Refresh</Button>
+                        <Button icon="refresh" onClick={props.filesStore!.refreshSourceFilesList}>Refresh</Button>
                     </ButtonGroup>
                 </Navbar.Group>
             </Navbar>

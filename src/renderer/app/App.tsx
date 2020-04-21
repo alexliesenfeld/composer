@@ -1,9 +1,8 @@
 import * as React from 'react';
 import {inject, observer} from "mobx-react";
 import {Redirect, Route, Switch, useHistory} from "react-router-dom"
-import ProjectsPage from "@/renderer/app/pages/project/ProjectPage";
 import FilesPage from "@/renderer/app/pages/files/FilesPage";
-import {APPLICATION, ARCHIVE, COG, DOCUMENT, LAYERS, PLAY} from "@blueprintjs/icons/lib/esm/generated/iconNames";
+import {APPLICATION, ARCHIVE, BUILD, COG, DOCUMENT, LAYERS, PLAY} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 import {
     Alignment,
     Button,
@@ -21,26 +20,18 @@ import '@public/style.scss';
 import WelcomePage from "@/renderer/app/pages/welcome/WelcomePage";
 import {ConfigStore} from "@/renderer/app/stores/configStore";
 import {AppStore} from "@/renderer/app/stores/appStore";
-import * as workspace from "@/renderer/app/controllers/workspace";
-import {allWithLoadingScreen} from "@/renderer/app/util/app-spinner";
+import PropertiesPage from "@/renderer/app/pages/properties/PropertiesPage";
+import {WorkspaceStore} from "@/renderer/app/stores/workspaceStore";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-const App = (props: { appStore?: AppStore, configStore?: ConfigStore }) => {
-    let history = useHistory();
-    let {userConfig} = props.configStore!;
+const App = (props: { appStore?: AppStore, configStore?: ConfigStore, workspaceStore?: WorkspaceStore }) => {
+    const history = useHistory();
+    const {userConfig} = props.configStore!;
 
     const getIntentForLocation = (linkLocation: string): Intent => {
         return history.location.pathname === linkLocation ? "primary" : "none";
     };
-
-    const [downloadIPlug2FromGithub, downloadIPlug2FromGithub2, downloadIPlug2FromGithu3, downloadIPlug2FromGithu4] =
-        allWithLoadingScreen([
-            [workspace.downloadIPlug2FromGithub, "Downloading iPlug2 from GitHub ..."],
-            [workspace.downloadIPlug2FromGithub, "Downloading iPlug2 from GitHub ..."],
-            [workspace.downloadIPlug2FromGithub, "Downloading iPlug2 from GitHub ..."],
-            [workspace.downloadIPlug2FromGithub, "Downloading iPlug2 from GitHub ..."],
-        ])(props.appStore!);
 
     if (!userConfig) {
         return <WelcomePage/>;
@@ -54,39 +45,38 @@ const App = (props: { appStore?: AppStore, configStore?: ConfigStore }) => {
                         <Icon icon={LAYERS} iconSize={20} className='logo'/>
                         <span> Composer</span>
                     </NavbarHeading>
-                    <Button onClick={() => history.push("/project")} intent={getIntentForLocation("/project")}
+                    <Button onClick={() => history.push("/properties")} intent={getIntentForLocation("/properties")}
                             className={Classes.MINIMAL} icon={APPLICATION}
-                            text="Project"/>
+                            text="Properties"/>
                     <Button onClick={() => history.push("/files")} intent={getIntentForLocation("/files")}
                             className={Classes.MINIMAL} icon={DOCUMENT}
                             text="Files"/>
-                    <Button onClick={() => history.push("/installer")} intent={getIntentForLocation("/installer")}
+                    <Button onClick={() => history.push("/packaging")} intent={getIntentForLocation("/packaging")}
                             className={Classes.MINIMAL} icon={ARCHIVE}
-                            text="Installer"/>
+                            text="Packaging"/>
                 </NavbarGroup>
                 <NavbarGroup align={Alignment.RIGHT}>
                     <Button onClick={() => history.push("/settings")} intent={getIntentForLocation("/settings")}
-                            className={Classes.MINIMAL} icon={COG}
-                            text="Settings"/>
+                            className={Classes.MINIMAL} icon={COG}/>
                     <NavbarDivider/>
                     <Button icon={PLAY} text="Open in Visual Studio" intent={"success"} onClick={() => {
-                        downloadIPlug2FromGithub(props.configStore!.configPath!, '2d8bccf670b983c20fd73cb9e47358255f50093e');
+                        props.workspaceStore!.setupWorkspace(props.configStore!.configPath!, props.configStore!.userConfig!);
                     }}/>
                 </NavbarGroup>
             </Navbar>
             <main className='content custom-scrollbar'>
                 <Switch>
-                    <Route path="/project">
-                        <ProjectsPage/>
+                    <Route path="/properties">
+                        <PropertiesPage/>
                     </Route>
                     <Route path="/files">
                         <FilesPage/>
                     </Route>
-                    <Route path="/installer">
-                        <a>INSTALLER</a>
+                    <Route path="/packaging">
+                        <a>PACKAGING</a>
                     </Route>
                     <Route exact path="/" render={() => (
-                        <Redirect to="/project"/>
+                        <Redirect to="/properties"/>
                     )}/>
                 </Switch>
 
@@ -95,4 +85,4 @@ const App = (props: { appStore?: AppStore, configStore?: ConfigStore }) => {
     );
 };
 
-export default inject('appStore', 'configStore')(observer(App))
+export default inject('appStore', 'configStore', 'workspaceStore')(observer(App))
