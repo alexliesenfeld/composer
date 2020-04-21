@@ -1,15 +1,16 @@
 import {action, observable, runInAction} from "mobx";
 import {ElectronContext} from "@/renderer/app/model/electron-context";
 import {UserConfig} from "@/renderer/app/model/user-config";
-import * as configService from "../services/config";
-import {errorToast, showSuccessToast, successToast} from "@/renderer/app/util/app-toaster";
+import {withErrorToast, showSuccessToast} from "@/renderer/app/util/app-toaster";
+import {ConfigService} from "@/renderer/app/services/config-service";
 
 export class ConfigStore {
+    private readonly configService = new ConfigService();
     @observable userConfig: UserConfig | undefined = undefined;
     @observable configPath: string | undefined = undefined;
 
     @action.bound
-    @errorToast("Failed creating a new project")
+    @withErrorToast("Failed creating a new project")
     public async createNewUserConfig(): Promise<void> {
         const result = await ElectronContext.dialog.showSaveDialog({
             filters: [{
@@ -23,14 +24,14 @@ export class ConfigStore {
             return;
         }
 
-        await configService.writeNewConfigToPath(result.filePath);
-        this.loadConfigFromPath(result.filePath);
+        await this.configService.writeNewConfigToPath(result.filePath);
+        await this.loadConfigFromPath(result.filePath);
 
         showSuccessToast("Successfully created a new project")
     }
 
     @action.bound
-    @errorToast("Failed to open project")
+    @withErrorToast("Failed to open project")
     public async openConfigFromDialog(): Promise<void> {
         const result = await ElectronContext.dialog.showOpenDialog({
             filters: [{extensions: ["json"], name: 'composer.json'}]
@@ -40,19 +41,19 @@ export class ConfigStore {
             return;
         }
 
-        this.loadConfigFromPath(result.filePaths[0]);
+        await this.loadConfigFromPath(result.filePaths[0]);
         showSuccessToast("Successfully opened project")
     }
 
     @action.bound
-    @errorToast("Failed saving project")
-    @successToast("Saved")
+    @withErrorToast("Failed saving project")
     public async save(): Promise<void> {
-        await configService.writeConfigToPath(this.configPath!, this.userConfig!);
+        await this.configService.writeConfigToPath(this.configPath!, this.userConfig!);
+        showSuccessToast("Saved")
     }
 
     private async loadConfigFromPath(path: string): Promise<void> {
-        const userConfig = await configService.loadConfigFromPath(path);
+        const userConfig = await this.configService.loadConfigFromPath(path);
 
         runInAction(() => {
             this.userConfig = userConfig;

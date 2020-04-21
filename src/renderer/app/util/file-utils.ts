@@ -34,3 +34,26 @@ export const deleteFolderRecursive = async (dirPath: string) => {
         await Fs.rmdir(dirPath);
     }
 };
+
+export const deleteFileIfExists = async (filePath: string) => {
+    if (await Fs.exists(filePath)) {
+        await Fs.unlink(filePath);
+    }
+};
+
+
+export const ensureDirExists = async (dirPath: string): Promise<string> => {
+    if (!await Fs.exists(dirPath)) {
+        await Fs.mkdir(dirPath, {recursive: true})
+    }
+    return dirPath;
+};
+
+export const recreateDir = async (dependenciesDirectory: string): Promise<string> => {
+    if (await Fs.exists(dependenciesDirectory)) {
+        await deleteFolderRecursive(dependenciesDirectory)
+    }
+    await Fs.mkdir(dependenciesDirectory);
+    return dependenciesDirectory;
+};
+
