@@ -18,16 +18,15 @@ import {
 
 import '@public/style.scss';
 import WelcomePage from "@/renderer/app/pages/welcome/WelcomePage";
-import {ConfigStore} from "@/renderer/app/stores/configStore";
-import {AppStore} from "@/renderer/app/stores/appStore";
 import PropertiesPage from "@/renderer/app/pages/properties/PropertiesPage";
-import {WorkspaceStore} from "@/renderer/app/stores/workspaceStore";
+import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
+import {AppStore} from "@/renderer/app/stores/app-store";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
-const App = (props: { appStore?: AppStore, configStore?: ConfigStore, workspaceStore?: WorkspaceStore }) => {
+const App = (props: { appStore?: AppStore, workspaceStore?: WorkspaceStore }) => {
     const history = useHistory();
-    const {userConfig} = props.configStore!;
+    const {userConfig} = props.workspaceStore!;
 
     const getIntentForLocation = (linkLocation: string): Intent => {
         return history.location.pathname === linkLocation ? "primary" : "none";
@@ -60,7 +59,7 @@ const App = (props: { appStore?: AppStore, configStore?: ConfigStore, workspaceS
                             className={Classes.MINIMAL} icon={COG}/>
                     <NavbarDivider/>
                     <Button icon={PLAY} text="Open in Visual Studio" intent={"success"} onClick={() => {
-                        props.workspaceStore!.setupWorkspace(props.configStore!.configPath!, props.configStore!.userConfig!);
+                        props.workspaceStore!.setupWorkspace(props.workspaceStore!.configPath!, props.workspaceStore!.userConfig!);
                     }}/>
                 </NavbarGroup>
             </Navbar>
@@ -85,4 +84,4 @@ const App = (props: { appStore?: AppStore, configStore?: ConfigStore, workspaceS
     );
 };
 
-export default inject('appStore', 'configStore', 'workspaceStore')(observer(App))
+export default inject('appStore', 'workspaceStore')(observer(App))

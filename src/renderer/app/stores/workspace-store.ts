@@ -1,13 +1,25 @@
 import {action, observable, runInAction} from "mobx";
-import {ElectronContext} from "@/renderer/app/model/electron-context";
+import {showSuccessToast, withErrorToast} from "@/renderer/app/services/ui/app-toaster";
 import {UserConfig} from "@/renderer/app/model/user-config";
-import {withErrorToast, showSuccessToast} from "@/renderer/app/util/app-toaster";
-import {ConfigService} from "@/renderer/app/services/config-service";
+import {withLoadingScreen} from "@/renderer/app/services/ui/activity-util";
+import * as workspaceService from "@/renderer/app/services/domain/workspace-service";
+import {ElectronContext} from "@/renderer/app/model/electron-context";
+import * as configService from "@/renderer/app/services/domain/config-service";
+import {Fs} from "@/renderer/app/util/fs";
 
-export class ConfigStore {
-    private readonly configService = new ConfigService();
+export class WorkspaceStore {
     @observable userConfig: UserConfig | undefined = undefined;
     @observable configPath: string | undefined = undefined;
+    @observable sourceFilesList: string[] = [];
+
+    @action.bound
+    public async refreshSourceFilesList(): Promise<void> {
+        const appPath = ElectronContext.remote.app.getAppPath();
+        const sourceFilesList = await Fs.readdir(appPath);
+        runInAction(() => {
+            this.sourceFilesList = sourceFilesList;
+        })
+    }
 
     @action.bound
     @withErrorToast("Failed creating a new project")
@@ -24,7 +36,7 @@ export class ConfigStore {
             return;
         }
 
-        await this.configService.writeNewConfigToPath(result.filePath);
+        await configService.writeNewConfigToPath(result.filePath);
         await this.loadConfigFromPath(result.filePath);
 
         showSuccessToast("Successfully created a new project")
@@ -48,12 +60,20 @@ export class ConfigStore {
     @action.bound
     @withErrorToast("Failed saving project")
     public async save(): Promise<void> {
-        await this.configService.writeConfigToPath(this.configPath!, this.userConfig!);
+        await configService.writeConfigToPath(this.configPath!, this.userConfig!);
         showSuccessToast("Saved")
     }
 
+    @action.bound
+    @withLoadingScreen("Setting up workspace ...")
+    @withErrorToast("Failed to setup workspace")
+    async setupWorkspace(userConfigFilePath: string, config: UserConfig) {
+        await workspaceService.setupWorkspace(userConfigFilePath, config);
+        showSuccessToast("Successfully created workspace")
+    }
+
     private async loadConfigFromPath(path: string): Promise<void> {
-        const userConfig = await this.configService.loadConfigFromPath(path);
+        const userConfig = await configService.loadConfigFromPath(path);
 
         runInAction(() => {
             this.userConfig = userConfig;
@@ -62,6 +82,4 @@ export class ConfigStore {
 
         ElectronContext.enableSaveItemInWindowMenu(true);
     }
-
 }
-

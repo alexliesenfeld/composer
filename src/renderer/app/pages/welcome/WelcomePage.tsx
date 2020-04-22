@@ -2,21 +2,21 @@ import * as React from 'react';
 import {Button, Card} from "@blueprintjs/core";
 import {DOCUMENT_OPEN, NEW_OBJECT} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 import {inject, observer} from "mobx-react";
-import {ConfigStore} from "@/renderer/app/stores/configStore";
+import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 
-const WelcomePage = (props: { configStore?: ConfigStore }) => {
+const WelcomePage = (props: { workspaceStore?: WorkspaceStore }) => {
     return (
         <div className='WelcomePage'>
             <Card>
                 <h3>Welcome to Composer!</h3>
                 <p>Please load or create a new project to get started.</p>
-                <Button icon={NEW_OBJECT} fill={true} onClick={props.configStore!.createNewUserConfig} intent={"primary"}>New
+                <Button icon={NEW_OBJECT} fill={true} onClick={props.workspaceStore!.createNewUserConfig} intent={"primary"}>New
                     Project</Button>
-                <Button icon={DOCUMENT_OPEN} fill={true} onClick={props.configStore!.openConfigFromDialog} intent={"warning"}>Open
+                <Button icon={DOCUMENT_OPEN} fill={true} onClick={props.workspaceStore!.openConfigFromDialog} intent={"warning"}>Open
                     Project</Button>
             </Card>
         </div>
     );
 };
 
-export default inject('configStore')(observer(WelcomePage))
+export default inject('workspaceStore')(observer(WelcomePage))

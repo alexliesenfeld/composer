@@ -1,11 +1,7 @@
-import {FilesStore} from "@/renderer/app/stores/filesStore";
-import {ConfigStore} from "@/renderer/app/stores/configStore";
-import {AppStore} from "@/renderer/app/stores/appStore";
-import {WorkspaceStore} from "@/renderer/app/stores/workspaceStore";
+import {AppStore} from "@/renderer/app/stores/app-store";
+import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 
 export const stores = {
-    filesStore: new FilesStore(),
-    configStore: new ConfigStore(),
     appStore: new AppStore(),
     workspaceStore: new WorkspaceStore()
 };

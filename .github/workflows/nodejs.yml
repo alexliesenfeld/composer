@@ -5,7 +5,7 @@ name: Build
 
 on:
   # Turned off for now
-  # push:
+  # setLoadingText:
   #  branches: [ master ]
   pull_request:
     branches: [ master ]

@@ -1,22 +1,22 @@
 import * as React from 'react';
 import {inject, observer} from "mobx-react";
-import {ConfigStore} from "@/renderer/app/stores/configStore";
 import {ElectronContext} from "@/renderer/app/model/electron-context";
+import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 
-@inject('configStore')
+@inject('workspaceStore')
 @observer
-class ElectronEventLister extends React.Component<{ configStore?: ConfigStore }> {
+class ElectronEventLister extends React.Component<{ workspaceStore?: WorkspaceStore }> {
 
     componentDidMount(): void {
-        ElectronContext.registerSaveProjectEventListener(this.props.configStore!.save);
-        ElectronContext.registerOpenProjectEventListener(this.props.configStore!.openConfigFromDialog);
-        ElectronContext.registerCreateNewProjectEventListener(this.props.configStore!.createNewUserConfig);
+        ElectronContext.registerSaveProjectEventListener(this.props.workspaceStore!.save);
+        ElectronContext.registerOpenProjectEventListener(this.props.workspaceStore!.openConfigFromDialog);
+        ElectronContext.registerCreateNewProjectEventListener(this.props.workspaceStore!.createNewUserConfig);
     }
 
     componentWillUnmount(): void {
-        ElectronContext.deregisterSaveProjectEventListener(this.props.configStore!.save);
-        ElectronContext.deregisterOpenProjectEventListener(this.props.configStore!.openConfigFromDialog);
-        ElectronContext.deregisterCreateNewProjectEventListener(this.props.configStore!.createNewUserConfig);
+        ElectronContext.deregisterSaveProjectEventListener(this.props.workspaceStore!.save);
+        ElectronContext.deregisterOpenProjectEventListener(this.props.workspaceStore!.openConfigFromDialog);
+        ElectronContext.deregisterCreateNewProjectEventListener(this.props.workspaceStore!.createNewUserConfig);
     }
 
     render() {

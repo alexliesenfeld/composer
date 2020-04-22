@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {inject, observer} from "mobx-react";
 import {H3} from "@blueprintjs/core";
-import {ConfigStore} from "@/renderer/app/stores/configStore";
 import GeneralPanel from "@/renderer/app/pages/properties/components/GeneralPanel";
 import UserInterfacePanel from "@/renderer/app/pages/properties/components/UserInterfacePanel";
 import InputOutputPanel from "@/renderer/app/pages/properties/components/InputOutputPanel";
@@ -10,6 +9,7 @@ import {matchesVersion, removeSpaces} from "@/renderer/app/util/string-utils";
 import AudioUnitPanel from "@/renderer/app/pages/properties/components/AudioUnitPanel";
 import VstPanel from "@/renderer/app/pages/properties/components/VstPanel";
 import {UserConfig} from "@/renderer/app/model/user-config";
+import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 
 /*
 This component will rerender all children whenever this component is rendered. This is because it accepts
@@ -25,9 +25,9 @@ export default React.memo(DependenciesPanel, (prevProps, nextProps) => {
         && prevProps.version === nextProps.version;
 });
 */
-const PropertiesPage = (props: { configStore?: ConfigStore }) => {
-    const {userConfig} = props.configStore!;
-    const setUserConfig = (config: UserConfig) => props.configStore!.userConfig = config;
+const PropertiesPage = (props: { workspaceStore?: WorkspaceStore }) => {
+    const {userConfig} = props.workspaceStore!;
+    const setUserConfig = (config: UserConfig) => props.workspaceStore!.userConfig = config;
 
     return (
         <div className='PropertiesPage'>
@@ -147,4 +147,4 @@ const PropertiesPage = (props: { configStore?: ConfigStore }) => {
     );
 };
 
-export default inject('configStore')(observer(PropertiesPage))
+export default inject('workspaceStore')(observer(PropertiesPage))

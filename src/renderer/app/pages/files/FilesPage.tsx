@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import {FilesStore} from "@/renderer/app/stores/filesStore";
 import {
     Alignment,
     Button,
@@ -20,9 +19,10 @@ import {
 } from "@blueprintjs/core";
 import {ADD, CARET_DOWN} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 import {inject, observer} from "mobx-react";
+import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 
-const FilesPage = (props: {filesStore?: FilesStore }) => {
-    const {sourceFilesList} = props.filesStore!;
+const FilesPage = (props: {workspaceStore?: WorkspaceStore }) => {
+    const {sourceFilesList} = props.workspaceStore!;
 
     return (
         <div>
@@ -46,7 +46,7 @@ const FilesPage = (props: {filesStore?: FilesStore }) => {
                         <Popover content={<FileMenu/>} position={"bottom"}>
                             <Button rightIcon={CARET_DOWN} icon={ADD} intent={"primary"}>Add</Button>
                         </Popover>
-                        <Button icon="refresh" onClick={props.filesStore!.refreshSourceFilesList}>Refresh</Button>
+                        <Button icon="refresh" onClick={props.workspaceStore!.refreshSourceFilesList}>Refresh</Button>
                     </ButtonGroup>
                 </Navbar.Group>
             </Navbar>
@@ -74,4 +74,4 @@ export const SourceFileList = (props: IProps & { paths: string[] }) => {
     </div>);
 };
 
-export default inject('filesStore')(observer(FilesPage))
+export default inject('workspaceStore')(observer(FilesPage))

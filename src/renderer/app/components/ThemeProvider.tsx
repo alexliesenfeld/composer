@@ -1,6 +1,6 @@
 import * as React from 'react';
-import {AppStore} from "@/renderer/app/stores/appStore";
 import {inject, observer} from "mobx-react";
+import {AppStore} from "@/renderer/app/stores/app-store";
 
 
 @inject('appStore')
