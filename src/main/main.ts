@@ -40,6 +40,10 @@ function registerRendererEventListeners(mainWindow: BrowserWindow, menu: Electro
     ipcMain.on(IPCRendererEvents.INIT_SET_CAN_SAVE, (event, enabled: boolean) => {
         menu.getMenuItemById(SAVE_MENU_ITEM_ID).enabled = enabled;
     });
+
+    ipcMain.on(IPCRendererEvents.INIT_SET_PROJECT_NAME, (event, projectName: string) => {
+        mainWindow.setTitle("Composer | " + projectName);
+    });
 }
 
 app.on('ready', createWindow);

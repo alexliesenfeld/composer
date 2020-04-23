@@ -25,3 +25,9 @@ export class OperationFailedError extends CustomError {
         super(OperationFailedError, customMessage ? customMessage : `Operation has failed.`);
     }
 }
+
+export class UnsupportedOperationError extends CustomError {
+    constructor(public customMessage?: string) {
+        super(UnsupportedOperationError, customMessage ? customMessage : `Operation is unsupported.`);
+    }
+}

@@ -5,5 +5,6 @@ export enum IPCMainEvents {
 }
 
 export enum IPCRendererEvents {
-    INIT_SET_CAN_SAVE = "INIT_SET_CAN_SAVE"
+    INIT_SET_CAN_SAVE = "INIT_SET_CAN_SAVE",
+    INIT_SET_PROJECT_NAME = "INIT_SET_PROJECT_NAME"
 }

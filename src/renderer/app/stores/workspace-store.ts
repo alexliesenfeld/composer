@@ -68,8 +68,14 @@ export class WorkspaceStore {
     @withLoadingScreen("Setting up workspace ...")
     @withErrorToast("Failed to setup workspace")
     async setupWorkspace(userConfigFilePath: string, config: UserConfig) {
-        await workspaceService.setupWorkspace(userConfigFilePath, config);
+        await workspaceService.setupWorkspace(userConfigFilePath, config, ElectronContext.currentOperatingSystem());
         showSuccessToast("Successfully created workspace")
+    }
+
+    @action.bound
+    public async setProjectName(projectName: string): Promise<void> {
+        this.userConfig!.projectName = projectName;
+        ElectronContext.setCurrentProjectName(projectName);
     }
 
     private async loadConfigFromPath(path: string): Promise<void> {
@@ -81,5 +87,6 @@ export class WorkspaceStore {
         });
 
         ElectronContext.enableSaveItemInWindowMenu(true);
+        ElectronContext.setCurrentProjectName(this.userConfig!.projectName);
     }
 }

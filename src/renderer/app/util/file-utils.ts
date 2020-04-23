@@ -20,13 +20,13 @@ export const unzipFile = async (zipFilePath: string, targetDir: string) => {
     });
 };
 
-export const deleteFolderRecursive = async (dirPath: string) => {
+export const deleteDirectory = async (dirPath: string) => {
     if (await Fs.exists(dirPath)) {
         const dirContents = await Fs.readdir(dirPath);
         for (const file of dirContents) {
             const curPath = path.join(dirPath, file);
             if ((await Fs.lstat(curPath)).isDirectory()) { // recurse
-                await deleteFolderRecursive(curPath);
+                await deleteDirectory(curPath);
             } else { // delete file
                 await Fs.unlink(curPath);
             }
@@ -41,6 +41,20 @@ export const deleteFileIfExists = async (filePath: string) => {
     }
 };
 
+export const moveDirContents = async (fromDir: string, toDir: string) => {
+    const files = await Fs.readdir(fromDir);
+    await createDirIfNotExists(toDir);
+
+    for (const fileName of files) {
+        const fromFile = path.join(fromDir, fileName);
+        const toFile = path.join(toDir, fileName);
+        await Fs.move(fromFile, toFile);
+    }
+};
+
+export const moveDir = async (fromPath: string, toPath: string) => {
+    await Fs.move(fromPath, toPath);
+};
 
 export const ensureDirExists = async (dirPath: string): Promise<string> => {
     if (!await Fs.exists(dirPath)) {
@@ -51,9 +65,14 @@ export const ensureDirExists = async (dirPath: string): Promise<string> => {
 
 export const recreateDir = async (dependenciesDirectory: string): Promise<string> => {
     if (await Fs.exists(dependenciesDirectory)) {
-        await deleteFolderRecursive(dependenciesDirectory)
+        await deleteDirectory(dependenciesDirectory)
     }
     await Fs.mkdir(dependenciesDirectory);
     return dependenciesDirectory;
 };
 
+export const createDirIfNotExists = async (dirPath: string): Promise<void> => {
+    if (!await Fs.exists(dirPath)) {
+        await Fs.mkdir(dirPath);
+    }
+};

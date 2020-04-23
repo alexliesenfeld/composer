@@ -1,9 +1,15 @@
 import {ipcRenderer, remote} from 'electron';
 import {IPCMainEvents, IPCRendererEvents} from "@common/constants";
+import {OperatingSystem} from "@/renderer/app/services/domain/constants";
+import {UnsupportedOperationError} from "@/renderer/app/model/errors";
 
 export abstract class ElectronContext {
     static readonly remote = remote;
     static readonly dialog = remote.dialog;
+
+    static setCurrentProjectName(projectName: string) {
+        ipcRenderer.send(IPCRendererEvents.INIT_SET_PROJECT_NAME, projectName);
+    }
 
     static enableSaveItemInWindowMenu(enable: boolean) {
         ipcRenderer.send(IPCRendererEvents.INIT_SET_CAN_SAVE, enable);
@@ -33,5 +39,17 @@ export abstract class ElectronContext {
         ipcRenderer.removeListener(IPCMainEvents.INIT_OPEN_PROJECT, listener);
     }
 
+    static currentOperatingSystem(): OperatingSystem {
+        switch (process.platform) {
+            case "win32":
+                return OperatingSystem.WINDOWS;
+            case "linux":
+                return OperatingSystem.LINUX;
+            case "darwin":
+                return OperatingSystem.MACOS;
+            default:
+                throw new UnsupportedOperationError(`Operating system ${process.platform} mot supported`);
+        }
+    }
 }
 

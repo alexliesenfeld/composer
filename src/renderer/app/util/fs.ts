@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as util from "util";
+import * as mv from "mv";
 
 /**
  * Contains promisified functions from the node "fs" package.
@@ -14,5 +15,6 @@ export abstract class Fs {
     static readonly lstat = util.promisify(fs.lstat);
     static readonly rmdir = util.promisify(fs.rmdir);
     static readonly rename = util.promisify(fs.rename);
+    static readonly move = (util.promisify(mv));
 }
 

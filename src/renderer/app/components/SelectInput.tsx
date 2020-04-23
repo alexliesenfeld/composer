@@ -24,7 +24,6 @@ const stringItemRenderer: ItemRenderer<SelectInputItem<any>> = (item: SelectInpu
     );
 };
 
-
 export const SelectInput = <T extends unknown>(props: { items: SelectInputItem<T>[], selectedItemKey: T, onClick: (item: SelectInputItem<T>) => void }) => {
     const TypedSelect = Select.ofType<SelectInputItem<T>>();
 

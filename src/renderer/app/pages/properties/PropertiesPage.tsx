@@ -27,6 +27,7 @@ export default React.memo(DependenciesPanel, (prevProps, nextProps) => {
 */
 const PropertiesPage = (props: { workspaceStore?: WorkspaceStore }) => {
     const {userConfig} = props.workspaceStore!;
+    const setProjectName = (projectName: string) => props.workspaceStore!.setProjectName(projectName);
     const setUserConfig = (config: UserConfig) => props.workspaceStore!.userConfig = config;
 
     return (
@@ -36,10 +37,7 @@ const PropertiesPage = (props: { workspaceStore?: WorkspaceStore }) => {
             <div className='page-sections-container'>
                 <section>
                     <GeneralPanel projectName={userConfig!.projectName}
-                                  setProjectName={(value) => setUserConfig({
-                                      ...userConfig!,
-                                      projectName: removeSpaces(value)
-                                  })}
+                                  setProjectName={setProjectName}
                                   prototype={userConfig!.prototype}
                                   setPrototype={(value) => setUserConfig({...userConfig!, prototype: value})}
                                   formats={userConfig!.formats}
