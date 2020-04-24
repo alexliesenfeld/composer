@@ -66,9 +66,9 @@ export class WorkspaceStore {
 
     @action.bound
     @withLoadingScreen("Starting ...")
-    @withToast("Failed to setup workspace", "Successfully created workspace")
-    async startIde(userConfigFilePath: string, config: UserConfig) {
-        await this.workspaceService.setupWorkspace(userConfigFilePath, config, ElectronContext.currentOperatingSystem());
+    @withToast("Failed to start IDE")
+    async startIDE(configFilePath: string, config: UserConfig) {
+        await this.workspaceService.startIDE(configFilePath, config, ElectronContext.currentOperatingSystem());
     }
 
     @action.bound

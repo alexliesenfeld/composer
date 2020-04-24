@@ -82,3 +82,32 @@ export const createDirIfNotExists = async (dirPath: string): Promise<void> => {
         await Fsx.mkdir(dirPath);
     }
 };
+
+
+export const directoryIsEmpty = async (dirPath: string, fileNamesToIgnore?: string[]): Promise<boolean> => {
+    const files = await Fsx.readdir(dirPath);
+
+    if (files.length == 0) {
+        return true;
+    }
+
+    if (!fileNamesToIgnore) {
+        return false;
+    }
+
+    if (files.length > fileNamesToIgnore.length) {
+        return false;
+    }
+
+    for (const file of files) {
+        if (!fileNamesToIgnore.includes(file)) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
+export const directoryDoesNotExistOrIsEmpty = async (dirPath: string, fileNamesToIgnore?: string[]): Promise<boolean> => {
+    return !await Fsx.exists(dirPath) || await directoryIsEmpty(dirPath, fileNamesToIgnore);
+};

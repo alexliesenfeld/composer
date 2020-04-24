@@ -3,6 +3,7 @@ import * as path from "path";
 import {
     deleteDirectory,
     deleteFileIfExists,
+    directoryDoesNotExistOrIsEmpty,
     downloadFile,
     moveDirContents,
     recreateDir,
@@ -20,18 +21,27 @@ const getIPlug2BaseDirPath = (workspaceDir: string) => path.join(getDependencies
 const getVst3SdkDirPath = (workspaceDir: string) => path.join(getIPlug2DependenciesPath(workspaceDir), "IPlug", "VST3_SDK");
 const getDownloadsDirPath = (workspaceDir: string) => path.join(getDependenciesDirPath(workspaceDir), "downloads");
 const getIPlug2DependenciesPath = (workspaceDir: string) => path.join(getIPlug2BaseDirPath(workspaceDir), "Dependencies");
+const getIPlug2DependenciesBuildPath = (workspaceDir: string) => path.join(getIPlug2DependenciesPath(workspaceDir), "Build");
 
 export class WorkspaceService {
 
     @activity("Setting up workspace")
-    async setupWorkspace(userConfigFilePath: string, config: UserConfig, os: OperatingSystem) {
+    async startIDE(userConfigFilePath: string, config: UserConfig, os: OperatingSystem) {
         const workspaceDir = path.dirname(userConfigFilePath);
-        await recreateDir(getDependenciesDirPath(workspaceDir));
 
-        await this.downloadIPlug2FromGithub(workspaceDir, config.iPlug2GitSha);
-        await this.downloadIPlug2DependenciesFromGithub(workspaceDir, config, os);
-        await this.downloadVstSdk(workspaceDir, "0908f47");
-        this.startProject(workspaceDir, config, OperatingSystem.WINDOWS);
+        if (await this.shouldSetupIPlug2(workspaceDir)) {
+            await this.downloadIPlug2FromGithub(workspaceDir, config.iPlug2GitSha);
+        }
+
+        if (await this.shouldSetupIPlug2Dependencies(workspaceDir)) {
+            await this.downloadIPlug2DependenciesFromGithub(workspaceDir, config, os);
+        }
+
+        if (await this.shouldSetupVst3Sdk(workspaceDir)) {
+            await this.downloadVstSdk(workspaceDir, "0908f47");
+        }
+
+        await this.startProject(workspaceDir, config, OperatingSystem.WINDOWS);
     }
 
     @activity("Downloading iPlug2")
@@ -55,7 +65,7 @@ export class WorkspaceService {
 
     @activity("Downloading iPlug2 dependencies")
     async downloadIPlug2DependenciesFromGithub(workspaceDirPath: string, config: UserConfig, os: OperatingSystem): Promise<void> {
-        const dependenciesBuildDirPath = path.join(getIPlug2DependenciesPath(workspaceDirPath), "Build");
+        const dependenciesBuildDirPath = getIPlug2DependenciesBuildPath(workspaceDirPath);
         await recreateDir(dependenciesBuildDirPath);
 
         if (os == OperatingSystem.MACOS) {
@@ -104,5 +114,17 @@ export class WorkspaceService {
     async startProject(workspaceDirPath: string, config: UserConfig, os: OperatingSystem): Promise<void> {
         const p = path.join(workspaceDirPath, "dependencies", "iPlug2", "Examples", "IPlugEffect", "IPlugEffect.sln");
         await Cpx.sudoExec(`start ${p}`);
+    }
+
+    async shouldSetupIPlug2(workspaceDirPath: string): Promise<boolean> {
+        return directoryDoesNotExistOrIsEmpty(getIPlug2BaseDirPath(workspaceDirPath));
+    }
+
+    async shouldSetupIPlug2Dependencies(workspaceDirPath: string): Promise<boolean> {
+        return await directoryDoesNotExistOrIsEmpty(getIPlug2DependenciesBuildPath(workspaceDirPath));
+    }
+
+    async shouldSetupVst3Sdk(workspaceDirPath: string): Promise<boolean> {
+        return await directoryDoesNotExistOrIsEmpty(getVst3SdkDirPath(workspaceDirPath), ["README.md"]);
     }
 }
