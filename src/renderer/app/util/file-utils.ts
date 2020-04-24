@@ -2,7 +2,7 @@ import * as request from "request";
 import * as AdmZip from "adm-zip";
 import * as fs from "fs";
 import * as path from "path";
-import {Fs} from "@/renderer/app/util/fs";
+import {Fsx} from "@/renderer/app/util/fsx";
 
 export const downloadFile = (url: string, target: string) => {
     return new Promise(function (resolve, reject) {
@@ -21,58 +21,64 @@ export const unzipFile = async (zipFilePath: string, targetDir: string) => {
 };
 
 export const deleteDirectory = async (dirPath: string) => {
-    if (await Fs.exists(dirPath)) {
-        const dirContents = await Fs.readdir(dirPath);
+    if (await Fsx.exists(dirPath)) {
+        const dirContents = await Fsx.readdir(dirPath);
         for (const file of dirContents) {
             const curPath = path.join(dirPath, file);
-            if ((await Fs.lstat(curPath)).isDirectory()) { // recurse
+            // We need this for files that have been created with write protection.
+            await addFilePermissions(curPath, 0o666);
+            if ((await Fsx.lstat(curPath)).isDirectory()) { // recurse
                 await deleteDirectory(curPath);
             } else { // delete file
-                await Fs.unlink(curPath);
+                await Fsx.unlink(curPath);
             }
         }
-        await Fs.rmdir(dirPath);
+        await Fsx.rmdir(dirPath);
     }
 };
 
+async function addFilePermissions(filePath: string, mode: number) {
+    await Fsx.chmod(filePath, (await Fsx.stat(filePath)).mode | mode);
+}
+
 export const deleteFileIfExists = async (filePath: string) => {
-    if (await Fs.exists(filePath)) {
-        await Fs.unlink(filePath);
+    if (await Fsx.exists(filePath)) {
+        await Fsx.unlink(filePath);
     }
 };
 
 export const moveDirContents = async (fromDir: string, toDir: string) => {
-    const files = await Fs.readdir(fromDir);
+    const files = await Fsx.readdir(fromDir);
     await createDirIfNotExists(toDir);
 
     for (const fileName of files) {
         const fromFile = path.join(fromDir, fileName);
         const toFile = path.join(toDir, fileName);
-        await Fs.move(fromFile, toFile);
+        await Fsx.move(fromFile, toFile);
     }
 };
 
 export const moveDir = async (fromPath: string, toPath: string) => {
-    await Fs.move(fromPath, toPath);
+    await Fsx.move(fromPath, toPath);
 };
 
 export const ensureDirExists = async (dirPath: string): Promise<string> => {
-    if (!await Fs.exists(dirPath)) {
-        await Fs.mkdir(dirPath, {recursive: true})
+    if (!await Fsx.exists(dirPath)) {
+        await Fsx.mkdir(dirPath, {recursive: true})
     }
     return dirPath;
 };
 
 export const recreateDir = async (dependenciesDirectory: string): Promise<string> => {
-    if (await Fs.exists(dependenciesDirectory)) {
+    if (await Fsx.exists(dependenciesDirectory)) {
         await deleteDirectory(dependenciesDirectory)
     }
-    await Fs.mkdir(dependenciesDirectory);
+    await Fsx.mkdir(dependenciesDirectory);
     return dependenciesDirectory;
 };
 
 export const createDirIfNotExists = async (dirPath: string): Promise<void> => {
-    if (!await Fs.exists(dirPath)) {
-        await Fs.mkdir(dirPath);
+    if (!await Fsx.exists(dirPath)) {
+        await Fsx.mkdir(dirPath);
     }
 };

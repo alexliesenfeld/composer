@@ -14,7 +14,7 @@ const getMessageFor = (error: any) => {
     return `An unexpected error occurred: ${error}`;
 };
 
-export function withErrorToast(description: string) {
+export function withToast(onErrorMessage: string, onSuccessMessage?: string) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor): PropertyDescriptor {
         const originalMethod = descriptor.value;
 
@@ -27,15 +27,23 @@ export function withErrorToast(description: string) {
                 // the new promise is resolved immediately with that value.
                 const promisifiedResult = Promise.resolve(result);
 
-                // The description will be popped from the execution context once the promise resolves
+                // Show a message if the promise resolves successfully
+                if (onSuccessMessage) {
+                    promisifiedResult.then((...args: any[]) => {
+                        showSuccessToast(onSuccessMessage);
+                        return args;
+                    })
+                }
+
+                // Show an error message if the promise is rejected with an error
                 promisifiedResult.catch((error) => {
-                    showErrorToast(description, error);
+                    showErrorToast(onErrorMessage, error);
                     throw error;
                 });
 
                 return promisifiedResult;
             } catch (error) {
-                showErrorToast(description, error);
+                showErrorToast(onErrorMessage, error);
                 throw error;
             }
         };

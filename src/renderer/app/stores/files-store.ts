@@ -1,7 +1,7 @@
 import {action, observable, runInAction} from "mobx";
 import {ElectronContext} from "@/renderer/app/model/electron-context";
-import {Fs} from "@/renderer/app/util/fs";
 import {FileNotFoundError} from "@/renderer/app/model/errors";
+import {Fsx} from "@/renderer/app/util/fsx";
 
 export enum FilesTab {
     SOURCE_FILES_TAB,
@@ -16,7 +16,7 @@ export class FilesStore {
     @action.bound
     public async refreshSourceFilesList(): Promise<void> {
         const appPath = ElectronContext.remote.app.getAppPath();
-        const sourceFilesList = await Fs.readdir(appPath);
+        const sourceFilesList = await Fsx.readdir(appPath);
         runInAction(() => {
             this.sourceFilesList = sourceFilesList;
         })

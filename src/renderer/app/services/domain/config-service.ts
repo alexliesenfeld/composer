@@ -6,12 +6,12 @@ import {
     Vst3Subcategory
 } from "@/renderer/app/model/user-config";
 import * as path from "path";
-import {Fs} from "@/renderer/app/util/fs";
 import {DirectoryNotEmptyError} from "@/renderer/app/model/errors";
+import {Fsx} from "@/renderer/app/util/fsx";
 
 export const writeNewConfigToPath = async (filePath: string): Promise<unknown> => {
     const directoryPath = path.dirname(filePath);
-    const filesInDirectory = await Fs.readdir(directoryPath);
+    const filesInDirectory = await Fsx.readdir(directoryPath);
 
     if (filesInDirectory && filesInDirectory.length > 0) {
         throw new DirectoryNotEmptyError("The directory of a new project must be empty.", directoryPath)
@@ -21,12 +21,12 @@ export const writeNewConfigToPath = async (filePath: string): Promise<unknown> =
 };
 
 export const loadConfigFromPath = async (path: string): Promise<UserConfig> => {
-    const fileContent = await Fs.readFile(path, {encoding: 'utf-8'});
+    const fileContent = await Fsx.readFile(path, {encoding: 'utf-8'});
     return JSON.parse(fileContent);
 };
 
 export const writeConfigToPath = async (path: string, config: UserConfig): Promise<unknown> => {
-    return Fs.writeFile(path, JSON.stringify(config));
+    return Fsx.writeFile(path, JSON.stringify(config));
 };
 
 const createInitialConfig = (): UserConfig => {

@@ -59,7 +59,7 @@ const App = (props: { appStore?: AppStore, workspaceStore?: WorkspaceStore }) =>
                             className={Classes.MINIMAL} icon={COG}/>
                     <NavbarDivider/>
                     <Button icon={PLAY} text="Open in Visual Studio" intent={"success"} onClick={() => {
-                        props.workspaceStore!.setupWorkspace(props.workspaceStore!.configPath!, props.workspaceStore!.userConfig!);
+                        props.workspaceStore!.startIde(props.workspaceStore!.configPath!, props.workspaceStore!.userConfig!);
                     }}/>
                 </NavbarGroup>
             </Navbar>

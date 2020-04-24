@@ -1,13 +1,14 @@
 import {action, observable, runInAction} from "mobx";
-import {showSuccessToast, withErrorToast} from "@/renderer/app/services/ui/app-toaster";
+import {showSuccessToast, withToast} from "@/renderer/app/services/ui/app-toaster";
 import {UserConfig} from "@/renderer/app/model/user-config";
 import {withLoadingScreen} from "@/renderer/app/services/ui/activity-util";
-import * as workspaceService from "@/renderer/app/services/domain/workspace-service";
 import {ElectronContext} from "@/renderer/app/model/electron-context";
 import * as configService from "@/renderer/app/services/domain/config-service";
-import {Fs} from "@/renderer/app/util/fs";
+import {WorkspaceService} from "@/renderer/app/services/domain/workspace-service";
+import {Fsx} from "@/renderer/app/util/fsx";
 
 export class WorkspaceStore {
+    private readonly workspaceService = new WorkspaceService();
     @observable userConfig: UserConfig | undefined = undefined;
     @observable configPath: string | undefined = undefined;
     @observable sourceFilesList: string[] = [];
@@ -15,14 +16,14 @@ export class WorkspaceStore {
     @action.bound
     public async refreshSourceFilesList(): Promise<void> {
         const appPath = ElectronContext.remote.app.getAppPath();
-        const sourceFilesList = await Fs.readdir(appPath);
+        const sourceFilesList = await Fsx.readdir(appPath);
         runInAction(() => {
             this.sourceFilesList = sourceFilesList;
         })
     }
 
     @action.bound
-    @withErrorToast("Failed creating a new project")
+    @withToast("Failed creating a new project")
     public async createNewUserConfig(): Promise<void> {
         const result = await ElectronContext.dialog.showSaveDialog({
             filters: [{
@@ -43,7 +44,7 @@ export class WorkspaceStore {
     }
 
     @action.bound
-    @withErrorToast("Failed to open project")
+    @withToast("Failed to open project")
     public async openConfigFromDialog(): Promise<void> {
         const result = await ElectronContext.dialog.showOpenDialog({
             filters: [{extensions: ["json"], name: 'composer.json'}]
@@ -58,18 +59,16 @@ export class WorkspaceStore {
     }
 
     @action.bound
-    @withErrorToast("Failed saving project")
+    @withToast("Failed saving project", "Saved")
     public async save(): Promise<void> {
         await configService.writeConfigToPath(this.configPath!, this.userConfig!);
-        showSuccessToast("Saved")
     }
 
     @action.bound
-    @withLoadingScreen("Setting up workspace ...")
-    @withErrorToast("Failed to setup workspace")
-    async setupWorkspace(userConfigFilePath: string, config: UserConfig) {
-        await workspaceService.setupWorkspace(userConfigFilePath, config, ElectronContext.currentOperatingSystem());
-        showSuccessToast("Successfully created workspace")
+    @withLoadingScreen("Starting ...")
+    @withToast("Failed to setup workspace", "Successfully created workspace")
+    async startIde(userConfigFilePath: string, config: UserConfig) {
+        await this.workspaceService.setupWorkspace(userConfigFilePath, config, ElectronContext.currentOperatingSystem());
     }
 
     @action.bound

@@ -152,7 +152,7 @@ ThemeProvider
 /*****************************************************************
 SpinnerPanel
 ******************************************************************/
-.SpinnerPanel {
+.AppLoadingPanel {
   width: 100vw;
   height: 100vh;
   padding-top: 25vh;
@@ -164,16 +164,30 @@ SpinnerPanel
   color: #293742;
 }
 
-.bp3-dark .SpinnerPanel {
+.bp3-dark .AppLoadingPanel {
   background: rgba(24, 32, 38, 0.8);
   text-shadow: 1px 1px 1px black;
   color: #FFFFFF;
 }
 
-.SpinnerPanel .text {
+.AppLoadingPanel .text {
   max-width: 50%;
   margin: 1em auto auto;
   text-align: center;
+}
+
+.AppLoadingPanel .log {
+  position: absolute;
+  bottom: 0;
+  max-height: 50vh;
+  width: 100%;
+  margin: 1em auto auto;
+  background-color: rgba(16, 22, 26, 0.75);
+  z-index: 999999999999999;
+}
+
+.AppLoadingPanel .log-entry {
+
 }
 
 /*****************************************************************
