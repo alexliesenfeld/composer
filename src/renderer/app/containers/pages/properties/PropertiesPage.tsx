@@ -1,30 +1,16 @@
 import * as React from 'react';
 import {inject, observer} from "mobx-react";
 import {H3} from "@blueprintjs/core";
-import GeneralPanel from "@/renderer/app/pages/properties/components/GeneralPanel";
-import UserInterfacePanel from "@/renderer/app/pages/properties/components/UserInterfacePanel";
-import InputOutputPanel from "@/renderer/app/pages/properties/components/InputOutputPanel";
-import ManufacturerPanel from "@/renderer/app/pages/properties/components/ManufacturerPanel";
+import GeneralPanel from "@/renderer/app/containers/pages/properties/components/GeneralPanel";
+import UserInterfacePanel from "@/renderer/app/containers/pages/properties/components/UserInterfacePanel";
+import InputOutputPanel from "@/renderer/app/containers/pages/properties/components/InputOutputPanel";
+import ManufacturerPanel from "@/renderer/app/containers/pages/properties/components/ManufacturerPanel";
 import {matchesVersion, removeSpaces} from "@/renderer/app/util/string-utils";
-import AudioUnitPanel from "@/renderer/app/pages/properties/components/AudioUnitPanel";
-import VstPanel from "@/renderer/app/pages/properties/components/VstPanel";
+import AudioUnitPanel from "@/renderer/app/containers/pages/properties/components/AudioUnitPanel";
+import VstPanel from "@/renderer/app/containers/pages/properties/components/VstPanel";
 import {UserConfig} from "@/renderer/app/model/user-config";
 import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 
-/*
-This component will rerender all children whenever this component is rendered. This is because it accepts
-setter methods, which are not fixed but recreated on each render using the arrow operator.
-This causes child components to be rerendered even when using memoization (see React.memo). If at some point performance
-is poor, memoization can still be used here, but in combination with a change check in the child (see below).
-This will avoid rerendering this component if no actual value properties in props are changed:
-
-export default React.memo(DependenciesPanel, (prevProps, nextProps) => {
-    return prevProps.formats == nextProps.formats
-        && prevProps.projectName === nextProps.projectName
-        && prevProps.prototype === nextProps.prototype
-        && prevProps.version === nextProps.version;
-});
-*/
 const PropertiesPage = (props: { workspaceStore?: WorkspaceStore }) => {
     const {userConfig} = props.workspaceStore!;
     const setProjectName = (projectName: string) => props.workspaceStore!.setProjectName(projectName);

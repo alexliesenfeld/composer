@@ -150,44 +150,31 @@ ThemeProvider
 }
 
 /*****************************************************************
-SpinnerPanel
+LoadingPanel
 ******************************************************************/
-.AppLoadingPanel {
+.LoadingPanel {
   width: 100vw;
   height: 100vh;
   padding-top: 25vh;
   position: absolute;
-  z-index: 100000000;
+  z-index: 100;
+  text-align: center;
 
-  background: rgba(216, 225, 232, 0.85);
+  background: rgba(216, 225, 232, 0.9);
   text-shadow: 1px 1px 1px white;
   color: #293742;
 }
 
-.bp3-dark .AppLoadingPanel {
-  background: rgba(24, 32, 38, 0.8);
+.bp3-dark .LoadingPanel {
+  background: rgba(24, 32, 38, 0.9);
   text-shadow: 1px 1px 1px black;
   color: #FFFFFF;
 }
 
-.AppLoadingPanel .text {
+.LoadingPanel .text {
   max-width: 50%;
-  margin: 1em auto auto;
   text-align: center;
-}
-
-.AppLoadingPanel .log {
-  position: absolute;
-  bottom: 0;
-  max-height: 50vh;
-  width: 100%;
-  margin: 1em auto auto;
-  background-color: rgba(16, 22, 26, 0.75);
-  z-index: 999999999999999;
-}
-
-.AppLoadingPanel .log-entry {
-
+  margin: 1em auto 0.75em;
 }
 
 /*****************************************************************
@@ -203,4 +190,52 @@ WelcomePage
   button {
     margin-bottom: 1em;
   }
+}
+
+/*****************************************************************
+WelcomePage
+******************************************************************/
+.LogPage{
+  background-color: #10161a;
+  width: 100%;
+  height: calc(100% - #{$pt-navbar-height});
+  position: absolute;
+  top: $pt-navbar-height;
+  left: 0;
+  z-index: 10;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.LogPage pre {
+  @extend .custom-scrollbar;
+  width: 100%;
+  height: 100%;
+  background-color: $dark-gray1;
+  color: $pt-code-text-color;
+  border: none;
+  padding: 1em;
+  margin: 0;
+}
+
+.LogPage .log-message {
+  width: 100%;
+  display: block;
+  color: $light-gray5;
+}
+
+.LogPage .log-message.error {
+  color: $vermilion5;
+}
+
+.LogPage .log-message.debug {
+  color: $gray1;
+}
+
+.LogPage .log-message .timestamp {
+  margin-right: 1em;
+}
+
+.LogPage .log-message .message {
+  white-space: normal;
 }

@@ -3,10 +3,10 @@ import {CommandFailedError, OperationFailedError} from "@/renderer/app/model/err
 
 const sudo = require('sudo-prompt');
 
-const spawn = (cmd: string): Promise<string> => {
+const spawn = (cmd: string, cwd?: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
         const parts = cmd.split(/\s+/g);
-        const cp = child_process.spawn(parts[0], parts.slice(1), {stdio: ['ignore', 'pipe', 'pipe']});
+        const cp = child_process.spawn(parts[0], parts.slice(1), {stdio: ['ignore', 'pipe', 'pipe'], cwd: cwd});
 
         let output = "";
         let errorOutput = "";

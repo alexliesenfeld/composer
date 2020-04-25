@@ -3,19 +3,26 @@ import * as ReactDOM from "react-dom";
 import {Provider} from "mobx-react";
 import {stores} from "./app/stores/";
 import App from "@/renderer/app/App";
-import ElectronEventLister from "@/renderer/app/containers/ElectronEventListener";
+import ElectronEventLister from "@/renderer/app/containers/common/ElectronEventListener";
 import {HashRouter} from "react-router-dom"
 import ThemeProvider from "@/renderer/app/components/ThemeProvider";
-import AppLoadingPanel from "@/renderer/app/containers/AppLoadingPanel";
+import LoadingPanel from "@/renderer/app/containers/common/LoadingPanel";
+import {setLoadingServiceContext} from "@/renderer/app/services/ui/loading-screen-service";
+import {setLoggingServiceContext} from "@/renderer/app/services/ui/logging-service";
+import {setNotificationServiceContext} from "@/renderer/app/services/ui/notification-service";
+
+setLoadingServiceContext(stores.appStore);
+setLoggingServiceContext(stores.appStore);
+setNotificationServiceContext(stores.appStore);
 
 ReactDOM.render(
     <Provider {...stores}>
         <HashRouter>
             <ThemeProvider>
                 <ElectronEventLister>
-                    <AppLoadingPanel>
+                    <LoadingPanel>
                         <App/>
-                    </AppLoadingPanel>
+                    </LoadingPanel>
                 </ElectronEventLister>
             </ThemeProvider>
         </HashRouter>

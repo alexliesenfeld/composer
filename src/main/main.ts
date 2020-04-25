@@ -41,8 +41,8 @@ function registerRendererEventListeners(mainWindow: BrowserWindow, menu: Electro
         menu.getMenuItemById(SAVE_MENU_ITEM_ID).enabled = enabled;
     });
 
-    ipcMain.on(IPCRendererEvents.INIT_SET_PROJECT_NAME, (event, projectName: string) => {
-        mainWindow.setTitle("Composer | " + projectName);
+    ipcMain.on(IPCRendererEvents.INIT_SET_PROJECT_INFO, (event, projectName: string, filePath: string) => {
+        mainWindow.setTitle(`Composer - ${projectName} (${filePath})`);
     });
 }
 

@@ -1,8 +1,16 @@
 import * as React from 'react';
 import {inject, observer} from "mobx-react";
 import {Redirect, Route, Switch, useHistory} from "react-router-dom"
-import FilesPage from "@/renderer/app/pages/files/FilesPage";
-import {APPLICATION, ARCHIVE, BUILD, COG, DOCUMENT, LAYERS, PLAY} from "@blueprintjs/icons/lib/esm/generated/iconNames";
+import FilesPage from "@/renderer/app/containers/pages/files/FilesPage";
+import {
+    APPLICATION,
+    ARCHIVE,
+    COG,
+    CONSOLE,
+    DOCUMENT,
+    LAYERS,
+    PLAY
+} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 import {
     Alignment,
     Button,
@@ -17,10 +25,11 @@ import {
 } from "@blueprintjs/core";
 
 import '@public/style.scss';
-import WelcomePage from "@/renderer/app/pages/welcome/WelcomePage";
-import PropertiesPage from "@/renderer/app/pages/properties/PropertiesPage";
+import WelcomePage from "@/renderer/app/containers/pages/welcome/WelcomePage";
+import PropertiesPage from "@/renderer/app/containers/pages/properties/PropertiesPage";
 import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 import {AppStore} from "@/renderer/app/stores/app-store";
+import {LogPage} from "@/renderer/app/containers/pages/log/LogPage";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
@@ -57,6 +66,8 @@ const App = (props: { appStore?: AppStore, workspaceStore?: WorkspaceStore }) =>
                 <NavbarGroup align={Alignment.RIGHT}>
                     <Button onClick={() => history.push("/settings")} intent={getIntentForLocation("/settings")}
                             className={Classes.MINIMAL} icon={COG}/>
+                    <Button onClick={() => history.push("/logs")} intent={getIntentForLocation("/logs")}
+                            className={Classes.MINIMAL} icon={CONSOLE}/>
                     <NavbarDivider/>
                     <Button icon={PLAY} text="Open in Visual Studio" intent={"success"} onClick={() => {
                         props.workspaceStore!.startIDE(props.workspaceStore!.configPath!, props.workspaceStore!.userConfig!);
@@ -73,6 +84,9 @@ const App = (props: { appStore?: AppStore, workspaceStore?: WorkspaceStore }) =>
                     </Route>
                     <Route path="/packaging">
                         <a>PACKAGING</a>
+                    </Route>
+                    <Route path="/logs">
+                        <LogPage/>
                     </Route>
                     <Route exact path="/" render={() => (
                         <Redirect to="/properties"/>

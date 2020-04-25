@@ -17,3 +17,7 @@ export function enumValues<T>(t: T): ReadonlyArray<T[keyof T]> {
     const plainStringEnum = values.every(x => typeof x === 'string');
     return plainStringEnum ? values : values.filter(x => typeof x !== 'string');
 }
+
+export function cheapUUID() {
+    return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
