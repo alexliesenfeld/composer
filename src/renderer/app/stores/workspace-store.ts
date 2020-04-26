@@ -8,6 +8,8 @@ import {withLoadingScreen} from "@/renderer/app/services/ui/loading-screen-servi
 import {showSuccessNotification, withNotification} from "@/renderer/app/services/ui/notification-service";
 import {trySilently} from "@/renderer/app/util/error-utils";
 
+const CONFIG_PATH_KEY = 'configPath';
+
 export class WorkspaceStore {
     private readonly workspaceService = new WorkspaceService();
     @observable userConfig: UserConfig | undefined = undefined;
@@ -15,7 +17,7 @@ export class WorkspaceStore {
     @observable sourceFilesList: string[] = [];
 
     constructor() {
-        trySilently(() => this.loadConfigFromPathSync(localStorage.getItem('configPath')!));
+        trySilently(() => this.loadConfigFromPathSync(localStorage.getItem(CONFIG_PATH_KEY)!));
     }
 
     @action.bound
@@ -89,7 +91,7 @@ export class WorkspaceStore {
             this.configPath = configPath;
         });
 
-        localStorage.setItem('configPath', configPath);
+        localStorage.setItem(CONFIG_PATH_KEY, configPath);
 
         ElectronContext.enableSaveItemInWindowMenu(true);
     }
