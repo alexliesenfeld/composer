@@ -18,5 +18,6 @@ export abstract class Fsx {
     static readonly rmdir = util.promisify(fs.rmdir);
     static readonly rename = util.promisify(fs.rename);
     static readonly move = (util.promisify(mv));
+    static readonly copyFile = util.promisify(fs.copyFile);
 }
 

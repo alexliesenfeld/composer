@@ -111,3 +111,7 @@ export const directoryIsEmpty = async (dirPath: string, fileNamesToIgnore?: stri
 export const directoryDoesNotExistOrIsEmpty = async (dirPath: string, fileNamesToIgnore?: string[]): Promise<boolean> => {
     return !await Fsx.exists(dirPath) || await directoryIsEmpty(dirPath, fileNamesToIgnore);
 };
+
+export const copyFile = async (sourceFile: string, targetPath: string) => {
+  await Fsx.copyFile(sourceFile, targetPath);
+};

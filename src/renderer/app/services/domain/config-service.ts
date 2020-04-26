@@ -29,6 +29,10 @@ export const writeConfigToPath = async (path: string, config: UserConfig): Promi
     return Fsx.writeFile(path, JSON.stringify(config));
 };
 
+export const writeFile = async (path: string, content: string): Promise<void> => {
+    return Fsx.writeFile(path, content);
+};
+
 const createInitialConfig = (): UserConfig => {
     return {
         projectName: 'NewProject',

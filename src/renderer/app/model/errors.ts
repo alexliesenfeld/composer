@@ -27,13 +27,21 @@ export class OperationFailedError extends CustomError {
 }
 
 export class CommandFailedError extends CustomError {
-    constructor(public command: string, public errorOutput: string, public statusCode: number | null) {
-        super(CommandFailedError, `Command "${command}" failed with error code "${statusCode}". Error output: "${errorOutput}".`);
+    constructor(public command: string,  public output: string, public errorOutput: string,public statusCode: number | null) {
+        super(CommandFailedError, `Command "${command}" failed with error code "${statusCode}". Output: ${output}, Error output: "${errorOutput}".`);
     }
 }
 
 export class UnsupportedOperationError extends CustomError {
     constructor(public customMessage?: string) {
         super(UnsupportedOperationError, customMessage ? customMessage : `Operation is unsupported.`);
+    }
+}
+
+
+export class AssertionError extends CustomError {
+    constructor(public customMessage?: string) {
+        super(AssertionError, customMessage ? customMessage : `Assertion error.`);
+        this.message += ` Stack: ${this.stack}`;
     }
 }

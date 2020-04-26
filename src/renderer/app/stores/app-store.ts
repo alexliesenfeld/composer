@@ -9,12 +9,21 @@ export interface AppStoreLogMessage {
     message: string;
 }
 
+export enum Page {
+    PROPERTIES,
+    FILES,
+    PACKAGING,
+    SETTINGS,
+    LOG
+}
+
 export class AppStore implements LoadingServiceContext, LoggingServiceContext, NotificationServiceContext {
     @observable darkTheme: boolean = true;
     @observable logMessages: AppStoreLogMessage[] = [];
     @observable isLoadingScreenShown: boolean;
     @observable loadingScreenText: string | undefined;
     @observable loadingActivities: string[] = [];
+    @observable selectedPage: Page = Page.PROPERTIES;
 
     @action.bound
     showLoadingScreen(loadingText?: string): void {
@@ -61,12 +70,9 @@ export class AppStore implements LoadingServiceContext, LoggingServiceContext, N
         this.log(message, LogLevel.DEBUG);
     }
 
+    @action.bound
     showLog(): void {
-        // This assumes HashRouter is being used. It navigates directly using the window property.
-        // If react-router-mobx or a similar package is being used, this line should be replaced.
-        window.location.href = "#logs"
+       this.selectedPage = Page.LOG;
     }
-
-
 
 }

@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {inject, observer} from "mobx-react";
-import {Redirect, Route, Switch, useHistory} from "react-router-dom"
 import FilesPage from "@/renderer/app/containers/pages/files/FilesPage";
 import {
     APPLICATION,
@@ -17,6 +16,7 @@ import {
     Classes,
     FocusStyleManager,
     Icon,
+    IconName,
     Intent,
     Navbar,
     NavbarDivider,
@@ -28,17 +28,24 @@ import '@public/style.scss';
 import WelcomePage from "@/renderer/app/containers/pages/welcome/WelcomePage";
 import PropertiesPage from "@/renderer/app/containers/pages/properties/PropertiesPage";
 import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
-import {AppStore} from "@/renderer/app/stores/app-store";
+import {AppStore, Page} from "@/renderer/app/stores/app-store";
 import {LogPage} from "@/renderer/app/containers/pages/log/LogPage";
+import {When} from "@/renderer/app/components/When";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 
 const App = (props: { appStore?: AppStore, workspaceStore?: WorkspaceStore }) => {
-    const history = useHistory();
     const {userConfig} = props.workspaceStore!;
 
-    const getIntentForLocation = (linkLocation: string): Intent => {
-        return history.location.pathname === linkLocation ? "primary" : "none";
+    const NavButton = (navProps: {text?: string, page: Page, icon: IconName}) => {
+        return <Button onClick={() => props.appStore!.selectedPage = navProps.page}
+                intent={getIntentForLocation(props.appStore!.selectedPage, navProps.page)}
+                className={Classes.MINIMAL} icon={navProps.icon}
+                text={navProps.text}/>
+    };
+
+    const getIntentForLocation = (currentPage: Page, targetPage: Page): Intent => {
+        return currentPage === targetPage ? "primary" : "none";
     };
 
     if (!userConfig) {
@@ -51,23 +58,15 @@ const App = (props: { appStore?: AppStore, workspaceStore?: WorkspaceStore }) =>
                 <NavbarGroup align={Alignment.LEFT}>
                     <NavbarHeading>
                         <Icon icon={LAYERS} iconSize={20} className='logo'/>
-                        <span> Composer</span>
+                        <span> {props.workspaceStore!.userConfig!.projectName}</span>
                     </NavbarHeading>
-                    <Button onClick={() => history.push("/properties")} intent={getIntentForLocation("/properties")}
-                            className={Classes.MINIMAL} icon={APPLICATION}
-                            text="Properties"/>
-                    <Button onClick={() => history.push("/files")} intent={getIntentForLocation("/files")}
-                            className={Classes.MINIMAL} icon={DOCUMENT}
-                            text="Files"/>
-                    <Button onClick={() => history.push("/packaging")} intent={getIntentForLocation("/packaging")}
-                            className={Classes.MINIMAL} icon={ARCHIVE}
-                            text="Packaging"/>
+                    <NavButton text="Properties"  page={Page.PROPERTIES} icon={APPLICATION}/>
+                    <NavButton text="Files" page={Page.FILES} icon={DOCUMENT}/>
+                    <NavButton text="Packaging"  page={Page.PACKAGING} icon={ARCHIVE}/>
                 </NavbarGroup>
                 <NavbarGroup align={Alignment.RIGHT}>
-                    <Button onClick={() => history.push("/settings")} intent={getIntentForLocation("/settings")}
-                            className={Classes.MINIMAL} icon={COG}/>
-                    <Button onClick={() => history.push("/logs")} intent={getIntentForLocation("/logs")}
-                            className={Classes.MINIMAL} icon={CONSOLE}/>
+                    <NavButton page={Page.SETTINGS} icon={COG}/>
+                    <NavButton page={Page.LOG} icon={CONSOLE}/>
                     <NavbarDivider/>
                     <Button icon={PLAY} text="Open in Visual Studio" intent={"success"} onClick={() => {
                         props.workspaceStore!.startIDE(props.workspaceStore!.configPath!, props.workspaceStore!.userConfig!);
@@ -75,24 +74,15 @@ const App = (props: { appStore?: AppStore, workspaceStore?: WorkspaceStore }) =>
                 </NavbarGroup>
             </Navbar>
             <main className='content custom-scrollbar'>
-                <Switch>
-                    <Route path="/properties">
-                        <PropertiesPage/>
-                    </Route>
-                    <Route path="/files">
-                        <FilesPage/>
-                    </Route>
-                    <Route path="/packaging">
-                        <a>PACKAGING</a>
-                    </Route>
-                    <Route path="/logs">
-                        <LogPage/>
-                    </Route>
-                    <Route exact path="/" render={() => (
-                        <Redirect to="/properties"/>
-                    )}/>
-                </Switch>
-
+                <When condition={props.appStore!.selectedPage === Page.PROPERTIES}>
+                    <PropertiesPage/>
+                </When>
+                <When condition={props.appStore!.selectedPage === Page.FILES}>
+                    <FilesPage/>
+                </When>
+                <When condition={props.appStore!.selectedPage === Page.LOG}>
+                    <LogPage/>
+                </When>
             </main>
         </div>
     );

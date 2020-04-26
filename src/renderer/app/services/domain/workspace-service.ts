@@ -1,6 +1,7 @@
 import {Fsx} from "@/renderer/app/util/fsx";
 import * as path from "path";
 import {
+    copyFile,
     createDirIfNotExists,
     deleteDirectory,
     deleteFileIfExists,
@@ -13,10 +14,14 @@ import {
 } from "@/renderer/app/util/file-utils";
 import {PluginFormat, UserConfig} from "@/renderer/app/model/user-config";
 import {OperatingSystem} from "@/renderer/app/services/domain/constants";
-import {UnsupportedOperationError} from "@/renderer/app/model/errors";
+import {AssertionError, UnsupportedOperationError} from "@/renderer/app/model/errors";
 import * as git from "@/renderer/app/util/git-utils";
 import {Cpx} from "@/renderer/app/util/cpx";
-import {log, logActivity} from "@/renderer/app/services/ui/logging-service";
+import {logActivity} from "@/renderer/app/services/ui/logging-service";
+import {readFile} from "ts-loader/dist/utils";
+import {writeConfigToPath, writeFile} from "@/renderer/app/services/domain/config-service";
+import {trace} from "mobx";
+
 
 const getDependenciesDirPath = (workspaceDir: string) => path.join(workspaceDir, "lib");
 const getIPlug2BaseDirPath = (workspaceDir: string) => path.join(getDependenciesDirPath(workspaceDir), "iPlug2");
@@ -25,6 +30,7 @@ const getWorkDirPath = (workspaceDir: string) => path.join(workspaceDir, ".work"
 const getIPlug2DependenciesPath = (workspaceDir: string) => path.join(getIPlug2BaseDirPath(workspaceDir), "Dependencies");
 const getIPlug2DependenciesBuildPath = (workspaceDir: string) => path.join(getIPlug2DependenciesPath(workspaceDir), "Build");
 const getProjectSourcesPath = (workspaceDir: string) => path.join(workspaceDir, "src");
+const getVisualStudioSolutionFilePath = (workspaceDir: string, config: UserConfig) => path.join(workspaceDir, "src", config.projectName, config.projectName + ".sln");
 
 export class WorkspaceService {
 
@@ -47,9 +53,10 @@ export class WorkspaceService {
 
         if (await this.shouldSetupProject(workspaceDir)) {
             await this.createProjectSources(workspaceDir, config);
+            // await this.replaceProjectVariables(workspaceDir, config);
         }
 
-        if(os === OperatingSystem.WINDOWS) {
+        if (os === OperatingSystem.WINDOWS) {
             await this.startVisualStudioProject(workspaceDir, config, OperatingSystem.WINDOWS);
         } else {
             throw new UnsupportedOperationError("OS other than Windows are currently not supported");
@@ -125,7 +132,7 @@ export class WorkspaceService {
 
     @logActivity("Starting Visual Studio project")
     async startVisualStudioProject(workspaceDirPath: string, config: UserConfig, os: OperatingSystem): Promise<void> {
-        const vsSolutionPath = path.join(workspaceDirPath, "src", config.projectName + ".sln");
+        const vsSolutionPath = getVisualStudioSolutionFilePath(workspaceDirPath, config);
         await Cpx.sudoExec(`start ${vsSolutionPath}`);
     }
 
@@ -133,18 +140,33 @@ export class WorkspaceService {
     async createProjectSources(workspaceDirPath: string, config: UserConfig): Promise<void> {
         const sourcesPath = getProjectSourcesPath(workspaceDirPath);
         const examplesPath = path.join(getIPlug2BaseDirPath(workspaceDirPath), "Examples");
-        const workDirPath = getWorkDirPath(workspaceDirPath);
 
-        await recreateDir(workDirPath);
-
-        await Cpx.spawn(`python duplicate.py ${config.prototype} ${config.projectName} ${config.manufacturerName} ${workDirPath}`, examplesPath);
-
-        await deleteDirectory(sourcesPath);
-        await moveDir(path.join(workDirPath, config.projectName), sourcesPath);
-
-        await deleteDirectory(workDirPath);
+        await recreateDir(sourcesPath);
+        await Cpx.spawn(`python duplicate.py ${config.prototype} ${config.projectName} ${config.manufacturerName} ${sourcesPath}`, examplesPath);
     }
 
+    @logActivity("Replacing configuration variables")
+    async replaceProjectVariables(workspaceDirPath: string, config: UserConfig): Promise<void> {
+        await this.replaceWindowsProjectVariables(workspaceDirPath, config);
+    }
+
+    @logActivity("Replacing Windows configuration variables")
+    async replaceWindowsProjectVariables(workspaceDirPath: string, config: UserConfig): Promise<void> {
+        /*const winPropsFilePath = getProjectWinPropertiesPath(workspaceDirPath, config);
+        let winPropsFileContent = readFile(winPropsFilePath);
+        if (!winPropsFileContent) {
+            throw new AssertionError("The windows project props file project seems to be empty. Cannot proceed.");
+        }
+
+        this.replaceString(
+            winPropsFileContent,
+            "<Import Project=\"$(IPLUG2_ROOT)\\common-win.props\" />",
+            "<Import Project=\"$(IPLUG2_ROOT)\\..\\..\\src\\common-win.props\" />"
+        );
+
+        await writeFile(winPropsFilePath, winPropsFileContent);
+         */
+    }
 
     async shouldSetupIPlug2(workspaceDirPath: string): Promise<boolean> {
         return directoryDoesNotExistOrIsEmpty(getIPlug2BaseDirPath(workspaceDirPath));
@@ -160,5 +182,12 @@ export class WorkspaceService {
 
     async shouldSetupProject(workspaceDirPath: string): Promise<boolean> {
         return await directoryDoesNotExistOrIsEmpty(getProjectSourcesPath(workspaceDirPath));
+    }
+
+    private replaceString(content: string, from: string, to: string) {
+        const newContent = content.replace(from, to);
+        if (newContent === content){
+            throw new AssertionError("Content could not be replaced");
+        }
     }
 }

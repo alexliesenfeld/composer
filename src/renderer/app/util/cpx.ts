@@ -21,7 +21,7 @@ const spawn = (cmd: string, cwd?: string): Promise<string> => {
 
         cp.on('exit', function (code) {
             if (code != 0) {
-                reject(new CommandFailedError(cmd, errorOutput, code))
+                reject(new CommandFailedError(cmd, output, errorOutput, code))
             } else {
                 resolve(output);
             }

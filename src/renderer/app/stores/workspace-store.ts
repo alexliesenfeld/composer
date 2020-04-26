@@ -55,7 +55,6 @@ export class WorkspaceStore {
         }
 
         await this.loadConfigFromPath(result.filePaths[0]);
-        showSuccessNotification("Successfully opened project")
     }
 
     @action.bound

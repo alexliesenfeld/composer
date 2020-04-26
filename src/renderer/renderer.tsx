@@ -4,7 +4,6 @@ import {Provider} from "mobx-react";
 import {stores} from "./app/stores/";
 import App from "@/renderer/app/App";
 import ElectronEventLister from "@/renderer/app/containers/common/ElectronEventListener";
-import {HashRouter} from "react-router-dom"
 import ThemeProvider from "@/renderer/app/components/ThemeProvider";
 import LoadingPanel from "@/renderer/app/containers/common/LoadingPanel";
 import {setLoadingServiceContext} from "@/renderer/app/services/ui/loading-screen-service";
@@ -17,15 +16,13 @@ setNotificationServiceContext(stores.appStore);
 
 ReactDOM.render(
     <Provider {...stores}>
-        <HashRouter>
-            <ThemeProvider>
-                <ElectronEventLister>
-                    <LoadingPanel>
-                        <App/>
-                    </LoadingPanel>
-                </ElectronEventLister>
-            </ThemeProvider>
-        </HashRouter>
+        <ThemeProvider>
+            <ElectronEventLister>
+                <LoadingPanel>
+                    <App/>
+                </LoadingPanel>
+            </ElectronEventLister>
+        </ThemeProvider>
     </Provider>,
     document.getElementById("app")
 );
