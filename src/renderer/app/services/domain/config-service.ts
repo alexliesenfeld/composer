@@ -8,6 +8,7 @@ import {
 import * as path from "path";
 import {DirectoryNotEmptyError} from "@/renderer/app/model/errors";
 import {Fsx} from "@/renderer/app/util/fsx";
+import * as fs from "fs";
 
 export const writeNewConfigToPath = async (filePath: string): Promise<unknown> => {
     const directoryPath = path.dirname(filePath);
@@ -22,7 +23,16 @@ export const writeNewConfigToPath = async (filePath: string): Promise<unknown> =
 
 export const loadConfigFromPath = async (path: string): Promise<UserConfig> => {
     const fileContent = await Fsx.readFile(path, {encoding: 'utf-8'});
-    return JSON.parse(fileContent);
+    return parseConfig(fileContent);
+};
+
+export const loadConfigFromPathSync = (path: string): UserConfig => {
+    const fileContent = fs.readFileSync(path, {encoding: 'utf-8'});
+    return parseConfig(fileContent);
+};
+
+const parseConfig = (content: string): UserConfig => {
+    return JSON.parse(content);
 };
 
 export const writeConfigToPath = async (path: string, config: UserConfig): Promise<unknown> => {

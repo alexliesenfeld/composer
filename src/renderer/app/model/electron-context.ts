@@ -7,10 +7,6 @@ export abstract class ElectronContext {
     static readonly remote = remote;
     static readonly dialog = remote.dialog;
 
-    static setCurrentProjectInformation(projectName: string, filePath: string) {
-        ipcRenderer.send(IPCRendererEvents.INIT_SET_PROJECT_INFO, projectName, filePath);
-    }
-
     static enableSaveItemInWindowMenu(enable: boolean) {
         ipcRenderer.send(IPCRendererEvents.INIT_SET_CAN_SAVE, enable);
     }

@@ -11,6 +11,7 @@ function createWindow(): void {
     mainWindow = new BrowserWindow({
         height: 800,
         width: 1024,
+        show: false, // Hide initially. Will be shown later (see 'ready-to-show' event below).
         webPreferences: {
             webSecurity: false,
             devTools: process.env.NODE_ENV !== 'production',
@@ -33,16 +34,20 @@ function createWindow(): void {
         mainWindow = null;
     });
 
+    // Usually, when electron loads the app, during the react app is loading, the background color of the window
+    // is white. For presentational reasons, the main window is not shown initially (see 'show: false' in the config
+    // above), and only when the app is loaded into the browser window, the window is being presented to the user.
+    mainWindow.on('ready-to-show', function() {
+        mainWindow!.show();
+        mainWindow!.focus();
+    });
+
     registerRendererEventListeners(mainWindow, menu);
 }
 
 function registerRendererEventListeners(mainWindow: BrowserWindow, menu: Electron.Menu) {
     ipcMain.on(IPCRendererEvents.INIT_SET_CAN_SAVE, (event, enabled: boolean) => {
         menu.getMenuItemById(SAVE_MENU_ITEM_ID).enabled = enabled;
-    });
-
-    ipcMain.on(IPCRendererEvents.INIT_SET_PROJECT_INFO, (event, projectName: string, filePath: string) => {
-        mainWindow.setTitle(`Composer - ${projectName} (${filePath})`);
     });
 }
 

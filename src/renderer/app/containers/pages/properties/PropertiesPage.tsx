@@ -13,7 +13,6 @@ import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 
 const PropertiesPage = (props: { workspaceStore?: WorkspaceStore }) => {
     const {userConfig} = props.workspaceStore!;
-    const setProjectName = (projectName: string) => props.workspaceStore!.setProjectName(projectName);
     const setUserConfig = (config: UserConfig) => props.workspaceStore!.userConfig = config;
 
     return (
@@ -23,7 +22,7 @@ const PropertiesPage = (props: { workspaceStore?: WorkspaceStore }) => {
             <div className='page-sections-container'>
                 <section>
                     <GeneralPanel projectName={userConfig!.projectName}
-                                  setProjectName={setProjectName}
+                                  setProjectName={(value) => setUserConfig({...userConfig!, projectName: value})}
                                   prototype={userConfig!.prototype}
                                   setPrototype={(value) => setUserConfig({...userConfig!, prototype: value})}
                                   formats={userConfig!.formats}

@@ -6,6 +6,7 @@ import {WorkspaceService} from "@/renderer/app/services/domain/workspace-service
 import {Fsx} from "@/renderer/app/util/fsx";
 import {withLoadingScreen} from "@/renderer/app/services/ui/loading-screen-service";
 import {showSuccessNotification, withNotification} from "@/renderer/app/services/ui/notification-service";
+import {trySilently} from "@/renderer/app/util/error-utils";
 
 export class WorkspaceStore {
     private readonly workspaceService = new WorkspaceService();
@@ -13,13 +14,15 @@ export class WorkspaceStore {
     @observable configPath: string | undefined = undefined;
     @observable sourceFilesList: string[] = [];
 
+    constructor() {
+        trySilently(() => this.loadConfigFromPathSync(localStorage.getItem('configPath')!));
+    }
+
     @action.bound
     public async refreshSourceFilesList(): Promise<void> {
         const appPath = ElectronContext.remote.app.getAppPath();
         const sourceFilesList = await Fsx.readdir(appPath);
-        runInAction(() => {
-            this.sourceFilesList = sourceFilesList;
-        })
+        runInAction(() => this.sourceFilesList = sourceFilesList);
     }
 
     @action.bound
@@ -70,21 +73,24 @@ export class WorkspaceStore {
         await this.workspaceService.startIDE(configFilePath, config, ElectronContext.currentOperatingSystem());
     }
 
-    @action.bound
-    public async setProjectName(projectName: string): Promise<void> {
-        this.userConfig!.projectName = projectName;
-        ElectronContext.setCurrentProjectInformation(projectName, this.configPath!);
-    }
-
     private async loadConfigFromPath(path: string): Promise<void> {
         const userConfig = await configService.loadConfigFromPath(path);
+        this.setNewConfig(path, userConfig);
+    }
 
+    private loadConfigFromPathSync(path: string): void {
+        const userConfig = configService.loadConfigFromPathSync(path);
+        this.setNewConfig(path, userConfig);
+    }
+
+    private setNewConfig(configPath: string, userConfig: UserConfig) {
         runInAction(() => {
             this.userConfig = userConfig;
-            this.configPath = path;
+            this.configPath = configPath;
         });
 
+        localStorage.setItem('configPath', configPath);
+
         ElectronContext.enableSaveItemInWindowMenu(true);
-        ElectronContext.setCurrentProjectInformation(this.userConfig!.projectName, this.configPath!);
     }
 }
