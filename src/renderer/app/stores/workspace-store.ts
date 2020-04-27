@@ -21,13 +21,6 @@ export class WorkspaceStore {
     }
 
     @action.bound
-    public async refreshSourceFilesList(): Promise<void> {
-        const appPath = ElectronContext.remote.app.getAppPath();
-        const sourceFilesList = await Fsx.readdir(appPath);
-        runInAction(() => this.sourceFilesList = sourceFilesList);
-    }
-
-    @action.bound
     @withNotification({onError: "Failed creating a new project"})
     public async createNewUserConfig(): Promise<void> {
         const result = await ElectronContext.dialog.showSaveDialog({

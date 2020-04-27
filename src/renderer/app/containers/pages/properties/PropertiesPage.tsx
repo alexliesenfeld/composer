@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {inject, observer} from "mobx-react";
-import {H3} from "@blueprintjs/core";
 import GeneralPanel from "@/renderer/app/containers/pages/properties/components/GeneralPanel";
 import UserInterfacePanel from "@/renderer/app/containers/pages/properties/components/UserInterfacePanel";
 import InputOutputPanel from "@/renderer/app/containers/pages/properties/components/InputOutputPanel";
@@ -17,8 +16,6 @@ const PropertiesPage = (props: { workspaceStore?: WorkspaceStore }) => {
 
     return (
         <div className='PropertiesPage'>
-            <H3>Properties</H3>
-            <p>You can set all general project information here.</p>
             <div className='page-sections-container'>
                 <section>
                     <GeneralPanel projectName={userConfig!.projectName}

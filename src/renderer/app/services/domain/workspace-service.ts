@@ -13,7 +13,6 @@ import {
     unzipFile
 } from "@/renderer/app/util/file-utils";
 import {PluginFormat, UserConfig} from "@/renderer/app/model/user-config";
-import {OperatingSystem} from "@/renderer/app/services/domain/constants";
 import {AssertionError, UnsupportedOperationError} from "@/renderer/app/model/errors";
 import * as git from "@/renderer/app/util/git-utils";
 import {Cpx} from "@/renderer/app/util/cpx";
@@ -21,22 +20,23 @@ import {logActivity} from "@/renderer/app/services/ui/logging-service";
 import {readFile} from "ts-loader/dist/utils";
 import {writeConfigToPath, writeFile} from "@/renderer/app/services/domain/config-service";
 import {trace} from "mobx";
+import {
+    getDependenciesDirPath,
+    getIPlug2BaseDirPath,
+    getIPlug2DependenciesBuildPath,
+    getProjectBuildPath, getProjectDir,
+    getVisualStudioSolutionFilePath,
+    getVst3SdkDirPath,
+    getWorkDirPath,
+    OperatingSystem
+} from "@/renderer/app/services/domain/common";
 
-
-const getDependenciesDirPath = (workspaceDir: string) => path.join(workspaceDir, "lib");
-const getIPlug2BaseDirPath = (workspaceDir: string) => path.join(getDependenciesDirPath(workspaceDir), "iPlug2");
-const getVst3SdkDirPath = (workspaceDir: string) => path.join(getIPlug2DependenciesPath(workspaceDir), "IPlug", "VST3_SDK");
-const getWorkDirPath = (workspaceDir: string) => path.join(workspaceDir, ".work");
-const getIPlug2DependenciesPath = (workspaceDir: string) => path.join(getIPlug2BaseDirPath(workspaceDir), "Dependencies");
-const getIPlug2DependenciesBuildPath = (workspaceDir: string) => path.join(getIPlug2DependenciesPath(workspaceDir), "Build");
-const getProjectSourcesPath = (workspaceDir: string) => path.join(workspaceDir, "src");
-const getVisualStudioSolutionFilePath = (workspaceDir: string, config: UserConfig) => path.join(workspaceDir, "src", config.projectName, config.projectName + ".sln");
 
 export class WorkspaceService {
 
     @logActivity("Starting IDE")
     async startIDE(userConfigFilePath: string, config: UserConfig, os: OperatingSystem) {
-        const workspaceDir = path.dirname(userConfigFilePath);
+        const workspaceDir = getProjectDir(userConfigFilePath);
         await createDirIfNotExists(getDependenciesDirPath(workspaceDir));
 
         if (await this.shouldSetupIPlug2(workspaceDir)) {
@@ -138,11 +138,11 @@ export class WorkspaceService {
 
     @logActivity("Creating project from iPlug2 prototype")
     async createProjectSources(workspaceDirPath: string, config: UserConfig): Promise<void> {
-        const sourcesPath = getProjectSourcesPath(workspaceDirPath);
+        const buildPath = getProjectBuildPath(workspaceDirPath);
         const examplesPath = path.join(getIPlug2BaseDirPath(workspaceDirPath), "Examples");
 
-        await recreateDir(sourcesPath);
-        await Cpx.spawn(`python duplicate.py ${config.prototype} ${config.projectName} ${config.manufacturerName} ${sourcesPath}`, examplesPath);
+        await recreateDir(buildPath);
+        await Cpx.spawn(`python duplicate.py ${config.prototype} ${config.projectName} ${config.manufacturerName} ${buildPath}`, examplesPath);
     }
 
     @logActivity("Replacing configuration variables")
@@ -181,7 +181,7 @@ export class WorkspaceService {
     }
 
     async shouldSetupProject(workspaceDirPath: string): Promise<boolean> {
-        return await directoryDoesNotExistOrIsEmpty(getProjectSourcesPath(workspaceDirPath));
+        return await directoryDoesNotExistOrIsEmpty(getProjectBuildPath(workspaceDirPath));
     }
 
     private replaceString(content: string, from: string, to: string) {

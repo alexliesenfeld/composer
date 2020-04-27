@@ -2,7 +2,7 @@ import {app, BrowserWindow, ipcMain, Menu} from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import {buildMenuTemplate, SAVE_MENU_ITEM_ID} from "@main/menu";
-import {IPCRendererEvents} from "@common/constants";
+import {IPCMainEvents, IPCRendererEvents} from "@common/constants";
 import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-installer';
 
 let mainWindow: BrowserWindow | null;
