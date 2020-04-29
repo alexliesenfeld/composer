@@ -44,7 +44,9 @@ async function addFilePermissions(filePath: string, mode: number) {
 export const deleteFileIfExists = async (filePath: string) => {
     if (await Fsx.exists(filePath)) {
         await Fsx.unlink(filePath);
+        return true;
     }
+    return false;
 };
 
 export const moveDirContents = async (fromDir: string, toDir: string) => {

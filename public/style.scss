@@ -239,3 +239,19 @@ WelcomePage
 .LogPage .log-message .message {
   white-space: normal;
 }
+
+
+/*****************************************************************
+FilesPage
+******************************************************************/
+.FilesPage {
+  height: calc(100% - 4em);
+
+}
+
+.FilesPage .file-list-container {
+  @extend .custom-scrollbar;
+
+  height: 100%;
+  overflow-y: auto;
+}

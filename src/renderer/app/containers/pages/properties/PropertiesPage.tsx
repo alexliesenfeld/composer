@@ -7,12 +7,12 @@ import ManufacturerPanel from "@/renderer/app/containers/pages/properties/compon
 import {matchesVersion, removeSpaces} from "@/renderer/app/util/string-utils";
 import AudioUnitPanel from "@/renderer/app/containers/pages/properties/components/AudioUnitPanel";
 import VstPanel from "@/renderer/app/containers/pages/properties/components/VstPanel";
-import {UserConfig} from "@/renderer/app/model/user-config";
+import {WorkspaceConfig} from "@/renderer/app/model/workspace-config";
 import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 
 const PropertiesPage = (props: { workspaceStore?: WorkspaceStore }) => {
     const {userConfig} = props.workspaceStore!;
-    const setUserConfig = (config: UserConfig) => props.workspaceStore!.userConfig = config;
+    const setUserConfig = (config: WorkspaceConfig) => props.workspaceStore!.userConfig = config;
 
     return (
         <div className='PropertiesPage'>

@@ -11,7 +11,7 @@ import {
     Popover,
     Position
 } from "@blueprintjs/core";
-import {PluginFormat, Prototype} from "@/renderer/app/model/user-config";
+import {PluginFormat, Prototype} from "@/renderer/app/model/workspace-config";
 import {SelectInput} from "@/renderer/app/components/SelectInput";
 
 export interface InputOutputPanelProps {

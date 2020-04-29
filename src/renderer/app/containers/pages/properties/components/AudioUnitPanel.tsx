@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Card, Divider, Elevation, FormGroup, H5, InputGroup} from "@blueprintjs/core";
-import {AudioUnitPluginType, Prototype} from "@/renderer/app/model/user-config";
+import {AudioUnitPluginType, Prototype} from "@/renderer/app/model/workspace-config";
 import {SelectInput} from "@/renderer/app/components/SelectInput";
 import {enumValues} from "@/renderer/app/util/type-utils";
 

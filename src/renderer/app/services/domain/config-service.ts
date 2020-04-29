@@ -2,9 +2,9 @@ import {
     AudioUnitPluginType,
     PluginFormat,
     Prototype,
-    UserConfig,
+    WorkspaceConfig,
     Vst3Subcategory
-} from "@/renderer/app/model/user-config";
+} from "@/renderer/app/model/workspace-config";
 import * as path from "path";
 import {DirectoryNotEmptyError} from "@/renderer/app/model/errors";
 import {Fsx} from "@/renderer/app/util/fsx";
@@ -21,21 +21,21 @@ export const writeNewConfigToPath = async (filePath: string): Promise<unknown> =
     return writeConfigToPath(filePath, createInitialConfig());
 };
 
-export const loadConfigFromPath = async (path: string): Promise<UserConfig> => {
+export const loadConfigFromPath = async (path: string): Promise<WorkspaceConfig> => {
     const fileContent = await Fsx.readFile(path, {encoding: 'utf-8'});
     return parseConfig(fileContent);
 };
 
-export const loadConfigFromPathSync = (path: string): UserConfig => {
+export const loadConfigFromPathSync = (path: string): WorkspaceConfig => {
     const fileContent = fs.readFileSync(path, {encoding: 'utf-8'});
     return parseConfig(fileContent);
 };
 
-const parseConfig = (content: string): UserConfig => {
+const parseConfig = (content: string): WorkspaceConfig => {
     return JSON.parse(content);
 };
 
-export const writeConfigToPath = async (path: string, config: UserConfig): Promise<unknown> => {
+export const writeConfigToPath = async (path: string, config: WorkspaceConfig): Promise<unknown> => {
     return Fsx.writeFile(path, JSON.stringify(config));
 };
 
@@ -43,7 +43,7 @@ export const writeFile = async (path: string, content: string): Promise<void> =>
     return Fsx.writeFile(path, content);
 };
 
-const createInitialConfig = (): UserConfig => {
+const createInitialConfig = (): WorkspaceConfig => {
     return {
         projectName: 'NewProject',
         prototype: Prototype.IPLIGEFFECT,

@@ -59,7 +59,7 @@ export enum Vst3Subcategory {
     SURROUND = "Surround"
 }
 
-export interface UserConfig {
+export interface WorkspaceConfig {
     projectName: string;
     prototype: Prototype;
     formats: PluginFormat[];

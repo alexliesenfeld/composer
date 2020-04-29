@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {inject, observer} from "mobx-react";
-import FilesPage from "@/renderer/app/containers/pages/files/FilesPage";
 import {
     APPLICATION,
     ARCHIVE,
@@ -31,6 +30,7 @@ import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 import {AppStore, Page} from "@/renderer/app/stores/app-store";
 import {LogPage} from "@/renderer/app/containers/pages/log/LogPage";
 import {When} from "@/renderer/app/components/When";
+import {FilesPage} from "@/renderer/app/containers/pages/files/FilesPage";
 
 FocusStyleManager.onlyShowFocusOnTabs();
 

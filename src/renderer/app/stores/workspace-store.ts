@@ -1,5 +1,5 @@
 import {action, observable, runInAction} from "mobx";
-import {UserConfig} from "@/renderer/app/model/user-config";
+import {WorkspaceConfig} from "@/renderer/app/model/workspace-config";
 import {ElectronContext} from "@/renderer/app/model/electron-context";
 import * as configService from "@/renderer/app/services/domain/config-service";
 import {WorkspaceService} from "@/renderer/app/services/domain/workspace-service";
@@ -11,12 +11,11 @@ import {trySilently} from "@/renderer/app/util/error-utils";
 const CONFIG_PATH_KEY = 'configPath';
 
 export class WorkspaceStore {
-    private readonly workspaceService = new WorkspaceService();
-    @observable userConfig: UserConfig | undefined = undefined;
+    @observable userConfig: WorkspaceConfig | undefined = undefined;
     @observable configPath: string | undefined = undefined;
     @observable sourceFilesList: string[] = [];
 
-    constructor() {
+    constructor(private readonly workspaceService: WorkspaceService) {
         trySilently(() => this.loadConfigFromPathSync(localStorage.getItem(CONFIG_PATH_KEY)!));
     }
 
@@ -64,7 +63,7 @@ export class WorkspaceStore {
     @action.bound
     @withLoadingScreen("Starting IDE")
     @withNotification({onError: "Failed to start IDE", showLogButton: true})
-    async startIDE(configFilePath: string, config: UserConfig) {
+    async startIDE(configFilePath: string, config: WorkspaceConfig) {
         await this.workspaceService.startIDE(configFilePath, config, ElectronContext.currentOperatingSystem());
     }
 
@@ -78,7 +77,7 @@ export class WorkspaceStore {
         this.setNewConfig(path, userConfig);
     }
 
-    private setNewConfig(configPath: string, userConfig: UserConfig) {
+    private setNewConfig(configPath: string, userConfig: WorkspaceConfig) {
         runInAction(() => {
             this.userConfig = userConfig;
             this.configPath = configPath;
