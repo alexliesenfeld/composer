@@ -37,8 +37,6 @@
     "@types/adm-zip": "^0.4.33",
     "@types/mv": "^2.1.0",
     "@types/request": "^2.48.4",
-    "@types/shelljs": "^0.8.7",
-    "@types/xml2js": "^0.4.5",
     "adm-zip": "^0.4.14",
     "electron-sudo": "^4.0.12",
     "mobx": "^5.15.4",
@@ -51,8 +49,7 @@
     "request": "^2.88.2",
     "sass": "^1.26.5",
     "sass-loader": "^8.0.2",
-    "sudo-prompt": "^9.1.1",
-    "xml2js": "^0.4.23"
+    "sudo-prompt": "^9.1.1"
   },
   "devDependencies": {
     "@blueprintjs/core": "^3.26.0",
