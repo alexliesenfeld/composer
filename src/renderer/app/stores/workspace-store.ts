@@ -2,11 +2,10 @@ import {action, observable, runInAction} from "mobx";
 import {WorkspaceConfig} from "@/renderer/app/model/workspace-config";
 import {ElectronContext} from "@/renderer/app/model/electron-context";
 import * as configService from "@/renderer/app/services/domain/config-service";
-import {WorkspaceService} from "@/renderer/app/services/domain/workspace-service";
-import {Fsx} from "@/renderer/app/util/fsx";
 import {withLoadingScreen} from "@/renderer/app/services/ui/loading-screen-service";
 import {showSuccessNotification, withNotification} from "@/renderer/app/services/ui/notification-service";
 import {trySilently} from "@/renderer/app/util/error-utils";
+import {AbstractWorkspaceService} from "@/renderer/app/services/domain/workspace-service";
 
 const CONFIG_PATH_KEY = 'configPath';
 
@@ -15,7 +14,7 @@ export class WorkspaceStore {
     @observable configPath: string | undefined = undefined;
     @observable sourceFilesList: string[] = [];
 
-    constructor(private readonly workspaceService: WorkspaceService) {
+    constructor(private readonly workspaceService: AbstractWorkspaceService) {
         trySilently(() => this.loadConfigFromPathSync(localStorage.getItem(CONFIG_PATH_KEY)!));
     }
 
@@ -64,7 +63,7 @@ export class WorkspaceStore {
     @withLoadingScreen("Starting IDE")
     @withNotification({onError: "Failed to start IDE", showLogButton: true})
     async startIDE(configFilePath: string, config: WorkspaceConfig) {
-        await this.workspaceService.startIDE(configFilePath, config, ElectronContext.currentOperatingSystem());
+        await this.workspaceService.startIDE(configFilePath, config);
     }
 
     private async loadConfigFromPath(path: string): Promise<void> {

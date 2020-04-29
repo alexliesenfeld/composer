@@ -25,14 +25,14 @@ export const getIPlug2DependenciesBuildPath = (workspaceDir: string) => path.joi
 export const getProjectBuildPath = (workspaceDir: string) => path.join(workspaceDir, "build");
 export const getVisualStudioSolutionDirPath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getProjectBuildPath(workspaceDir), config.projectName);
 export const getVisualStudioSolutionFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioSolutionDirPath(workspaceDir, config), config.projectName + ".sln");
-export const getVisualStudioIDEProjectsFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioSolutionDirPath(workspaceDir, config), "projects");
-export const getVisualStudioAppIDEProjectFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsFilePath(workspaceDir, config), config.projectName + "-app.vcxproj");
-export const getVisualStudioAppIDEProjectFiltersFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsFilePath(workspaceDir, config), config.projectName + "-app.vcxproj.filters");
-export const getVisualStudioAaxIDEProjectFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsFilePath(workspaceDir, config), config.projectName + "-aax.vcxproj");
-export const getVisualStudioAaxIDEProjectFiltersFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsFilePath(workspaceDir, config), config.projectName + "-aax.vcxproj.filters");
-export const getVisualStudioVst2IDEProjectFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsFilePath(workspaceDir, config), config.projectName + "-vst2.vcxproj");
-export const getVisualStudioVst2IDEProjectFiltersFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsFilePath(workspaceDir, config), config.projectName + "-vst2.vcxproj.filters");
-export const getVisualStudioVst3IDEProjectFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsFilePath(workspaceDir, config), config.projectName + "-vst3.vcxproj");
-export const getVisualStudioVst3IDEProjectFiltersFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsFilePath(workspaceDir, config), config.projectName + "-vst3.vcxproj.filters");
+export const getVisualStudioIDEProjectsDir = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioSolutionDirPath(workspaceDir, config), "projects");
+export const getVisualStudioAppIDEProjectFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsDir(workspaceDir, config), config.projectName + "-app.vcxproj");
+export const getVisualStudioAppIDEProjectFiltersFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsDir(workspaceDir, config), config.projectName + "-app.vcxproj.filters");
+export const getVisualStudioAaxIDEProjectFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsDir(workspaceDir, config), config.projectName + "-aax.vcxproj");
+export const getVisualStudioAaxIDEProjectFiltersFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsDir(workspaceDir, config), config.projectName + "-aax.vcxproj.filters");
+export const getVisualStudioVst2IDEProjectFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsDir(workspaceDir, config), config.projectName + "-vst2.vcxproj");
+export const getVisualStudioVst2IDEProjectFiltersFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsDir(workspaceDir, config), config.projectName + "-vst2.vcxproj.filters");
+export const getVisualStudioVst3IDEProjectFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsDir(workspaceDir, config), config.projectName + "-vst3.vcxproj");
+export const getVisualStudioVst3IDEProjectFiltersFilePath = (workspaceDir: string, config: WorkspaceConfig) => path.join(getVisualStudioIDEProjectsDir(workspaceDir, config), config.projectName + "-vst3.vcxproj.filters");
 
 

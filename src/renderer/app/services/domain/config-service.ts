@@ -43,6 +43,10 @@ export const writeFile = async (path: string, content: string): Promise<void> =>
     return Fsx.writeFile(path, content);
 };
 
+export const readFile = async (path: string): Promise<string> => {
+    return (await Fsx.readFile(path)).toString();
+};
+
 const createInitialConfig = (): WorkspaceConfig => {
     return {
         projectName: 'NewProject',

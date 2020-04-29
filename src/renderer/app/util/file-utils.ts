@@ -3,6 +3,9 @@ import * as AdmZip from "adm-zip";
 import * as fs from "fs";
 import * as path from "path";
 import {Fsx} from "@/renderer/app/util/fsx";
+import {readFile, writeFile} from "@/renderer/app/services/domain/config-service";
+import {AssertionError, OperationFailedError} from "@/renderer/app/model/errors";
+import {assertReplace} from "@/renderer/app/util/string-utils";
 
 export const downloadFile = (url: string, target: string) => {
     return new Promise(function (resolve, reject) {
@@ -116,4 +119,15 @@ export const directoryDoesNotExistOrIsEmpty = async (dirPath: string, fileNamesT
 
 export const copyFile = async (sourceFile: string, targetPath: string) => {
   await Fsx.copyFile(sourceFile, targetPath);
+};
+
+export const assertReplaceContentInFile = async (filePath: string, from: string, to: string) => {
+    const fileContent = await readFile(filePath);
+    if (!fileContent) {
+        throw new OperationFailedError(`Could not open '${filePath}'.`)
+    }
+
+    const replacedFileContent = assertReplace(fileContent, from, to);
+
+    await writeFile(filePath, replacedFileContent);
 };
