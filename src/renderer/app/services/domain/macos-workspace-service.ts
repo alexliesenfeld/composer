@@ -5,6 +5,9 @@ import {AbstractWorkspaceService} from "@/renderer/app/services/domain/workspace
 import {FilesService} from "@/renderer/app/services/domain/files-service";
 
 export class MacOSWorkspaceService extends AbstractWorkspaceService {
+    removeDefaultPrototypeFiles(workspaceDir: string, config: WorkspaceConfig): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
 
     public constructor(fileService: FilesService) {
         super(fileService);
@@ -20,7 +23,7 @@ export class MacOSWorkspaceService extends AbstractWorkspaceService {
     }
 
     @logActivity("Adding source files")
-    async addSourceFilesToIDEProject(composerFilePath: string, config: WorkspaceConfig): Promise<void> {
+    async addUserSourceFilesToIDEProject(composerFilePath: string, config: WorkspaceConfig): Promise<void> {
         throw new UnsupportedOperationError("Not implemented");
     }
 

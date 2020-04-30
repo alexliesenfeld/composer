@@ -127,7 +127,7 @@ export const assertReplaceContentInFile = async (filePath: string, from: string,
         throw new OperationFailedError(`Could not open '${filePath}'.`)
     }
 
-    const replacedFileContent = assertReplace(fileContent, from, to);
+    const replacedFileContent = assertReplace(filePath, fileContent, from, to);
 
     await writeFile(filePath, replacedFileContent);
 };

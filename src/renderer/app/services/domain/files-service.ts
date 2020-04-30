@@ -7,6 +7,7 @@ import {
 } from "@/renderer/app/services/domain/common";
 import {copyFile, createDirIfNotExists, directoryDoesNotExistOrIsEmpty} from "@/renderer/app/util/file-utils";
 import * as path from "path";
+import * as fs from "fs";
 
 export class FilesService {
 
@@ -47,6 +48,18 @@ export class FilesService {
             return [];
         }
         return (await Fsx.readdir(dir)).map(fileName => path.join(dir, fileName));
+    }
+
+    loadSourceFileContentSync(userConfigFilePath: string, fileName: string): string {
+        const dir = getSourcesDirFromConfigPath(userConfigFilePath);
+        const filePath = path.join(dir, fileName);
+        return fs.readFileSync(filePath).toString();
+    }
+
+    loadFontContentSync(userConfigFilePath: string, fileName: string): Buffer {
+        const dir = getFontsDirFromConfigPath(userConfigFilePath);
+        const filePath = path.join(dir, fileName);
+        return fs.readFileSync(filePath);
     }
 
     @logActivity("Adding multiple source files")

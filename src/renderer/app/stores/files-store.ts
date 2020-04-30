@@ -14,6 +14,12 @@ export class FilesStore {
     @observable sourceFileNamesList: string[] = [];
     @observable fontFileNamesList: string[] = [];
     @observable imageFileNamesList: string[] = [];
+    @observable selectedSourceFile: string | undefined;
+    @observable selectedFontFile: string | undefined;
+    @observable selectedImageFile: string | undefined;
+    @observable selectedSourceFileContent: string | undefined;
+    @observable selectedFontFileContent: Buffer | undefined;
+    @observable fontViewerFontSize = 18;
 
     constructor(private readonly filesService: FilesService) {
     }
@@ -88,5 +94,15 @@ export class FilesStore {
 
         await this.filesService.addImageFiles(userConfigFilePath, dialogResult.filePaths);
         return this.refreshImageFilesList(userConfigFilePath);
+    }
+
+    @action.bound
+    public loadSourceFileContent(userConfigFilePath: string, file: string) {
+        this.selectedSourceFileContent = this.filesService.loadSourceFileContentSync(userConfigFilePath, file);
+    }
+
+    @action.bound
+    public loadFontContent(userConfigFilePath: string, file: string) {
+        this.selectedFontFileContent = this.filesService.loadFontContentSync(userConfigFilePath, file);
     }
 }

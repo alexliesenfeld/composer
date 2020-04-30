@@ -35,8 +35,10 @@
   "dependencies": {
     "@blueprintjs/select": "^3.12.2",
     "@types/adm-zip": "^0.4.33",
+    "@types/css-font-loading-module": "0.0.4",
     "@types/mv": "^2.1.0",
     "@types/request": "^2.48.4",
+    "ace-builds": "^1.4.11",
     "adm-zip": "^0.4.14",
     "electron-sudo": "^4.0.12",
     "mobx": "^5.15.4",
@@ -45,6 +47,7 @@
     "mv": "^2.1.1",
     "npm-check-updates": "^4.1.2",
     "react": "^16.13.1",
+    "react-ace": "^8.1.0",
     "react-dom": "^16.13.1",
     "request": "^2.88.2",
     "sass": "^1.26.5",

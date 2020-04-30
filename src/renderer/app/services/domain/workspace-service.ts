@@ -1,4 +1,5 @@
 import {
+    copyFile,
     createDirIfNotExists,
     deleteDirectory,
     deleteFileIfExists,
@@ -14,7 +15,8 @@ import {
     getDependenciesDirPath,
     getIPlug2BaseDirPath,
     getIPlug2DependenciesBuildPath,
-    getProjectBuildPath,
+    getProjectBuildPath, getProjectsBuildPath,
+    getSourcesDir,
     getVst3SdkDirPath,
     getWorkDirPath,
     getWorkspaceDir
@@ -31,8 +33,8 @@ export abstract class AbstractWorkspaceService {
     }
 
     @logActivity("Starting IDE")
-    public async startIDE(userConfigFilePath: string, config: WorkspaceConfig) {
-        const workspaceDir = getWorkspaceDir(userConfigFilePath);
+    public async startIDE(composerFilePath: string, config: WorkspaceConfig) {
+        const workspaceDir = getWorkspaceDir(composerFilePath);
         await createDirIfNotExists(getDependenciesDirPath(workspaceDir));
 
         if (await this.shouldSetupIPlug2(workspaceDir)) {
@@ -47,7 +49,16 @@ export abstract class AbstractWorkspaceService {
             await this.downloadVstSdk(workspaceDir, "0908f47");
         }
 
-        await this.createProjectSources(userConfigFilePath, config);
+        await this.generateProjectFromPrototype(composerFilePath, config);
+
+        if (await this.shouldInitializeSourceFiles(workspaceDir)) {
+            await this.initializeSourceFiles(workspaceDir, config);
+        }
+
+        await this.removeDefaultPrototypeFiles(workspaceDir, config);
+
+        await this.addUserSourceFilesToIDEProject(composerFilePath, config);
+
         await this.startIDEProject(workspaceDir, config);
     }
 
@@ -107,15 +118,22 @@ export abstract class AbstractWorkspaceService {
     }
 
     @logActivity("Creating project from iPlug2 prototype")
-    async createProjectSources(composerFilePath: string, config: WorkspaceConfig): Promise<void> {
+    async generateProjectFromPrototype(composerFilePath: string, config: WorkspaceConfig): Promise<void> {
         const workspaceDirPath = getWorkspaceDir(composerFilePath);
-        const buildPath = getProjectBuildPath(workspaceDirPath);
+        const buildsDir = getProjectsBuildPath(workspaceDirPath);
         const examplesPath = path.join(getIPlug2BaseDirPath(workspaceDirPath), "Examples");
 
-        await recreateDir(buildPath);
-        await Cpx.spawn(`python duplicate.py ${config.prototype} ${config.projectName} ${config.manufacturerName} ${buildPath}`, examplesPath);
+        await recreateDir(buildsDir);
+        await Cpx.spawn(`python duplicate.py ${config.prototype} ${config.projectName} ${config.manufacturerName} ${buildsDir}`, examplesPath);
+    }
 
-        await this.addSourceFilesToIDEProject(composerFilePath, config);
+    @logActivity("Copying initial sources from iPlug prototype project to project sources")
+    async initializeSourceFiles(workspaceDirPath: string, workspaceConfig: WorkspaceConfig): Promise<void> {
+        const sourcesDir = getSourcesDir(workspaceDirPath);
+
+        await createDirIfNotExists(sourcesDir);
+        const filesToCopy = this.getDefaultPrototypeFiles(workspaceDirPath, workspaceConfig);
+        await Promise.all(filesToCopy.map(f => copyFile(f, path.join(sourcesDir, path.basename(f)))));
     }
 
     async shouldSetupIPlug2(workspaceDirPath: string): Promise<boolean> {
@@ -130,7 +148,19 @@ export abstract class AbstractWorkspaceService {
         return directoryDoesNotExistOrIsEmpty(getVst3SdkDirPath(workspaceDirPath), ["README.md"]);
     }
 
-    abstract async addSourceFilesToIDEProject(composerFilePath: string, config: WorkspaceConfig): Promise<void>;
+    async shouldInitializeSourceFiles(workspaceDirPath: string): Promise<boolean> {
+        return directoryDoesNotExistOrIsEmpty(getSourcesDir(workspaceDirPath));
+    }
+
+    getDefaultPrototypeFiles(workspaceDir: string, workspaceConfig: WorkspaceConfig): string[] {
+        const projectBuildDir = getProjectBuildPath(workspaceDir, workspaceConfig);
+        return ["config.h", `${workspaceConfig.projectName}.h`, `${workspaceConfig.projectName}.cpp`]
+            .map(file => path.join(projectBuildDir, file));
+    }
+
+    abstract async removeDefaultPrototypeFiles(workspaceDir: string, config: WorkspaceConfig): Promise<void>;
+
+    abstract async addUserSourceFilesToIDEProject(composerFilePath: string, config: WorkspaceConfig): Promise<void>;
 
     abstract async startIDEProject(workspaceDirPath: string, config: WorkspaceConfig): Promise<void>;
 

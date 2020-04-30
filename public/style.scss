@@ -28,7 +28,6 @@ Generic
   width: 100%;
 }
 
-
 .row {
   @include column-split;
   padding-top: 0.5em;
@@ -59,6 +58,19 @@ Generic
 .page-sections-container section {
   margin-bottom: 1em;
 }
+
+.full-width {
+  width: 100%;
+}
+
+.no-padding {
+  padding: 0 !important;
+}
+
+.margin-top-1 {
+  margin-top: 1em;
+}
+
 
 @media only screen and (min-width: 1200px) {
   .page-sections-container {
@@ -245,8 +257,7 @@ WelcomePage
 FilesPage
 ******************************************************************/
 .FilesPage {
-  height: calc(100% - 4em);
-
+  height: calc(100% - 1em);
 }
 
 .FilesPage .file-list-container {
@@ -254,4 +265,26 @@ FilesPage
 
   height: 100%;
   overflow-y: auto;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+.FilesPage .file-list-container .bp3-tree-node {
+  cursor: pointer;
+}
+
+.FilesPage .file-list-container .ace_scrollbar {
+  @extend .custom-scrollbar;
+}
+
+.FilesPage .font-size-slider-nav {
+  width: 100%;
+}
+
+/*****************************************************************
+FontViewer
+******************************************************************/
+.FontViewer  {
+  margin-bottom: 2em;
+  padding: 2em;
 }

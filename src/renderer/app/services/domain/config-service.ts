@@ -36,7 +36,7 @@ const parseConfig = (content: string): WorkspaceConfig => {
 };
 
 export const writeConfigToPath = async (path: string, config: WorkspaceConfig): Promise<unknown> => {
-    return Fsx.writeFile(path, JSON.stringify(config));
+    return Fsx.writeFile(path, JSON.stringify(config, null, 4));
 };
 
 export const writeFile = async (path: string, content: string): Promise<void> => {
