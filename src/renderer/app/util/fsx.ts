@@ -1,6 +1,8 @@
 import * as fs from "fs";
 import * as util from "util";
 import * as mv from "mv";
+import * as chokidar from "chokidar"
+
 
 /**
  * Contains promisified functions from the node "fs" package.
@@ -20,4 +22,3 @@ export abstract class Fsx {
     static readonly move = (util.promisify(mv));
     static readonly copyFile = util.promisify(fs.copyFile);
 }
-

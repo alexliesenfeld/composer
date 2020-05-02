@@ -9,13 +9,13 @@ interface FontViewerProps {
     fontSize: number
 }
 
-export class FontViewer extends PureComponent<FontViewerProps> {
+export class FontViewer extends React.Component<FontViewerProps> {
 
     async componentDidUpdate(): Promise<void> {
         return this.loadFont();
     }
 
-    async componentDidMount(): Promise<void> {
+    async componentWillMount(): Promise<void> {
         return this.loadFont();
     }
 

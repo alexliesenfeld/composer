@@ -1,9 +1,10 @@
 import {logActivity} from "@/renderer/app/services/ui/logging-service";
 import {Fsx} from "@/renderer/app/util/fsx";
 import {
-    getFontsDirFromConfigPath,
-    getImagesDirFromConfigPath, getResourcesDir, getResourcesDirFromConfigPath,
-    getSourcesDirFromConfigPath
+    getFontsDir,
+    getFontsDirFromConfigPath, getImagesDir,
+    getImagesDirFromConfigPath, getResourcesDir, getResourcesDirFromConfigPath, getSourcesDir,
+    getSourcesDirFromConfigPath, getWorkspaceDir
 } from "@/renderer/app/services/domain/common";
 import {copyFile, createDirIfNotExists, directoryDoesNotExistOrIsEmpty} from "@/renderer/app/util/file-utils";
 import * as path from "path";
@@ -50,16 +51,24 @@ export class FilesService {
         return (await Fsx.readdir(dir)).map(fileName => path.join(dir, fileName));
     }
 
-    loadSourceFileContentSync(userConfigFilePath: string, fileName: string): string {
+    async loadSourceFileContent(userConfigFilePath: string, fileName: string): Promise<string> {
         const dir = getSourcesDirFromConfigPath(userConfigFilePath);
         const filePath = path.join(dir, fileName);
-        return fs.readFileSync(filePath).toString();
+        const buffer = await Fsx.readFile(filePath);
+        return buffer.toString();
     }
 
-    loadFontContentSync(userConfigFilePath: string, fileName: string): Buffer {
+    async loadFontContent(userConfigFilePath: string, fileName: string): Promise<Buffer> {
         const dir = getFontsDirFromConfigPath(userConfigFilePath);
         const filePath = path.join(dir, fileName);
-        return fs.readFileSync(filePath);
+        return Fsx.readFile(filePath);
+    }
+
+    async loadImageFileContent(userConfigFilePath: string, fileName: string): Promise<string> {
+        const dir = getImagesDirFromConfigPath(userConfigFilePath);
+        const filePath = path.join(dir, fileName);
+        const buffer = await Fsx.readFile(filePath);
+        return buffer.toString('base64');
     }
 
     @logActivity("Adding multiple source files")
@@ -119,5 +128,15 @@ export class FilesService {
         await copyFile(newImageFilePath, filePath);
     }
 
+    getSourcesDir(userConfigFilePath: string): string {
+        return getSourcesDir(getWorkspaceDir(userConfigFilePath));
+    }
 
+    getFontsDir(userConfigFilePath: string): string {
+        return getFontsDir(getWorkspaceDir(userConfigFilePath));
+    }
+
+    getImagesDir(userConfigFilePath: string): string {
+        return getImagesDir(getWorkspaceDir(userConfigFilePath));
+    }
 }

@@ -7,16 +7,14 @@ import {
     Card,
     IconName,
     ITreeNode,
-    Menu,
-    MenuItem,
     Navbar,
-    Popover,
+    Text,
     Slider,
     Tab,
     Tabs,
-    Tree
+    Tree, H5, H6
 } from "@blueprintjs/core";
-import {ADD, CARET_DOWN, CLEAN, FONT, HEADER, MEDIA, TRASH} from "@blueprintjs/icons/lib/esm/generated/iconNames";
+import {CLEAN, FONT, HEADER, IMPORT, MEDIA, NEW_OBJECT, TRASH} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 import {inject, observer} from "mobx-react";
 import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 import {FilesStore, FilesTab} from "@/renderer/app/stores/files-store";
@@ -26,27 +24,38 @@ import "ace-builds/webpack-resolver";
 import * as path from "path";
 import {FontViewer} from "@/renderer/app/components/FontViewer";
 import {ELEVATION_2} from "@blueprintjs/core/lib/esm/common/classes";
+import {ImageViewer} from "@/renderer/app/components/ImageViewer";
 
 @inject('workspaceStore', 'filesStore')
 @observer
-export class FilesPage extends React.PureComponent<{ workspaceStore?: WorkspaceStore, filesStore?: FilesStore }> {
+export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore, filesStore?: FilesStore }> {
 
-    async refreshLists(): Promise<void> {
-        const actions = [
+    async componentDidMount(): Promise<void> {
+        await Promise.all([
             this.props.filesStore!.refreshSourceFilesList(this.props.workspaceStore!.configPath!),
             this.props.filesStore!.refreshFontFilesList(this.props.workspaceStore!.configPath!),
             this.props.filesStore!.refreshImageFilesList(this.props.workspaceStore!.configPath!),
-        ];
+        ]);
 
-        await Promise.all(actions);
-
-        if (this.props.filesStore!.selectedSourceFile) {
-            this.props.filesStore!.loadSourceFileContent(this.props.workspaceStore!.configPath!, this.props.filesStore!.selectedSourceFile)
-        }
+        await Promise.all([
+            this.props.filesStore!.watchSourcesDir(this.props.workspaceStore!.configPath!, () => {
+                this.props.filesStore!.refreshSourceFilesList(this.props.workspaceStore!.configPath!);
+            }),
+            this.props.filesStore!.watchFontsDir(this.props.workspaceStore!.configPath!, () => {
+                this.props.filesStore!.refreshFontFilesList(this.props.workspaceStore!.configPath!);
+            }),
+            this.props.filesStore!.watchImageDir(this.props.workspaceStore!.configPath!, () => {
+                this.props.filesStore!.refreshImageFilesList(this.props.workspaceStore!.configPath!);
+            })
+        ]);
     }
 
-    async componentDidMount(): Promise<void> {
-        await this.refreshLists();
+    async componentWillUnmount() {
+        await Promise.all([
+            this.props.filesStore!.unwatchSourcesDir(),
+            this.props.filesStore!.unwatchFontsDir(),
+            this.props.filesStore!.unwatchImageDir()
+        ]);
     }
 
     render() {
@@ -64,16 +73,14 @@ export class FilesPage extends React.PureComponent<{ workspaceStore?: WorkspaceS
                     <Tab id={FilesTab.FONTS_TAB} title='Fonts'/>
                     <Tab id={FilesTab.IMAGES_TAB} title='Images'/>
                 </Tabs>
-                <div className='file-list-container row'>
+                <div className='file-list-tab-page row'>
                     <When condition={this.props.filesStore!.activeTab == FilesTab.SOURCE_FILES_TAB}>
-                        <div className='left-column' style={{maxWidth: "30em", paddingLeft: '1px'}}>
+                        <div className='left-column file-list-container'>
                             <FileList paths={sourceFileNamesList}
                                       currentlySelectedFile={this.props.filesStore!.selectedSourceFile}
                                       onSelectFile={(file) => {
-                                          this.props.filesStore!.selectedSourceFile = file;
-                                          this.props.filesStore!.loadSourceFileContent(this.props.workspaceStore!.configPath!, file)
+                                          this.props.filesStore!.setSelectedSourceFile(this.props.workspaceStore!.configPath!, file);
                                       }}
-                                      onRefresh={() => this.refreshLists()}
                                       onImportExistingItem={() => {
                                           this.props.filesStore!.addNewSourceFile(this.props.workspaceStore!.configPath!);
                                       }}
@@ -81,38 +88,38 @@ export class FilesPage extends React.PureComponent<{ workspaceStore?: WorkspaceS
                                       }}
                             />
                         </div>
-                        <div className='right-column'>
-                            <Card className={`${ELEVATION_2} full-width no-padding`}><AceEditor
-                                style={{width: "100%", height: "100%"}}
-                                placeholder='No file has been loaded'
-                                mode='c_cpp'
-                                theme='tomorrow_night'
-                                name='source-file-editor'
-                                value={this.props.filesStore!.selectedSourceFileContent}
-                                fontSize={16}
-                                showPrintMargin={false}
-                                showGutter={true}
-                                highlightActiveLine={false}
-                                setOptions={{
-                                    useWorker: false,
-                                    enableBasicAutocompletion: true,
-                                    enableLiveAutocompletion: true,
-                                    showLineNumbers: true,
-                                    tabSize: 4,
-                                    readOnly: true,
-                                }}
-                            /></Card>
+                        <div className='right-column viewer-container'>
+                            <Card className={`${ELEVATION_2} full-width no-padding`}>
+                                <AceEditor
+                                    style={{width: "100%", height: "100%"}}
+                                    placeholder='No file has been loaded'
+                                    mode='c_cpp'
+                                    theme='tomorrow_night'
+                                    name='source-file-editor'
+                                    value={this.props.filesStore!.selectedSourceFileContent}
+                                    fontSize={16}
+                                    showPrintMargin={false}
+                                    showGutter={true}
+                                    highlightActiveLine={false}
+                                    setOptions={{
+                                        useWorker: false,
+                                        enableBasicAutocompletion: true,
+                                        enableLiveAutocompletion: true,
+                                        showLineNumbers: true,
+                                        tabSize: 4,
+                                        readOnly: true,
+                                    }}
+                                />
+                            </Card>
                         </div>
                     </When>
                     <When condition={this.props.filesStore!.activeTab == FilesTab.FONTS_TAB}>
-                        <div className='left-column' style={{maxWidth: "30em", paddingLeft: '1px'}}>
+                        <div className='left-column file-list-container'>
                             <FileList paths={fontFileNamesList}
                                       currentlySelectedFile={this.props.filesStore!.selectedFontFile}
                                       onSelectFile={(file) => {
-                                          this.props.filesStore!.selectedFontFile = file;
-                                          this.props.filesStore!.loadFontContent(this.props.workspaceStore!.configPath!, file)
+                                          this.props.filesStore!.setSelectedFontFile(this.props.workspaceStore!.configPath!, file);
                                       }}
-                                      onRefresh={() => this.refreshLists()}
                                       onImportExistingItem={() => {
                                           this.props.filesStore!.addNewFontFile(this.props.workspaceStore!.configPath!);
                                       }}
@@ -120,10 +127,13 @@ export class FilesPage extends React.PureComponent<{ workspaceStore?: WorkspaceS
                                       }}
                             />
                         </div>
-                        <div className='right-column'>
+                        <div className='right-column viewer-container'>
                             <When condition={!!this.props.filesStore!.selectedFontFileContent}>
-                                <Card className={`full-width no-padding`}>
+                                <Card className={`${ELEVATION_2} full-width no-padding`}>
                                     <Navbar>
+                                        <Navbar.Group align={Alignment.LEFT}>
+                                            <Text>{this.props.filesStore!.selectedFontFile}</Text>
+                                        </Navbar.Group>
                                         <Navbar.Group align={Alignment.RIGHT} className='font-size-slider-nav'>
                                             <Slider
                                                 min={0}
@@ -135,6 +145,7 @@ export class FilesPage extends React.PureComponent<{ workspaceStore?: WorkspaceS
                                             />
                                         </Navbar.Group>
                                     </Navbar>
+
                                     <FontViewer fontFileBuffer={this.props.filesStore!.selectedFontFileContent!}
                                                 fontSize={this.props.filesStore!.fontViewerFontSize}/>
                                 </Card>
@@ -143,18 +154,44 @@ export class FilesPage extends React.PureComponent<{ workspaceStore?: WorkspaceS
                         </div>
                     </When>
                     <When condition={this.props.filesStore!.activeTab == FilesTab.IMAGES_TAB}>
-                        <div className='left-column' style={{maxWidth: "30em", paddingLeft: '1px'}}>
+                        <div className='left-column file-list-container'>
                             <FileList paths={imageFileNamesList}
                                       currentlySelectedFile={this.props.filesStore!.selectedImageFile}
                                       onSelectFile={(file) => {
-                                          this.props.filesStore!.selectedImageFile = file;
+                                          this.props.filesStore!.setSelectedImageFile(this.props.workspaceStore!.configPath!, file);
                                       }}
-                                      onRefresh={() => this.refreshLists()}
                                       onImportExistingItem={() => {
                                           this.props.filesStore!.addNewImage(this.props.workspaceStore!.configPath!);
                                       }}/>
                         </div>
-                        <div className='right-column'>
+                        <div className='right-column viewer-container'>
+                            <When
+                                condition={!!this.props.filesStore!.selectedImageFile && !!this.props.filesStore!.selectedImageFileContent}>
+                                <Card className={`${ELEVATION_2} full-width no-padding`}>
+                                    <Navbar>
+                                        <Navbar.Group align={Alignment.LEFT}>
+                                            <Text>{this.props.filesStore!.selectedImageFile}</Text>
+                                        </Navbar.Group>
+                                        <Navbar.Group align={Alignment.RIGHT}>
+                                            <ButtonGroup>
+                                                <Button small={true}
+                                                        onClick={() => this.props.filesStore!.imageViewerStretchImage = false}
+                                                        active={!this.props.filesStore!.imageViewerStretchImage}
+                                                >Original</Button>
+                                                <Button small={true}
+                                                        onClick={() => this.props.filesStore!.imageViewerStretchImage = true}
+                                                        active={this.props.filesStore!.imageViewerStretchImage}
+                                                >Stretch</Button>
+                                            </ButtonGroup>
+                                        </Navbar.Group>
+
+                                    </Navbar>
+
+                                    <ImageViewer fileName={this.props.filesStore!.selectedImageFile!}
+                                                 imageFileBuffer={this.props.filesStore!.selectedImageFileContent!}
+                                                 fullSize={this.props.filesStore!.imageViewerStretchImage}/>
+                                </Card>
+                            </When>
 
                         </div>
                     </When>
@@ -170,34 +207,26 @@ interface FileListProps {
     currentlySelectedFile: string | undefined,
     onCreateNewItem?: () => void;
     onImportExistingItem: () => void;
-    onRefresh: () => void;
 }
 
 export const FileList = (props: FileListProps) => {
     return (<Card className={`${ELEVATION_2} full-width no-padding`}>
         <Navbar>
             <Navbar.Group align={"left"}>
-                <Popover
-                    content={
-                        <Menu>
-                            {
-                                props.onCreateNewItem ?
-                                    <MenuItem text="New" onClick={() => props.onCreateNewItem!()}/> : null
-                            }
-                            <MenuItem text="Import" onClick={() => props.onImportExistingItem()}/>
-                        </Menu>
+                <ButtonGroup>
+                    {
+                        props.onCreateNewItem ?
+                            <Button icon={NEW_OBJECT} small={true} minimal={true}
+                                    onClick={() => props.onCreateNewItem!()}>New</Button> : null
                     }
-                    position={"bottom"}
-                    minimal={true}>
-                    <Button rightIcon={CARET_DOWN} icon={ADD} small={true} minimal={true}>Add</Button>
-                </Popover>
-            </Navbar.Group>
-            <Navbar.Group align={"right"}>
-                <Button icon="refresh" small={true} minimal={true}>Refresh</Button>
+                    <Button icon={IMPORT} small={true} minimal={true}
+                            onClick={() => props.onImportExistingItem()}>Import</Button>
+                </ButtonGroup>
+
             </Navbar.Group>
 
         </Navbar>
-        <Tree className='margin-top-1'
+        <Tree className='file-tree'
               contents={props.paths.map((fileName) => {
                   return {
                       id: fileName,
@@ -227,6 +256,8 @@ const getIconForFileName = (fileName: string): IconName | undefined => {
         case ".png":
         case ".bmp":
         case ".svg":
+        case ".jpeg":
+        case ".jpg":
             return MEDIA;
         default:
             return undefined;
