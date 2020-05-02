@@ -6,9 +6,15 @@ import {
     getImagesDirFromConfigPath, getResourcesDir, getResourcesDirFromConfigPath, getSourcesDir,
     getSourcesDirFromConfigPath, getWorkspaceDir
 } from "@/renderer/app/services/domain/common";
-import {copyFile, createDirIfNotExists, directoryDoesNotExistOrIsEmpty} from "@/renderer/app/util/file-utils";
+import {
+    copyFile,
+    createDirIfNotExists,
+    deleteFileIfExists,
+    directoryDoesNotExistOrIsEmpty
+} from "@/renderer/app/util/file-utils";
 import * as path from "path";
 import * as fs from "fs";
+import {writeFile} from "@/renderer/app/services/domain/config-service";
 
 export class FilesService {
 
@@ -72,14 +78,39 @@ export class FilesService {
     }
 
     @logActivity("Adding multiple source files")
-    async addSourceFiles(userConfigFilePath: string, newSourceFilePaths: string[]): Promise<void> {
+    async addNewSourceFiles(userConfigFilePath: string, newSourceFilePaths: string[]): Promise<void> {
         for (const newSourceFilePath of newSourceFilePaths) {
-            await this.addSourceFile(userConfigFilePath, newSourceFilePath);
+            await this.addNewSourceFile(userConfigFilePath, newSourceFilePath);
         }
     }
 
-    @logActivity("Adding source file {1}")
-    async addSourceFile(userConfigFilePath: string, newSourceFilePath: string): Promise<void> {
+
+    @logActivity("Adding new source file {1}")
+    async addNewSourceFile(userConfigFilePath: string, fileName: string): Promise<void> {
+        const sourcesDir = getSourcesDirFromConfigPath(userConfigFilePath);
+        const filePath = path.join(sourcesDir, fileName);
+
+        await createDirIfNotExists(sourcesDir);
+        await writeFile(filePath, "");
+    }
+
+    @logActivity("Deleting source file {1}")
+    async deleteSourceFile(userConfigFilePath: string, fileName: string): Promise<void> {
+        const sourcesDir = getSourcesDirFromConfigPath(userConfigFilePath);
+        const filePath = path.join(sourcesDir, fileName);
+
+        await deleteFileIfExists(filePath);
+    }
+
+    @logActivity("Importing multiple source files")
+    async importSourceFiles(userConfigFilePath: string, newSourceFilePaths: string[]): Promise<void> {
+        for (const newSourceFilePath of newSourceFilePaths) {
+            await this.importSourceFile(userConfigFilePath, newSourceFilePath);
+        }
+    }
+
+    @logActivity("Importing source file {1}")
+    async importSourceFile(userConfigFilePath: string, newSourceFilePath: string): Promise<void> {
         const sourcesDir = getSourcesDirFromConfigPath(userConfigFilePath);
         const fileName = path.basename(newSourceFilePath);
         const filePath = path.join(sourcesDir, fileName);
@@ -108,6 +139,14 @@ export class FilesService {
         await copyFile(newFontFilePath, filePath);
     }
 
+    @logActivity("Deleting font file {1}")
+    async deleteFontFile(userConfigFilePath: string, fileName: string): Promise<void> {
+        const sourcesDir = getFontsDirFromConfigPath(userConfigFilePath);
+        const filePath = path.join(sourcesDir, fileName);
+
+        await deleteFileIfExists(filePath);
+    }
+
     @logActivity("Adding multiple image files")
     async addImageFiles(userConfigFilePath: string, newImageFilePaths: string[]): Promise<void> {
         for (const newSourceFilePath of newImageFilePaths) {
@@ -126,6 +165,14 @@ export class FilesService {
         await createDirIfNotExists(imagesDir);
 
         await copyFile(newImageFilePath, filePath);
+    }
+
+    @logActivity("Deleting image file {1}")
+    async deleteImageFile(userConfigFilePath: string, fileName: string): Promise<void> {
+        const sourcesDir = getImagesDirFromConfigPath(userConfigFilePath);
+        const filePath = path.join(sourcesDir, fileName);
+
+        await deleteFileIfExists(filePath);
     }
 
     getSourcesDir(userConfigFilePath: string): string {

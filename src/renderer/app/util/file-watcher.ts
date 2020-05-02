@@ -14,7 +14,9 @@ export class FileWatcher {
 
     async start() {
         return new Promise<void>((resolve, reject) => {
-            this.chokidarWatcher = chokidar.watch(this.dirPath, {})
+            this.chokidarWatcher = chokidar.watch(this.dirPath, {
+                persistent: true
+            })
                 .on('add', this.onChange)
                 .on('change', this.onChange)
                 .on('unlink', this.onChange)

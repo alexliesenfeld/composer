@@ -257,7 +257,12 @@ WelcomePage
 FilesPage
 ******************************************************************/
 .FilesPage {
-  height: calc(100% - 1.25em);
+  height: calc(100% - 1em);
+}
+
+.FilesPage .font-size-slider-nav {
+  width: 35%;
+  max-width: 20em;
 }
 
 .FilesPage .file-list-tab-page {
@@ -266,35 +271,39 @@ FilesPage
   padding-bottom: 1em;
 }
 
-.FilesPage .file-list-tab-page .bp3-tree-node {
+/*****************************************************************
+FileBrowser
+******************************************************************/
+.FileBrowser {
+  @extend .row;
+  height: calc(100% - 0.75em);
+  padding-top: 1em;
+}
+
+.FileBrowser .bp3-tree-node {
   cursor: pointer;
 }
 
-.FilesPage .file-list-tab-page .ace_scrollbar {
+.FileBrowser .ace_scrollbar {
   @extend .custom-scrollbar;
 }
 
-.FilesPage .file-list-tab-page .file-list-container {
+.FileBrowser .file-list-container {
   @extend .custom-scrollbar;
   max-height: 100%;
-  max-width: 30em;
+  max-width: 25em;
   padding-left: 1px;
 }
 
 
-.FilesPage .font-size-slider-nav {
-  width: 35%;
-  max-width: 20em;
-}
-
-.FilesPage .file-tree {
+.FileBrowser .file-tree {
   @extend .custom-scrollbar;
   padding-top: 1em;
   max-height: calc(100% - 50px);
   overflow-y: auto;
 }
 
-.FilesPage .viewer-container {
+.FileBrowser .viewer-container {
   max-height: 100%;
 }
 

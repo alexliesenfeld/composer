@@ -26,6 +26,10 @@ export class FilesStore {
     @observable selectedImageFileContent: string | undefined;
     @observable fontViewerFontSize = 18;
     @observable imageViewerStretchImage = false;
+    @observable createNewSourceFileDialogOpened = false;
+    @observable sourceFileToDelete: string | undefined;
+    @observable fontFileToDelete: string | undefined;
+    @observable imageFileToDelete: string | undefined;
 
     constructor(private readonly filesService: FilesService) {
     }
@@ -34,6 +38,8 @@ export class FilesStore {
     async refreshSourceFilesList(userConfigFilePath: string): Promise<void> {
         const paths = await this.filesService.loadSourceFilesList(userConfigFilePath);
         const names = paths.map((filePath) => path.basename(filePath));
+
+        names.sort();
 
         runInAction(() => {
             this.sourceFileNamesList = names;
@@ -53,6 +59,8 @@ export class FilesStore {
         const paths = await this.filesService.loadFontFileList(userConfigFilePath);
         const names = paths.map((filePath) => path.basename(filePath));
 
+        names.sort();
+
         runInAction(() => {
             this.fontFileNamesList = names;
             if (this.selectedFontFile && !this.fontFileNamesList.includes(this.selectedFontFile)) {
@@ -70,6 +78,8 @@ export class FilesStore {
     async refreshImageFilesList(userConfigFilePath: string): Promise<void> {
         const paths = await this.filesService.loadImageFilesList(userConfigFilePath);
         const names = paths.map((filePath) => path.basename(filePath));
+
+        names.sort();
 
         runInAction(() => {
             this.imageFileNamesList = names;
@@ -118,7 +128,71 @@ export class FilesStore {
     }
 
     @action.bound
-    async addNewSourceFile(userConfigFilePath: string): Promise<void> {
+    async createNewSourceFile(userConfigFilePath: string, fileName: string): Promise<void> {
+        await this.filesService.addNewSourceFile(userConfigFilePath, fileName);
+        return this.refreshSourceFilesList(userConfigFilePath);
+    }
+
+
+    @action.bound
+    async startDeletingSourceFile(fileName: string): Promise<void> {
+        this.sourceFileToDelete = fileName;
+    }
+
+    @action.bound
+    async cancelDeletingSourceFile(): Promise<void> {
+        this.sourceFileToDelete = undefined;
+    }
+
+    @action.bound
+    async completeDeletingSourceFile(userConfigFilePath: string): Promise<void> {
+        await this.filesService.deleteSourceFile(userConfigFilePath, this.sourceFileToDelete!);
+        await this.refreshSourceFilesList(userConfigFilePath);
+        runInAction(() => {
+            this.sourceFileToDelete = undefined;
+        });
+    }
+
+    @action.bound
+    async startDeletingFontFile(fileName: string): Promise<void> {
+        this.fontFileToDelete = fileName;
+    }
+
+    @action.bound
+    async cancelDeletingFontFile(): Promise<void> {
+        this.fontFileToDelete = undefined;
+    }
+
+    @action.bound
+    async completeDeletingFontFile(userConfigFilePath: string): Promise<void> {
+        await this.filesService.deleteFontFile(userConfigFilePath, this.fontFileToDelete!);
+        await this.refreshSourceFilesList(userConfigFilePath);
+        runInAction(() => {
+            this.fontFileToDelete = undefined;
+        });
+    }
+
+    @action.bound
+    async startDeletingImageFile(fileName: string): Promise<void> {
+        this.imageFileToDelete = fileName;
+    }
+
+    @action.bound
+    async cancelDeletingImageFile(): Promise<void> {
+        this.imageFileToDelete = undefined;
+    }
+
+    @action.bound
+    async completeDeletingImageFile(userConfigFilePath: string): Promise<void> {
+        await this.filesService.deleteImageFile(userConfigFilePath, this.imageFileToDelete!);
+        await this.refreshSourceFilesList(userConfigFilePath);
+        runInAction(() => {
+            this.imageFileToDelete = undefined;
+        });
+    }
+
+    @action.bound
+    async importSourceFile(userConfigFilePath: string): Promise<void> {
         const dialogResult = await ElectronContext.dialog.showOpenDialog({
             properties: ["multiSelections"],
             filters: [{extensions: ["h", "hpp", "cpp"], name: 'Source Files (*.h,*.hpp,*.cpp)'}]
@@ -128,12 +202,12 @@ export class FilesStore {
             return;
         }
 
-        await this.filesService.addSourceFiles(userConfigFilePath, dialogResult.filePaths);
+        await this.filesService.importSourceFiles(userConfigFilePath, dialogResult.filePaths);
         return this.refreshSourceFilesList(userConfigFilePath);
     }
 
     @action.bound
-    async addNewFontFile(userConfigFilePath: string): Promise<void> {
+    async importFontFile(userConfigFilePath: string): Promise<void> {
         const dialogResult = await ElectronContext.dialog.showOpenDialog({
             properties: ["multiSelections"],
             filters: [{extensions: ["ttf"], name: 'Font Files (*.ttf)'}]
@@ -148,7 +222,7 @@ export class FilesStore {
     }
 
     @action.bound
-    async addNewImage(userConfigFilePath: string): Promise<void> {
+    async importImage(userConfigFilePath: string): Promise<void> {
         const dialogResult = await ElectronContext.dialog.showOpenDialog({
             properties: ["multiSelections"],
             filters: [{extensions: ["png", "bmp", "svg"], name: 'Image Files (*.png,*.bmp,*.svg)'}]
@@ -206,4 +280,6 @@ export class FilesStore {
             await this.imageFilesWatcher.stop();
         }
     }
+
+
 }

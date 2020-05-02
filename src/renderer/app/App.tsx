@@ -20,7 +20,7 @@ import {
     Navbar,
     NavbarDivider,
     NavbarGroup,
-    NavbarHeading
+    NavbarHeading, Portal
 } from "@blueprintjs/core";
 
 import '@public/style.scss';
