@@ -1,22 +1,10 @@
 import * as React from 'react';
-import {PureComponent} from 'react';
-import {loremIpsum} from "@/renderer/app/util/string-utils";
 import {IconName} from "@blueprintjs/icons";
 import * as path from "path";
-import {
-    ADD,
-    CLEAN,
-    FONT,
-    HEADER,
-    IMPORT,
-    MEDIA,
-    NEW_OBJECT,
-    TRASH
-} from "@blueprintjs/icons/lib/esm/generated/iconNames";
-import {Alert, Button, ButtonGroup, Card, ITreeNode, Navbar, Tree} from "@blueprintjs/core";
+import {ADD, CLEAN, FONT, HEADER, IMPORT, MEDIA, TRASH} from "@blueprintjs/icons/lib/esm/generated/iconNames";
+import {Button, ButtonGroup, Card, ITreeNode, Navbar, Tree} from "@blueprintjs/core";
 import {ELEVATION_2} from "@blueprintjs/core/lib/esm/common/classes";
 import {When} from "@/renderer/app/components/When";
-import CreateNewFileDialog from "@/renderer/app/components/CreateNewFileDialog";
 
 export interface FileBrowserProps {
     fileList: string[],
@@ -34,6 +22,7 @@ export class FileBrowser extends React.Component<FileBrowserProps> {
     getIconForFileName(fileName: string): IconName | undefined {
         switch (path.extname(fileName)) {
             case ".h":
+            case ".hpp":
                 return HEADER;
             case ".cpp":
                 return CLEAN;
@@ -52,7 +41,7 @@ export class FileBrowser extends React.Component<FileBrowserProps> {
 
     render() {
         return (
-            <div className={`FileBrowser ${this.props.className ? this.props.className : ''}`} >
+            <div className={`FileBrowser ${this.props.className ? this.props.className : ''}`}>
                 <div className='left-column file-list-container'>
                     <Card className={`${ELEVATION_2} full-width no-padding`}>
                         <Navbar>
@@ -76,7 +65,11 @@ export class FileBrowser extends React.Component<FileBrowserProps> {
                                       icon: this.getIconForFileName(fileName),
                                       label: fileName,
                                       isSelected: fileName === this.props.selectedFile,
-                                      secondaryLabel: <Button small={true} minimal={true} icon={TRASH} onClick={() => this.props.onDelete(fileName)}/>
+                                      secondaryLabel:
+                                          <div>
+                                              <Button small={true} minimal={true} icon={TRASH}
+                                                      onClick={() => this.props.onDelete(fileName)}/>
+                                          </div>
                                   } as ITreeNode;
                               })}
                               onNodeClick={((node) => this.props.onSelectFile(node.id as string))}

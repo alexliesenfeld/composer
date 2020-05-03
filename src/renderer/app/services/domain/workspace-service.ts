@@ -5,6 +5,7 @@ import {
     deleteFileIfExists,
     directoryDoesNotExistOrIsEmpty,
     downloadFile,
+    moveDir,
     moveDirContents,
     recreateDir,
     unzipFile
@@ -12,14 +13,21 @@ import {
 import {WorkspaceConfig} from "@/renderer/app/model/workspace-config";
 import {logActivity} from "@/renderer/app/services/ui/logging-service";
 import {
+    CONFIG_HEADER_FILE_NAME,
+    DEFAULT_FONT_FILE_NAME,
+    getBuildsDir,
     getDependenciesDirPath,
+    getFontsDir,
     getIPlug2BaseDirPath,
     getIPlug2DependenciesBuildPath,
-    getProjectBuildPath, getProjectsBuildPath,
+    getProjectBuildDir,
+    getResourcesDir,
     getSourcesDir,
+    getVisualStudioProjectFontResourcesDir,
     getVst3SdkDirPath,
     getWorkDirPath,
-    getWorkspaceDir
+    getWorkspaceDir,
+    OperatingSystem
 } from "@/renderer/app/services/domain/common";
 import {FilesService} from "@/renderer/app/services/domain/files-service";
 import * as path from "path";
@@ -55,9 +63,15 @@ export abstract class AbstractWorkspaceService {
             await this.initializeSourceFiles(workspaceDir, config);
         }
 
-        await this.removeDefaultPrototypeFiles(workspaceDir, config);
+        if (await this.shouldInitializeFontFiles(workspaceDir)) {
+            await this.initializeFontFiles(workspaceDir, config);
+        }
+
+        await this.removeDefaultPrototypeSourceFiles(workspaceDir, config);
+        await this.removeDefaultPrototypeFontFiles(workspaceDir, config);
 
         await this.addUserSourceFilesToIDEProject(composerFilePath, config);
+        await this.addUserFontFilesToIDEProject(composerFilePath, config);
 
         await this.startIDEProject(workspaceDir, config);
     }
@@ -120,11 +134,29 @@ export abstract class AbstractWorkspaceService {
     @logActivity("Creating project from iPlug2 prototype")
     async generateProjectFromPrototype(composerFilePath: string, config: WorkspaceConfig): Promise<void> {
         const workspaceDirPath = getWorkspaceDir(composerFilePath);
-        const buildsDir = getProjectsBuildPath(workspaceDirPath);
+        const buildsDir = getBuildsDir(workspaceDirPath);
         const examplesPath = path.join(getIPlug2BaseDirPath(workspaceDirPath), "Examples");
 
         await recreateDir(buildsDir);
         await Cpx.spawn(`python duplicate.py ${config.prototype} ${config.projectName} ${config.manufacturerName} ${buildsDir}`, examplesPath);
+
+        await moveDir(path.join(buildsDir, config.projectName), getProjectBuildDir(workspaceDirPath, this.getOs()))
+    }
+
+    @logActivity("Copying initial fonts from iPlug prototype project to project sources")
+    async initializeFontFiles(workspaceDirPath: string, workspaceConfig: WorkspaceConfig): Promise<void> {
+        const resourcesDir = getResourcesDir(workspaceDirPath);
+        const workspaceFontsDir = getFontsDir(workspaceDirPath);
+
+        await createDirIfNotExists(resourcesDir);
+        await createDirIfNotExists(workspaceFontsDir);
+
+        const vsSolutionFontsDir = getVisualStudioProjectFontResourcesDir(workspaceDirPath, workspaceConfig, this.getOs());
+        const filesToCopy = path.join(vsSolutionFontsDir, DEFAULT_FONT_FILE_NAME);
+
+        await copyFile(filesToCopy, path.join(workspaceFontsDir, path.basename(filesToCopy)));
+
+        this.initializeFontFilesInIDEProject(workspaceDirPath, workspaceConfig);
     }
 
     @logActivity("Copying initial sources from iPlug prototype project to project sources")
@@ -132,8 +164,10 @@ export abstract class AbstractWorkspaceService {
         const sourcesDir = getSourcesDir(workspaceDirPath);
 
         await createDirIfNotExists(sourcesDir);
-        const filesToCopy = this.getDefaultPrototypeFiles(workspaceDirPath, workspaceConfig);
+        const filesToCopy = this.getDefaultPrototypeSourceFiles(workspaceDirPath, workspaceConfig);
         await Promise.all(filesToCopy.map(f => copyFile(f, path.join(sourcesDir, path.basename(f)))));
+
+
     }
 
     async shouldSetupIPlug2(workspaceDirPath: string): Promise<boolean> {
@@ -152,17 +186,42 @@ export abstract class AbstractWorkspaceService {
         return directoryDoesNotExistOrIsEmpty(getSourcesDir(workspaceDirPath));
     }
 
-    getDefaultPrototypeFiles(workspaceDir: string, workspaceConfig: WorkspaceConfig): string[] {
-        const projectBuildDir = getProjectBuildPath(workspaceDir, workspaceConfig);
-        return ["config.h", `${workspaceConfig.projectName}.h`, `${workspaceConfig.projectName}.cpp`]
+    async shouldInitializeFontFiles(workspaceDirPath: string): Promise<boolean> {
+        return directoryDoesNotExistOrIsEmpty(getFontsDir(workspaceDirPath));
+    }
+
+    getDefaultPrototypeSourceFiles(workspaceDir: string, workspaceConfig: WorkspaceConfig): string[] {
+        const projectBuildDir = getProjectBuildDir(workspaceDir, this.getOs());
+        return [CONFIG_HEADER_FILE_NAME, `${workspaceConfig.projectName}.h`, `${workspaceConfig.projectName}.cpp`]
             .map(file => path.join(projectBuildDir, file));
     }
 
-    abstract async removeDefaultPrototypeFiles(workspaceDir: string, config: WorkspaceConfig): Promise<void>;
+    getVariableNameForForFile(filePath: string): string {
+        return path.basename(filePath)
+            .replace(/[^a-z0-9+]+/gi, '_')
+            .toUpperCase();
+    }
+
+    async removeDefaultPrototypeFontFiles(workspaceDir: string, config: WorkspaceConfig): Promise<void> {
+        this.removeDefaultPrototypeFontFilesFromIDEProject(workspaceDir, config);
+
+        const fontPath = getVisualStudioProjectFontResourcesDir(workspaceDir, config, this.getOs());
+        await deleteFileIfExists(path.join(fontPath, DEFAULT_FONT_FILE_NAME));
+    }
+
+    abstract async initializeFontFilesInIDEProject(workspaceDir: string, config: WorkspaceConfig): Promise<void>;
+
+    abstract async removeDefaultPrototypeFontFilesFromIDEProject(workspaceDir: string, config: WorkspaceConfig): Promise<void>;
+
+    abstract async removeDefaultPrototypeSourceFiles(workspaceDir: string, config: WorkspaceConfig): Promise<void>;
 
     abstract async addUserSourceFilesToIDEProject(composerFilePath: string, config: WorkspaceConfig): Promise<void>;
+
+    abstract async addUserFontFilesToIDEProject(composerFilePath: string, config: WorkspaceConfig): Promise<void>;
 
     abstract async startIDEProject(workspaceDirPath: string, config: WorkspaceConfig): Promise<void>;
 
     abstract async getIPlug2DependencyFileNames(): Promise<string[]>;
+
+    abstract getOs(): OperatingSystem;
 }

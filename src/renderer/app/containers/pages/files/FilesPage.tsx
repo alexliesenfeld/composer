@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {Alignment, Button, ButtonGroup, Navbar, Slider, Tab, Tabs, Text} from "@blueprintjs/core";
+import {Alignment, Button, ButtonGroup, Navbar, Slider, Tab, Tabs, Tag, Text} from "@blueprintjs/core";
 import {inject, observer} from "mobx-react";
 import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 import {FilesStore, FilesTab} from "@/renderer/app/stores/files-store";
@@ -139,7 +139,12 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                     >
                         <Navbar>
                             <Navbar.Group align={Alignment.LEFT}>
-                                <Text>{this.props.filesStore!.selectedFontFile}</Text>
+                                {!!this.props.filesStore!.selectedFontFile ?
+                                    <Text>{this.props.filesStore!.selectedFontFile}
+                                        <Tag minimal={true} className='resource-variable-tag'> {
+                                            this.props.workspaceStore!.getResourceAliasName(this.props.filesStore!.selectedFontFile!)
+                                        }</Tag>
+                                    </Text> : null}
                             </Navbar.Group>
                             <Navbar.Group align={Alignment.RIGHT} className='font-size-slider-nav'>
                                 <Slider

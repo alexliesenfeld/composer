@@ -39,8 +39,6 @@ export class FilesStore {
         const paths = await this.filesService.loadSourceFilesList(userConfigFilePath);
         const names = paths.map((filePath) => path.basename(filePath));
 
-        names.sort();
-
         runInAction(() => {
             this.sourceFileNamesList = names;
             if (this.selectedSourceFile && !this.sourceFileNamesList.includes(this.selectedSourceFile)) {
@@ -59,8 +57,6 @@ export class FilesStore {
         const paths = await this.filesService.loadFontFileList(userConfigFilePath);
         const names = paths.map((filePath) => path.basename(filePath));
 
-        names.sort();
-
         runInAction(() => {
             this.fontFileNamesList = names;
             if (this.selectedFontFile && !this.fontFileNamesList.includes(this.selectedFontFile)) {
@@ -78,8 +74,6 @@ export class FilesStore {
     async refreshImageFilesList(userConfigFilePath: string): Promise<void> {
         const paths = await this.filesService.loadImageFilesList(userConfigFilePath);
         const names = paths.map((filePath) => path.basename(filePath));
-
-        names.sort();
 
         runInAction(() => {
             this.imageFileNamesList = names;

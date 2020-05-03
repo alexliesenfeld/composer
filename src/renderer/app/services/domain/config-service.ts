@@ -2,8 +2,8 @@ import {
     AudioUnitPluginType,
     PluginFormat,
     Prototype,
-    WorkspaceConfig,
-    Vst3Subcategory
+    Vst3Subcategory,
+    WorkspaceConfig
 } from "@/renderer/app/model/workspace-config";
 import * as path from "path";
 import {DirectoryNotEmptyError} from "@/renderer/app/model/errors";

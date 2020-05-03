@@ -1,4 +1,4 @@
-import {action, observable, runInAction} from "mobx";
+import {action, computed, observable, runInAction} from "mobx";
 import {WorkspaceConfig} from "@/renderer/app/model/workspace-config";
 import {ElectronContext} from "@/renderer/app/model/electron-context";
 import * as configService from "@/renderer/app/services/domain/config-service";
@@ -64,6 +64,10 @@ export class WorkspaceStore {
     @withNotification({onError: "Failed to start IDE", showLogButton: true})
     async startIDE(configFilePath: string, config: WorkspaceConfig) {
         await this.workspaceService.startIDE(configFilePath, config);
+    }
+
+    getResourceAliasName(filePath: string): string {
+        return this.workspaceService.getVariableNameForForFile(filePath);
     }
 
     private async loadConfigFromPath(path: string): Promise<void> {

@@ -121,13 +121,21 @@ export const copyFile = async (sourceFile: string, targetPath: string) => {
   await Fsx.copyFile(sourceFile, targetPath);
 };
 
+export const createHardLink = async (sourceFile: string, targetPath: string) => {
+    await Fsx.link(sourceFile, targetPath);
+};
+
+export const createSoftLink = async (sourceFile: string, targetPath: string) => {
+    await Fsx.symlink(sourceFile, targetPath);
+};
+
 export const assertReplaceContentInFile = async (filePath: string, from: string, to: string) => {
     const fileContent = await readFile(filePath);
     if (!fileContent) {
         throw new OperationFailedError(`Could not open '${filePath}'.`)
     }
 
-    const replacedFileContent = assertReplace(filePath, fileContent, from, to);
+    const replacedFileContent = assertReplace(fileContent, from, to);
 
     await writeFile(filePath, replacedFileContent);
 };

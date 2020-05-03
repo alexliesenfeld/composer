@@ -2,9 +2,13 @@ import {logActivity} from "@/renderer/app/services/ui/logging-service";
 import {Fsx} from "@/renderer/app/util/fsx";
 import {
     getFontsDir,
-    getFontsDirFromConfigPath, getImagesDir,
-    getImagesDirFromConfigPath, getResourcesDir, getResourcesDirFromConfigPath, getSourcesDir,
-    getSourcesDirFromConfigPath, getWorkspaceDir
+    getFontsDirFromConfigPath,
+    getImagesDir,
+    getImagesDirFromConfigPath,
+    getResourcesDirFromConfigPath,
+    getSourcesDir,
+    getSourcesDirFromConfigPath,
+    getWorkspaceDir
 } from "@/renderer/app/services/domain/common";
 import {
     copyFile,
@@ -13,7 +17,6 @@ import {
     directoryDoesNotExistOrIsEmpty
 } from "@/renderer/app/util/file-utils";
 import * as path from "path";
-import * as fs from "fs";
 import {writeFile} from "@/renderer/app/services/domain/config-service";
 
 export class FilesService {

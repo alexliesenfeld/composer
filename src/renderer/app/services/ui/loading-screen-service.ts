@@ -1,5 +1,6 @@
 export interface LoadingServiceContext {
     showLoadingScreen(loadingText?: string): void;
+
     hideLoadingScreen(): void;
 }
 

@@ -1,7 +1,6 @@
 import * as fs from "fs";
 import * as util from "util";
 import * as mv from "mv";
-import * as chokidar from "chokidar"
 
 
 /**
@@ -21,4 +20,6 @@ export abstract class Fsx {
     static readonly rename = util.promisify(fs.rename);
     static readonly move = (util.promisify(mv));
     static readonly copyFile = util.promisify(fs.copyFile);
+    static readonly link = util.promisify(fs.link);
+    static readonly symlink = util.promisify(fs.symlink);
 }
