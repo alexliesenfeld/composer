@@ -68,8 +68,8 @@ const App = (props: { appStore?: AppStore, workspaceStore?: WorkspaceStore }) =>
                     <NavButton page={Page.SETTINGS} icon={COG}/>
                     <NavButton page={Page.LOG} icon={CONSOLE}/>
                     <NavbarDivider/>
-                    <Button icon={PLAY} text="Open in Visual Studio" intent={"success"} onClick={() => {
-                        props.workspaceStore!.startIDE(props.workspaceStore!.configPath!, props.workspaceStore!.userConfig!);
+                    <Button icon={PLAY} text={`Open in ${props.appStore!.ideName}`} intent={"success"} onClick={() => {
+                        props.workspaceStore!.startIDE();
                     }}/>
                 </NavbarGroup>
             </Navbar>

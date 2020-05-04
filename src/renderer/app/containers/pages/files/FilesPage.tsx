@@ -19,21 +19,22 @@ import {AppStore} from "@/renderer/app/stores/app-store";
 export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore, filesStore?: FilesStore, appStore?: AppStore }> {
 
     async componentDidMount(): Promise<void> {
+        const paths = this.props.workspaceStore!.workspacePaths!;
         await Promise.all([
-            this.props.filesStore!.refreshSourceFilesList(this.props.workspaceStore!.configPath!),
-            this.props.filesStore!.refreshFontFilesList(this.props.workspaceStore!.configPath!),
-            this.props.filesStore!.refreshImageFilesList(this.props.workspaceStore!.configPath!),
+            this.props.filesStore!.refreshSourceFilesList(paths),
+            this.props.filesStore!.refreshFontFilesList(paths),
+            this.props.filesStore!.refreshImageFilesList(paths),
         ]);
 
         await Promise.all([
-            this.props.filesStore!.watchSourcesDir(this.props.workspaceStore!.configPath!, () => {
-                this.props.filesStore!.refreshSourceFilesList(this.props.workspaceStore!.configPath!);
+            this.props.filesStore!.watchSourcesDir(paths, () => {
+                this.props.filesStore!.refreshSourceFilesList(paths);
             }),
-            this.props.filesStore!.watchFontsDir(this.props.workspaceStore!.configPath!, () => {
-                this.props.filesStore!.refreshFontFilesList(this.props.workspaceStore!.configPath!);
+            this.props.filesStore!.watchFontsDir(paths, () => {
+                this.props.filesStore!.refreshFontFilesList(paths);
             }),
-            this.props.filesStore!.watchImageDir(this.props.workspaceStore!.configPath!, () => {
-                this.props.filesStore!.refreshImageFilesList(this.props.workspaceStore!.configPath!);
+            this.props.filesStore!.watchImageDir(paths, () => {
+                this.props.filesStore!.refreshImageFilesList(paths);
             })
         ]);
     }
@@ -64,7 +65,7 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                     <CreateFileDialog isOpen={this.props.filesStore!.createNewSourceFileDialogOpened}
                                       title={"Create new source file"}
                                       onAccept={(fileName) => {
-                                          this.props.filesStore!.createNewSourceFile(this.props.workspaceStore!.configPath!, fileName);
+                                          this.props.filesStore!.createNewSourceFile(this.props.workspaceStore!.workspacePaths!, fileName);
                                           this.props.filesStore!.createNewSourceFileDialogOpened = false;
                                       }}
                                       onCancel={() => this.props.filesStore!.createNewSourceFileDialogOpened = false}
@@ -74,7 +75,7 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                     <ConfirmDeleteFileDialog
                         darkTheme={this.props.appStore!.darkTheme}
                         onCancel={() => this.props.filesStore!.cancelDeletingSourceFile()}
-                        onAccept={() => this.props.filesStore!.completeDeletingSourceFile(this.props.workspaceStore!.configPath!)}
+                        onAccept={() => this.props.filesStore!.completeDeletingSourceFile(this.props.workspaceStore!.workspacePaths!)}
                         fileName={this.props.filesStore!.sourceFileToDelete}
                     />
                     <FileBrowser
@@ -82,10 +83,10 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                         fileList={this.props.filesStore!.sourceFileNamesList}
                         selectedFile={this.props.filesStore!.selectedSourceFile}
                         onSelectFile={(file) => {
-                            this.props.filesStore!.setSelectedSourceFile(this.props.workspaceStore!.configPath!, file);
+                            this.props.filesStore!.setSelectedSourceFile(this.props.workspaceStore!.workspacePaths!, file);
                         }}
                         onImportExistingItem={() => {
-                            this.props.filesStore!.importSourceFile(this.props.workspaceStore!.configPath!);
+                            this.props.filesStore!.importSourceFile(this.props.workspaceStore!.workspacePaths!);
                         }}
                         onCreateNewItem={() => {
                             this.props.filesStore!.createNewSourceFileDialogOpened = true;
@@ -120,7 +121,7 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                     <ConfirmDeleteFileDialog
                         darkTheme={this.props.appStore!.darkTheme}
                         onCancel={() => this.props.filesStore!.cancelDeletingFontFile()}
-                        onAccept={() => this.props.filesStore!.completeDeletingFontFile(this.props.workspaceStore!.configPath!)}
+                        onAccept={() => this.props.filesStore!.completeDeletingFontFile(this.props.workspaceStore!.workspacePaths!)}
                         fileName={this.props.filesStore!.fontFileToDelete}
                     />
                     <FileBrowser
@@ -128,10 +129,10 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                         fileList={this.props.filesStore!.fontFileNamesList}
                         selectedFile={this.props.filesStore!.selectedFontFile}
                         onSelectFile={(file) => {
-                            this.props.filesStore!.setSelectedFontFile(this.props.workspaceStore!.configPath!, file);
+                            this.props.filesStore!.setSelectedFontFile(this.props.workspaceStore!.workspacePaths!, file);
                         }}
                         onImportExistingItem={() => {
-                            this.props.filesStore!.importFontFile(this.props.workspaceStore!.configPath!);
+                            this.props.filesStore!.importFontFile(this.props.workspaceStore!.workspacePaths!);
                         }}
                         onDelete={(fileName: string) => {
                             this.props.filesStore!.startDeletingFontFile(fileName);
@@ -165,7 +166,7 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                     <ConfirmDeleteFileDialog
                         darkTheme={this.props.appStore!.darkTheme}
                         onCancel={() => this.props.filesStore!.cancelDeletingImageFile()}
-                        onAccept={() => this.props.filesStore!.completeDeletingImageFile(this.props.workspaceStore!.configPath!)}
+                        onAccept={() => this.props.filesStore!.completeDeletingImageFile(this.props.workspaceStore!.workspacePaths!)}
                         fileName={this.props.filesStore!.imageFileToDelete}
                     />
                     <FileBrowser
@@ -173,10 +174,10 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                         fileList={this.props.filesStore!.imageFileNamesList}
                         selectedFile={this.props.filesStore!.selectedImageFile}
                         onSelectFile={(file) => {
-                            this.props.filesStore!.setSelectedImageFile(this.props.workspaceStore!.configPath!, file);
+                            this.props.filesStore!.setSelectedImageFile(this.props.workspaceStore!.workspacePaths!, file);
                         }}
                         onImportExistingItem={() => {
-                            this.props.filesStore!.importImage(this.props.workspaceStore!.configPath!);
+                            this.props.filesStore!.importImage(this.props.workspaceStore!.workspacePaths!);
                         }}
                         onDelete={(fileName: string) => {
                             this.props.filesStore!.startDeletingImageFile(fileName);

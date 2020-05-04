@@ -1,7 +1,7 @@
 import {ipcRenderer, remote} from 'electron';
 import {IPCMainEvents, IPCRendererEvents} from "@common/constants";
 import {UnsupportedOperationError} from "@/renderer/app/model/errors";
-import {OperatingSystem} from "@/renderer/app/services/domain/common";
+import {OperatingSystem} from "@/renderer/app/services/domain/common/model";
 
 export abstract class ElectronContext {
     static readonly remote = remote;

@@ -1,16 +1,6 @@
 import {logActivity} from "@/renderer/app/services/ui/logging-service";
 import {Fsx} from "@/renderer/app/util/fsx";
 import {
-    getFontsDir,
-    getFontsDirFromConfigPath,
-    getImagesDir,
-    getImagesDirFromConfigPath,
-    getResourcesDirFromConfigPath,
-    getSourcesDir,
-    getSourcesDirFromConfigPath,
-    getWorkspaceDir
-} from "@/renderer/app/services/domain/common";
-import {
     copyFile,
     createDirIfNotExists,
     deleteFileIfExists,
@@ -18,79 +8,79 @@ import {
 } from "@/renderer/app/util/file-utils";
 import * as path from "path";
 import {writeFile} from "@/renderer/app/services/domain/config-service";
+import {ProjectPaths} from "@/renderer/app/services/domain/common/paths";
 
 export class FilesService {
 
-    async loadSourceFileNamesList(userConfigFilePath: string): Promise<string[]> {
-        const result = await this.loadSourceFilesList(userConfigFilePath);
+    async loadSourceFileNamesList(projectPaths: ProjectPaths): Promise<string[]> {
+        const result = await this.loadSourceFilesList(projectPaths);
         return result.map(filePath => path.basename(filePath));
     }
 
-    async loadSourceFilesList(userConfigFilePath: string): Promise<string[]> {
-        const dir = getSourcesDirFromConfigPath(userConfigFilePath);
+    async loadSourceFilesList(projectPaths: ProjectPaths): Promise<string[]> {
+        const dir = projectPaths.getSourcesDir();
         if (await directoryDoesNotExistOrIsEmpty(dir)) {
             return [];
         }
         return (await Fsx.readdir(dir)).map(fileName => path.join(dir, fileName));
     }
 
-    async loadFontFileNamesList(userConfigFilePath: string): Promise<string[]> {
-        const result = await this.loadFontFileList(userConfigFilePath);
+    async loadFontFileNamesList(projectPaths: ProjectPaths): Promise<string[]> {
+        const result = await this.loadFontFileList(projectPaths);
         return result.map(filePath => path.basename(filePath));
     }
 
-    async loadFontFileList(userConfigFilePath: string): Promise<string[]> {
-        const dir = getFontsDirFromConfigPath(userConfigFilePath);
+    async loadFontFileList(projectPaths: ProjectPaths): Promise<string[]> {
+        const dir = projectPaths.getFontsDir();
         if (await directoryDoesNotExistOrIsEmpty(dir)) {
             return [];
         }
         return (await Fsx.readdir(dir)).map(fileName => path.join(dir, fileName));
     }
 
-    async loadImageFileNamesList(userConfigFilePath: string): Promise<string[]> {
-        const result = await this.loadImageFilesList(userConfigFilePath);
+    async loadImageFileNamesList(projectPaths: ProjectPaths): Promise<string[]> {
+        const result = await this.loadImageFilesList(projectPaths);
         return result.map(filePath => path.basename(filePath));
     }
 
-    async loadImageFilesList(userConfigFilePath: string): Promise<string[]> {
-        const dir = getImagesDirFromConfigPath(userConfigFilePath);
+    async loadImageFilesList(projectPaths: ProjectPaths): Promise<string[]> {
+        const dir = projectPaths.getImagesDir();
         if (await directoryDoesNotExistOrIsEmpty(dir)) {
             return [];
         }
         return (await Fsx.readdir(dir)).map(fileName => path.join(dir, fileName));
     }
 
-    async loadSourceFileContent(userConfigFilePath: string, fileName: string): Promise<string> {
-        const dir = getSourcesDirFromConfigPath(userConfigFilePath);
+    async loadSourceFileContent(projectPaths: ProjectPaths, fileName: string): Promise<string> {
+        const dir = projectPaths.getSourcesDir();
         const filePath = path.join(dir, fileName);
         const buffer = await Fsx.readFile(filePath);
         return buffer.toString();
     }
 
-    async loadFontContent(userConfigFilePath: string, fileName: string): Promise<Buffer> {
-        const dir = getFontsDirFromConfigPath(userConfigFilePath);
+    async loadFontContent(projectPaths: ProjectPaths, fileName: string): Promise<Buffer> {
+        const dir = projectPaths.getFontsDir();
         const filePath = path.join(dir, fileName);
         return Fsx.readFile(filePath);
     }
 
-    async loadImageFileContent(userConfigFilePath: string, fileName: string): Promise<string> {
-        const dir = getImagesDirFromConfigPath(userConfigFilePath);
+    async loadImageFileContent(projectPaths: ProjectPaths, fileName: string): Promise<string> {
+        const dir = projectPaths.getImagesDir();
         const filePath = path.join(dir, fileName);
         const buffer = await Fsx.readFile(filePath);
         return buffer.toString('base64');
     }
 
     @logActivity("Adding multiple source files")
-    async addNewSourceFiles(userConfigFilePath: string, newSourceFilePaths: string[]): Promise<void> {
+    async addNewSourceFiles(projectPaths: ProjectPaths, newSourceFilePaths: string[]): Promise<void> {
         for (const newSourceFilePath of newSourceFilePaths) {
-            await this.addNewSourceFile(userConfigFilePath, newSourceFilePath);
+            await this.addNewSourceFile(projectPaths, newSourceFilePath);
         }
     }
 
-
     @logActivity("Adding new source file {1}")
-    async addNewSourceFile(userConfigFilePath: string, fileName: string): Promise<void> {
-        const sourcesDir = getSourcesDirFromConfigPath(userConfigFilePath);
+    async addNewSourceFile(projectPaths: ProjectPaths, fileName: string): Promise<void> {
+        const sourcesDir = projectPaths.getSourcesDir();
         const filePath = path.join(sourcesDir, fileName);
 
         await createDirIfNotExists(sourcesDir);
@@ -98,23 +88,23 @@ export class FilesService {
     }
 
     @logActivity("Deleting source file {1}")
-    async deleteSourceFile(userConfigFilePath: string, fileName: string): Promise<void> {
-        const sourcesDir = getSourcesDirFromConfigPath(userConfigFilePath);
+    async deleteSourceFile(projectPaths: ProjectPaths, fileName: string): Promise<void> {
+        const sourcesDir = projectPaths.getSourcesDir();
         const filePath = path.join(sourcesDir, fileName);
 
         await deleteFileIfExists(filePath);
     }
 
     @logActivity("Importing multiple source files")
-    async importSourceFiles(userConfigFilePath: string, newSourceFilePaths: string[]): Promise<void> {
+    async importSourceFiles(projectPaths: ProjectPaths, newSourceFilePaths: string[]): Promise<void> {
         for (const newSourceFilePath of newSourceFilePaths) {
-            await this.importSourceFile(userConfigFilePath, newSourceFilePath);
+            await this.importSourceFile(projectPaths, newSourceFilePath);
         }
     }
 
     @logActivity("Importing source file {1}")
-    async importSourceFile(userConfigFilePath: string, newSourceFilePath: string): Promise<void> {
-        const sourcesDir = getSourcesDirFromConfigPath(userConfigFilePath);
+    async importSourceFile(projectPaths: ProjectPaths, newSourceFilePath: string): Promise<void> {
+        const sourcesDir = projectPaths.getSourcesDir();
         const fileName = path.basename(newSourceFilePath);
         const filePath = path.join(sourcesDir, fileName);
 
@@ -123,16 +113,16 @@ export class FilesService {
     }
 
     @logActivity("Adding multiple font files")
-    async addFontFiles(userConfigFilePath: string, newFontFilePaths: string[]): Promise<void> {
+    async addFontFiles(projectPaths: ProjectPaths, newFontFilePaths: string[]): Promise<void> {
         for (const newSourceFilePath of newFontFilePaths) {
-            await this.addFontFile(userConfigFilePath, newSourceFilePath);
+            await this.addFontFile(projectPaths, newSourceFilePath);
         }
     }
 
     @logActivity("Adding font file {1}")
-    async addFontFile(userConfigFilePath: string, newFontFilePath: string): Promise<void> {
-        const resourcesDir = getResourcesDirFromConfigPath(userConfigFilePath);
-        const fontsDir = getFontsDirFromConfigPath(userConfigFilePath);
+    async addFontFile(projectPaths: ProjectPaths, newFontFilePath: string): Promise<void> {
+        const resourcesDir  = projectPaths.getResourcesDir();
+        const fontsDir = projectPaths.getFontsDir();
         const fileName = path.basename(newFontFilePath);
         const filePath = path.join(fontsDir, fileName);
 
@@ -143,24 +133,24 @@ export class FilesService {
     }
 
     @logActivity("Deleting font file {1}")
-    async deleteFontFile(userConfigFilePath: string, fileName: string): Promise<void> {
-        const sourcesDir = getFontsDirFromConfigPath(userConfigFilePath);
+    async deleteFontFile(projectPaths: ProjectPaths, fileName: string): Promise<void> {
+        const sourcesDir = projectPaths.getFontsDir();
         const filePath = path.join(sourcesDir, fileName);
 
         await deleteFileIfExists(filePath);
     }
 
     @logActivity("Adding multiple image files")
-    async addImageFiles(userConfigFilePath: string, newImageFilePaths: string[]): Promise<void> {
+    async addImageFiles(projectPaths: ProjectPaths, newImageFilePaths: string[]): Promise<void> {
         for (const newSourceFilePath of newImageFilePaths) {
-            await this.addImageFile(userConfigFilePath, newSourceFilePath);
+            await this.addImageFile(projectPaths, newSourceFilePath);
         }
     }
 
     @logActivity("Adding image file {1}")
-    async addImageFile(userConfigFilePath: string, newImageFilePath: string): Promise<void> {
-        const resourcesDir = getResourcesDirFromConfigPath(userConfigFilePath);
-        const imagesDir = getImagesDirFromConfigPath(userConfigFilePath);
+    async addImageFile(projectPaths: ProjectPaths, newImageFilePath: string): Promise<void> {
+        const resourcesDir  = projectPaths.getResourcesDir();
+        const imagesDir = projectPaths.getImagesDir();
         const fileName = path.basename(newImageFilePath);
         const filePath = path.join(imagesDir, fileName);
 
@@ -171,22 +161,11 @@ export class FilesService {
     }
 
     @logActivity("Deleting image file {1}")
-    async deleteImageFile(userConfigFilePath: string, fileName: string): Promise<void> {
-        const sourcesDir = getImagesDirFromConfigPath(userConfigFilePath);
+    async deleteImageFile(projectPaths: ProjectPaths, fileName: string): Promise<void> {
+        const sourcesDir = projectPaths.getImagesDir();
         const filePath = path.join(sourcesDir, fileName);
 
         await deleteFileIfExists(filePath);
     }
 
-    getSourcesDir(userConfigFilePath: string): string {
-        return getSourcesDir(getWorkspaceDir(userConfigFilePath));
-    }
-
-    getFontsDir(userConfigFilePath: string): string {
-        return getFontsDir(getWorkspaceDir(userConfigFilePath));
-    }
-
-    getImagesDir(userConfigFilePath: string): string {
-        return getImagesDir(getWorkspaceDir(userConfigFilePath));
-    }
 }

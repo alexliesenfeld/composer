@@ -3,6 +3,7 @@ import {ElectronContext} from "@/renderer/app/model/electron-context";
 import {FilesService} from "@/renderer/app/services/domain/files-service";
 import * as path from "path";
 import {FileWatcher} from "@/renderer/app/util/file-watcher";
+import {ProjectPaths} from "@/renderer/app/services/domain/common/paths";
 
 export enum FilesTab {
     SOURCE_FILES_TAB,
@@ -35,8 +36,8 @@ export class FilesStore {
     }
 
     @action.bound
-    async refreshSourceFilesList(userConfigFilePath: string): Promise<void> {
-        const paths = await this.filesService.loadSourceFilesList(userConfigFilePath);
+    async refreshSourceFilesList(projectPaths: ProjectPaths): Promise<void> {
+        const paths = await this.filesService.loadSourceFilesList(projectPaths);
         const names = paths.map((filePath) => path.basename(filePath));
 
         runInAction(() => {
@@ -49,12 +50,12 @@ export class FilesStore {
             }
         });
 
-       return this.setSelectedSourceFile(userConfigFilePath, this.selectedSourceFile!);
+       return this.setSelectedSourceFile(projectPaths, this.selectedSourceFile!);
     }
 
     @action.bound
-    async refreshFontFilesList(userConfigFilePath: string): Promise<void> {
-        const paths = await this.filesService.loadFontFileList(userConfigFilePath);
+    async refreshFontFilesList(projectPaths: ProjectPaths): Promise<void> {
+        const paths = await this.filesService.loadFontFileList(projectPaths);
         const names = paths.map((filePath) => path.basename(filePath));
 
         runInAction(() => {
@@ -67,12 +68,12 @@ export class FilesStore {
             }
         });
 
-        return this.setSelectedFontFile(userConfigFilePath, this.selectedFontFile);
+        return this.setSelectedFontFile(projectPaths, this.selectedFontFile);
     }
 
     @action.bound
-    async refreshImageFilesList(userConfigFilePath: string): Promise<void> {
-        const paths = await this.filesService.loadImageFilesList(userConfigFilePath);
+    async refreshImageFilesList(projectPaths: ProjectPaths): Promise<void> {
+        const paths = await this.filesService.loadImageFilesList(projectPaths);
         const names = paths.map((filePath) => path.basename(filePath));
 
         runInAction(() => {
@@ -85,13 +86,13 @@ export class FilesStore {
             }
         });
 
-        return this.setSelectedImageFile(userConfigFilePath, this.selectedImageFile);
+        return this.setSelectedImageFile(projectPaths, this.selectedImageFile);
     }
 
     @action.bound
-    async setSelectedFontFile(userConfigFilePath: string, file: string | undefined): Promise<void> {
+    async setSelectedFontFile(projectPaths: ProjectPaths, file: string | undefined): Promise<void> {
         if (file) {
-            const content = await this.filesService.loadFontContent(userConfigFilePath, file);
+            const content = await this.filesService.loadFontContent(projectPaths, file);
             runInAction(() => {
                 this.selectedFontFile = file;
                 this.selectedFontFileContent = content
@@ -100,9 +101,9 @@ export class FilesStore {
     }
 
     @action.bound
-    async setSelectedSourceFile(userConfigFilePath: string, file: string | undefined): Promise<void> {
+    async setSelectedSourceFile(projectPaths: ProjectPaths, file: string | undefined): Promise<void> {
         if (file) {
-            const content = await this.filesService.loadSourceFileContent(userConfigFilePath, file);
+            const content = await this.filesService.loadSourceFileContent(projectPaths, file);
             runInAction(() => {
                 this.selectedSourceFile = file;
                 this.selectedSourceFileContent = content
@@ -111,9 +112,9 @@ export class FilesStore {
     }
 
     @action.bound
-    async setSelectedImageFile(userConfigFilePath: string, file: string | undefined): Promise<void> {
+    async setSelectedImageFile(projectPaths: ProjectPaths, file: string | undefined): Promise<void> {
         if (file) {
-            const content = await this.filesService.loadImageFileContent(userConfigFilePath, file);
+            const content = await this.filesService.loadImageFileContent(projectPaths, file);
             runInAction(() => {
                 this.selectedImageFile = file;
                 this.selectedImageFileContent = content
@@ -122,11 +123,10 @@ export class FilesStore {
     }
 
     @action.bound
-    async createNewSourceFile(userConfigFilePath: string, fileName: string): Promise<void> {
-        await this.filesService.addNewSourceFile(userConfigFilePath, fileName);
-        return this.refreshSourceFilesList(userConfigFilePath);
+    async createNewSourceFile(projectPaths: ProjectPaths, fileName: string): Promise<void> {
+        await this.filesService.addNewSourceFile(projectPaths, fileName);
+        return this.refreshSourceFilesList(projectPaths);
     }
-
 
     @action.bound
     async startDeletingSourceFile(fileName: string): Promise<void> {
@@ -139,9 +139,9 @@ export class FilesStore {
     }
 
     @action.bound
-    async completeDeletingSourceFile(userConfigFilePath: string): Promise<void> {
-        await this.filesService.deleteSourceFile(userConfigFilePath, this.sourceFileToDelete!);
-        await this.refreshSourceFilesList(userConfigFilePath);
+    async completeDeletingSourceFile(projectPaths: ProjectPaths): Promise<void> {
+        await this.filesService.deleteSourceFile(projectPaths, this.sourceFileToDelete!);
+        await this.refreshSourceFilesList(projectPaths);
         runInAction(() => {
             this.sourceFileToDelete = undefined;
         });
@@ -158,9 +158,9 @@ export class FilesStore {
     }
 
     @action.bound
-    async completeDeletingFontFile(userConfigFilePath: string): Promise<void> {
-        await this.filesService.deleteFontFile(userConfigFilePath, this.fontFileToDelete!);
-        await this.refreshSourceFilesList(userConfigFilePath);
+    async completeDeletingFontFile(projectPaths: ProjectPaths): Promise<void> {
+        await this.filesService.deleteFontFile(projectPaths, this.fontFileToDelete!);
+        await this.refreshSourceFilesList(projectPaths);
         runInAction(() => {
             this.fontFileToDelete = undefined;
         });
@@ -177,16 +177,16 @@ export class FilesStore {
     }
 
     @action.bound
-    async completeDeletingImageFile(userConfigFilePath: string): Promise<void> {
-        await this.filesService.deleteImageFile(userConfigFilePath, this.imageFileToDelete!);
-        await this.refreshSourceFilesList(userConfigFilePath);
+    async completeDeletingImageFile(projectPaths: ProjectPaths): Promise<void> {
+        await this.filesService.deleteImageFile(projectPaths, this.imageFileToDelete!);
+        await this.refreshSourceFilesList(projectPaths);
         runInAction(() => {
             this.imageFileToDelete = undefined;
         });
     }
 
     @action.bound
-    async importSourceFile(userConfigFilePath: string): Promise<void> {
+    async importSourceFile(projectPaths: ProjectPaths): Promise<void> {
         const dialogResult = await ElectronContext.dialog.showOpenDialog({
             properties: ["multiSelections"],
             filters: [{extensions: ["h", "hpp", "cpp"], name: 'Source Files (*.h,*.hpp,*.cpp)'}]
@@ -196,12 +196,12 @@ export class FilesStore {
             return;
         }
 
-        await this.filesService.importSourceFiles(userConfigFilePath, dialogResult.filePaths);
-        return this.refreshSourceFilesList(userConfigFilePath);
+        await this.filesService.importSourceFiles(projectPaths, dialogResult.filePaths);
+        return this.refreshSourceFilesList(projectPaths);
     }
 
     @action.bound
-    async importFontFile(userConfigFilePath: string): Promise<void> {
+    async importFontFile(projectPaths: ProjectPaths): Promise<void> {
         const dialogResult = await ElectronContext.dialog.showOpenDialog({
             properties: ["multiSelections"],
             filters: [{extensions: ["ttf"], name: 'Font Files (*.ttf)'}]
@@ -211,12 +211,12 @@ export class FilesStore {
             return;
         }
 
-        await this.filesService.addFontFiles(userConfigFilePath, dialogResult.filePaths);
-        return this.refreshFontFilesList(userConfigFilePath);
+        await this.filesService.addFontFiles(projectPaths, dialogResult.filePaths);
+        return this.refreshFontFilesList(projectPaths);
     }
 
     @action.bound
-    async importImage(userConfigFilePath: string): Promise<void> {
+    async importImage(projectPaths: ProjectPaths): Promise<void> {
         const dialogResult = await ElectronContext.dialog.showOpenDialog({
             properties: ["multiSelections"],
             filters: [{extensions: ["png", "bmp", "svg"], name: 'Image Files (*.png,*.bmp,*.svg)'}]
@@ -226,15 +226,14 @@ export class FilesStore {
             return;
         }
 
-        await this.filesService.addImageFiles(userConfigFilePath, dialogResult.filePaths);
-        return this.refreshImageFilesList(userConfigFilePath);
+        await this.filesService.addImageFiles(projectPaths, dialogResult.filePaths);
+        return this.refreshImageFilesList(projectPaths);
     }
 
     @action.bound
-    async watchSourcesDir(userConfigFilePath: string, onDirChange: () => void) {
+    async watchSourcesDir(projectPaths: ProjectPaths, onDirChange: () => void) {
         this.unwatchSourcesDir();
-        const dir = this.filesService.getSourcesDir(userConfigFilePath);
-        this.sourceFilesWatcher = new FileWatcher(dir, onDirChange);
+        this.sourceFilesWatcher = new FileWatcher(projectPaths.getSourcesDir(), onDirChange);
         await this.sourceFilesWatcher.start();
     }
 
@@ -246,10 +245,9 @@ export class FilesStore {
     }
 
     @action.bound
-    async watchFontsDir(userConfigFilePath: string, onDirChange: () => void) {
+    async watchFontsDir(projectPaths: ProjectPaths, onDirChange: () => void) {
         this.unwatchFontsDir();
-        const dir = this.filesService.getFontsDir(userConfigFilePath);
-        this.fontFilesWatcher = new FileWatcher(dir, onDirChange);
+        this.fontFilesWatcher = new FileWatcher(projectPaths.getFontsDir(), onDirChange);
         await this.fontFilesWatcher.start();
     }
 
@@ -261,10 +259,9 @@ export class FilesStore {
     }
 
     @action.bound
-    async watchImageDir(userConfigFilePath: string, onDirChange: () => void) {
+    async watchImageDir(projectPaths: ProjectPaths, onDirChange: () => void) {
         this.unwatchImageDir();
-        const dir = this.filesService.getImagesDir(userConfigFilePath);
-        this.imageFilesWatcher = new FileWatcher(dir, onDirChange);
+        this.imageFilesWatcher = new FileWatcher(projectPaths.getImagesDir(), onDirChange);
         await this.imageFilesWatcher.start();
     }
 

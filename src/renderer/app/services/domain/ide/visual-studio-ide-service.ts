@@ -1,35 +1,15 @@
 import * as path from "path";
-import {WorkspaceConfig} from "@/renderer/app/model/workspace-config";
 import {Cpx} from "@/renderer/app/util/cpx";
 import {logActivity} from "@/renderer/app/services/ui/logging-service";
-import {
-    DEFAULT_FONT_FILE_NAME,
-    getConfigHPath,
-    getMainPluginCppFile,
-    getMainRcPath,
-    getProjectBuildDir,
-    getSourcesDir,
-    getVisualStudioAaxIDEProjectFilePath,
-    getVisualStudioAaxIDEProjectFiltersFilePath,
-    getVisualStudioAppIDEProjectFilePath,
-    getVisualStudioAppIDEProjectFiltersFilePath,
-    getVisualStudioIDEProjectsDir, getVisualStudioProjectFontResourcesDir,
-    getVisualStudioProjectWinPropsPath,
-    getVisualStudioSolutionFilePath,
-    getVisualStudioVst2IDEProjectFilePath,
-    getVisualStudioVst2IDEProjectFiltersFilePath,
-    getVisualStudioVst3IDEProjectFilePath,
-    getVisualStudioVst3IDEProjectFiltersFilePath,
-    getWorkspaceDir,
-    OperatingSystem
-} from "@/renderer/app/services/domain/common";
-import {AbstractWorkspaceService} from "@/renderer/app/services/domain/workspace-service";
+
 import {FilesService} from "@/renderer/app/services/domain/files-service";
 import {AssertionError} from "@/renderer/app/model/errors";
 import {readFile, writeFile} from "@/renderer/app/services/domain/config-service";
 import {assertReplace, replace, replaceAll, times} from "@/renderer/app/util/string-utils";
-import {assertReplaceContentInFile, copyFile, createHardLink, deleteFileIfExists} from "@/renderer/app/util/file-utils";
-import {EOL} from "os"
+import {assertReplaceContentInFile, createHardLink, deleteFileIfExists} from "@/renderer/app/util/file-utils";
+import {EOL} from "ts-loader/dist/constants";
+import {IdeService, VariableNameTranslator} from "@/renderer/app/services/domain/common/ide-service";
+import {WorkspacePaths} from "@/renderer/app/services/domain/common/paths";
 
 const MAIN_RC_TEXTINCLUDE_FONT_RESOURCES_PLACEHOLDER = "//MAIN_RC_TEXTINCLUDE_FONT_RESOURCES_PLACEHOLDER";
 const MAIN_RC_FONT_RESOURCES_PLACEHOLDER = "//MAIN_RC_FONT_RESOURCES_PLACEHOLDER";
@@ -38,21 +18,17 @@ const MAIN_RC_FONT_RESOURCES_PLACEHOLDER = "//MAIN_RC_FONT_RESOURCES_PLACEHOLDER
  * This is a service class to work with the workspace on Windows. It extends the base class with OS-specific
  * functionality.
  */
-export class WindowsWorkspaceService extends AbstractWorkspaceService {
+export class VisualStudioIdeService implements IdeService {
 
     /**
      * The main constructor.
      * @param fileService A file service that allows accessing source files.
      */
-    constructor(fileService: FilesService) {
-        super(fileService);
+    constructor(private fileService: FilesService) {
     }
 
-    /**
-     * Returns the operating system that this implementation supports.
-     */
-    getOs(): OperatingSystem {
-        return OperatingSystem.WINDOWS;
+    getIdeName(): string {
+        return "Visual Studio";
     }
 
     /**
@@ -63,25 +39,23 @@ export class WindowsWorkspaceService extends AbstractWorkspaceService {
     }
 
     @logActivity("Starting Visual Studio project")
-    async startIDEProject(workspaceDirPath: string, config: WorkspaceConfig): Promise<void> {
-        const vsSolutionPath = getVisualStudioSolutionFilePath(workspaceDirPath, config, this.getOs());
+    async startIDEProject(context: WorkspacePaths): Promise<void> {
+        const vsSolutionPath = context.getVisualStudioSolutionFilePath();
         await Cpx.sudoExec(`start ${vsSolutionPath}`);
     }
 
-    async removeDefaultPrototypeSourceFiles(workspaceDir: string, config: WorkspaceConfig): Promise<void> {
-        const projectFiles = this.getAllVisualStudioProjectFiles(workspaceDir, config);
-        const defaultPrototypeFiles = this.getDefaultPrototypeSourceFiles(workspaceDir, config);
+    async removeDefaultPrototypeSourceFiles(context: WorkspacePaths, defaultPrototypeFiles: string[]): Promise<void> {
+        const projectFiles = this.getAllVisualStudioProjectFiles(context);
 
         for (const fileToRemove of defaultPrototypeFiles) {
             await Promise.all(projectFiles
-                .map(projectFile => this.removeSourceFileFromVisualStudioProjectFile(workspaceDir, config,
-                    projectFile, fileToRemove)));
+                .map(projectFile => this.removeSourceFileFromVisualStudioProjectFile(context, projectFile, fileToRemove)));
             await deleteFileIfExists(fileToRemove);
         }
     }
 
-    async removeDefaultPrototypeFontFilesFromIDEProject(workspaceDir: string, config: WorkspaceConfig): Promise<void> {
-        const mainRcPath = getMainRcPath(workspaceDir, config, this.getOs());
+    async removeDefaultPrototypeFontFilesFromIDEProject(context: WorkspacePaths): Promise<void> {
+        const mainRcPath = context.getMainRcPath();
 
         await assertReplaceContentInFile(
             mainRcPath,
@@ -101,55 +75,49 @@ export class WindowsWorkspaceService extends AbstractWorkspaceService {
     }
 
     @logActivity("Adding source files to Visual Studio solution projects")
-    async addUserSourceFilesToIDEProject(composerFilePath: string, config: WorkspaceConfig): Promise<void> {
-        const workspaceDir = getWorkspaceDir(composerFilePath);
-        const projectFiles = this.getAllVisualStudioProjectFiles(workspaceDir, config);
-        const filePaths = (await this.filesService.loadSourceFilesList(composerFilePath));
+    async addUserSourceFilesToIDEProject(context: WorkspacePaths): Promise<void> {
+        const projectFiles = this.getAllVisualStudioProjectFiles(context);
+        const filePaths = (await this.fileService.loadSourceFilesList(context));
 
         for (const fileToAdd of filePaths) {
             await Promise.all(projectFiles
                 .map(projectFile =>
-                    this.addSourceFileToVisualStudioProjectFile(workspaceDir, config, projectFile, fileToAdd)));
+                    this.addSourceFileToVisualStudioProjectFile(context, projectFile, fileToAdd)));
         }
 
-        await this.changeConfigHeaderPathInMainRc(workspaceDir, config);
-        await this.addUserSourcesToIncludePath(workspaceDir, config);
+        await this.changeConfigHeaderPathInMainRc(context);
+        await this.addUserSourcesToIncludePath(context);
     }
 
     @logActivity("Adding font files to Visual Studio solution projects")
-    async addUserFontFilesToIDEProject(composerFilePath: string, config: WorkspaceConfig): Promise<void> {
-        const workspaceDir = getWorkspaceDir(composerFilePath);
-        const filePaths = (await this.filesService.loadFontFileList(composerFilePath));
-
+    async addUserFontFilesToIDEProject(context: WorkspacePaths, translateToVariable: VariableNameTranslator): Promise<void> {
+        const filePaths = (await this.fileService.loadFontFileList(context));
         for (const filePath of filePaths) {
-            await this.addFontFileToVisualStudioProjects(workspaceDir, config, filePath);
+            await this.addFontFileToVisualStudioProjects(context, filePath, translateToVariable);
         }
-
     }
 
-    async initializeFontFilesInIDEProject(workspaceDir: string, config: WorkspaceConfig): Promise<void> {
-        const configHPath = getConfigHPath(workspaceDir, config, this.getOs());
-        const mainCppFile = getMainPluginCppFile(workspaceDir, config);
-
-        await assertReplaceContentInFile(configHPath, `#define ROBOTO_FN "Roboto-Regular.ttf"`, '');
+    async initializeFontFilesInIDEProject(context: WorkspacePaths, translateToVariable: VariableNameTranslator): Promise<void> {
+        await assertReplaceContentInFile(context.getConfigHPath(), `#define ROBOTO_FN "Roboto-Regular.ttf"`, '');
 
         // As fonts have a naming scheme. We are therefore removing the default iPlug name for roboto and re-adding it
         // with the standard naming scheme.
-        await assertReplaceContentInFile(mainCppFile, 'ROBOTO_FN', this.getVariableNameForForFile(`Roboto-Regular.ttf`));
+        await assertReplaceContentInFile(context.getMainPluginCppFile(), 'ROBOTO_FN',
+            translateToVariable(`Roboto-Regular.ttf`));
     }
 
-    private async addFontFileToVisualStudioProjects(workspaceDir: string, config: WorkspaceConfig, fontFileToAdd: string): Promise<void> {
-        const variableName = this.getVariableNameForForFile(fontFileToAdd);
-        const fontsDir = getVisualStudioProjectFontResourcesDir(workspaceDir, config, this.getOs());
+    private async addFontFileToVisualStudioProjects(context: WorkspacePaths, fontFileToAdd: string, translateToVariable: VariableNameTranslator): Promise<void> {
+        const variableName = translateToVariable(fontFileToAdd);
+        const fontsDir = context.getVisualStudioProjectFontResourcesDir();
 
-        await this.addFontToMainRc(workspaceDir, config, variableName);
-        await this.addFontToConfigH(workspaceDir, config, fontFileToAdd, variableName);
+        await this.addFontToMainRc(context, variableName);
+        await this.addFontToConfigH(context, fontFileToAdd, variableName);
 
         await createHardLink(fontFileToAdd, path.join(fontsDir, path.basename(fontFileToAdd)));
     }
 
-    private async addFontToMainRc(workspaceDir: string, config: WorkspaceConfig, variableName: string) {
-        const mainRcPath = getMainRcPath(workspaceDir, config, this.getOs());
+    private async addFontToMainRc(context: WorkspacePaths, variableName: string) {
+        const mainRcPath = context.getMainRcPath();
         let mainRcContent = await readFile(mainRcPath);
 
         // Adding Resource to section "3 TEXTINCLUDE"
@@ -163,8 +131,8 @@ export class WindowsWorkspaceService extends AbstractWorkspaceService {
         await writeFile(mainRcPath, mainRcContent);
     }
 
-    private async addFontToConfigH(workspaceDir: string, config: WorkspaceConfig, fileName: string, variableName: string) {
-        const configHPath = getConfigHPath(workspaceDir, config, this.getOs());
+    private async addFontToConfigH(context: WorkspacePaths, fileName: string, variableName: string) {
+        const configHPath = context.getConfigHPath();
         const fontDefinition = `#define ${variableName} "${path.basename(fileName)}"`;
 
         let configHContent = await readFile(configHPath);
@@ -177,8 +145,8 @@ export class WindowsWorkspaceService extends AbstractWorkspaceService {
         await writeFile(configHPath, configHContent);
     }
 
-    private async addSourceFileToVisualStudioProjectFile(workspaceDir: string, config: WorkspaceConfig, vsProjectFile: string, fileToAdd: string): Promise<void> {
-        const projectDir = getVisualStudioIDEProjectsDir(workspaceDir, config, this.getOs());
+    private async addSourceFileToVisualStudioProjectFile(context: WorkspacePaths, vsProjectFile: string, fileToAdd: string): Promise<void> {
+        const projectDir = context.getVisualStudioIDEProjectsDir();
         let fileContent = await readFile(vsProjectFile);
 
         if (!this.projectFileContainsSourceFile(fileContent, projectDir, fileToAdd)) {
@@ -192,13 +160,12 @@ export class WindowsWorkspaceService extends AbstractWorkspaceService {
      * Because composer manages its own sources directory, we need to include this directory in the visual studio
      * project files. The easiest way to do this, is to change the "AdditionalIncludeDirectories" definition by just
      * adding the sources directory to this list.
-     * @param workspaceDir The current workspace.
-     * @param config The configuration.
+     * @param context The current workspace context.
      */
-    private async addUserSourcesToIncludePath(workspaceDir: string, config: WorkspaceConfig): Promise<void> {
-        const winPropsPath = getVisualStudioProjectWinPropsPath(workspaceDir, config, this.getOs());
-        const sourcesDir = getSourcesDir(workspaceDir);
-        const solutionDir = getProjectBuildDir(workspaceDir, this.getOs());
+    private async addUserSourcesToIncludePath(context: WorkspacePaths): Promise<void> {
+        const winPropsPath = context.getVisualStudioProjectWinPropsPath();
+        const sourcesDir = context.getSourcesDir();
+        const solutionDir = context.getProjectBuildDir();
 
         await assertReplaceContentInFile(
             winPropsPath,
@@ -210,13 +177,12 @@ export class WindowsWorkspaceService extends AbstractWorkspaceService {
     /**
      * Because composer manages its own sources directory, we need to change the inclusion path for config.h
      * so that it points to the composer sources directory.
-     * @param workspaceDir The current workspace.
-     * @param config The configuration.
+     * @param context The current workspace context.
      */
-    private async changeConfigHeaderPathInMainRc(workspaceDir: string, config: WorkspaceConfig): Promise<void> {
-        const mainRcPath = getMainRcPath(workspaceDir, config, this.getOs());
-        const configHPath = getConfigHPath(workspaceDir, config, this.getOs());
-        const projectDir = getProjectBuildDir(workspaceDir, this.getOs());
+    private async changeConfigHeaderPathInMainRc(context: WorkspacePaths): Promise<void> {
+        const mainRcPath = context.getMainRcPath();
+        const configHPath = context.getConfigHPath();
+        const projectDir = context.getProjectBuildDir();
 
         await assertReplaceContentInFile(
             mainRcPath,
@@ -231,8 +197,8 @@ export class WindowsWorkspaceService extends AbstractWorkspaceService {
         );
     }
 
-    private async removeSourceFileFromVisualStudioProjectFile(workspaceDir: string, config: WorkspaceConfig, vsProjectFile: string, fileToRemove: string): Promise<void> {
-        const projectDir = getVisualStudioIDEProjectsDir(workspaceDir, config, this.getOs());
+    private async removeSourceFileFromVisualStudioProjectFile(context: WorkspacePaths, vsProjectFile: string, fileToRemove: string): Promise<void> {
+        const projectDir = context.getVisualStudioIDEProjectsDir();
         let fileContent = await readFile(vsProjectFile);
 
         if (this.projectFileContainsSourceFile(fileContent, projectDir, fileToRemove)) {
@@ -294,17 +260,16 @@ export class WindowsWorkspaceService extends AbstractWorkspaceService {
         }
     }
 
-    private getAllVisualStudioProjectFiles(workspaceDir: string, config: WorkspaceConfig): string[] {
-        const os = this.getOs();
+    private getAllVisualStudioProjectFiles(context: WorkspacePaths): string[] {
         return [
-            getVisualStudioAppIDEProjectFilePath(workspaceDir, config, os),
-            getVisualStudioVst2IDEProjectFilePath(workspaceDir, config, os),
-            getVisualStudioVst3IDEProjectFilePath(workspaceDir, config, os),
-            getVisualStudioAaxIDEProjectFilePath(workspaceDir, config, os),
-            getVisualStudioAppIDEProjectFiltersFilePath(workspaceDir, config, os),
-            getVisualStudioVst2IDEProjectFiltersFilePath(workspaceDir, config, os),
-            getVisualStudioVst3IDEProjectFiltersFilePath(workspaceDir, config, os),
-            getVisualStudioAaxIDEProjectFiltersFilePath(workspaceDir, config, os)
+            context.getVisualStudioAppIDEProjectFilePath(),
+            context.getVisualStudioVst2IDEProjectFilePath(),
+            context.getVisualStudioVst3IDEProjectFilePath(),
+            context.getVisualStudioAaxIDEProjectFilePath(),
+            context.getVisualStudioAppIDEProjectFiltersFilePath(),
+            context.getVisualStudioVst2IDEProjectFiltersFilePath(),
+            context.getVisualStudioVst3IDEProjectFiltersFilePath(),
+            context.getVisualStudioAaxIDEProjectFiltersFilePath()
         ];
     }
 

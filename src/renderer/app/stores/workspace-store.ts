@@ -5,7 +5,8 @@ import * as configService from "@/renderer/app/services/domain/config-service";
 import {withLoadingScreen} from "@/renderer/app/services/ui/loading-screen-service";
 import {showSuccessNotification, withNotification} from "@/renderer/app/services/ui/notification-service";
 import {trySilently} from "@/renderer/app/util/error-utils";
-import {AbstractWorkspaceService} from "@/renderer/app/services/domain/workspace-service";
+import {WorkspaceService} from "@/renderer/app/services/domain/workspace-service";
+import {WorkspacePaths} from "@/renderer/app/services/domain/common/paths";
 
 const CONFIG_PATH_KEY = 'configPath';
 
@@ -13,8 +14,9 @@ export class WorkspaceStore {
     @observable userConfig: WorkspaceConfig | undefined = undefined;
     @observable configPath: string | undefined = undefined;
     @observable sourceFilesList: string[] = [];
+    @observable workspacePaths: WorkspacePaths | undefined = undefined;
 
-    constructor(private readonly workspaceService: AbstractWorkspaceService) {
+    constructor(private readonly workspaceService: WorkspaceService) {
         trySilently(() => this.loadConfigFromPathSync(localStorage.getItem(CONFIG_PATH_KEY)!));
     }
 
@@ -62,12 +64,12 @@ export class WorkspaceStore {
     @action.bound
     @withLoadingScreen("Starting IDE")
     @withNotification({onError: "Failed to start IDE", showLogButton: true})
-    async startIDE(configFilePath: string, config: WorkspaceConfig) {
-        await this.workspaceService.startIDE(configFilePath, config);
+    async startIDE() {
+        await this.workspaceService.startIDE(this.userConfig!, this.workspacePaths!);
     }
 
     getResourceAliasName(filePath: string): string {
-        return this.workspaceService.getVariableNameForForFile(filePath);
+        return this.workspaceService.getVariableNameForFile(filePath);
     }
 
     private async loadConfigFromPath(path: string): Promise<void> {
@@ -84,6 +86,7 @@ export class WorkspaceStore {
         runInAction(() => {
             this.userConfig = userConfig;
             this.configPath = configPath;
+            this.workspacePaths = new WorkspacePaths(configPath, userConfig);
         });
 
         localStorage.setItem(CONFIG_PATH_KEY, configPath);

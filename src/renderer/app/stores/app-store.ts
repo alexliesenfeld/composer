@@ -25,6 +25,9 @@ export class AppStore implements LoadingServiceContext, LoggingServiceContext, N
     @observable loadingActivities: string[] = [];
     @observable selectedPage: Page = Page.PROPERTIES;
 
+    constructor(public readonly ideName: string) {
+    }
+
     @action.bound
     showLoadingScreen(loadingText?: string): void {
         this.isLoadingScreenShown = true;
@@ -72,7 +75,7 @@ export class AppStore implements LoadingServiceContext, LoggingServiceContext, N
 
     @action.bound
     showLog(): void {
-       this.selectedPage = Page.LOG;
+        this.selectedPage = Page.LOG;
     }
 
 }
