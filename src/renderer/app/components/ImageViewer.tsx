@@ -26,18 +26,10 @@ export class ImageViewer extends React.Component<ImageViewerProps> {
 
     getMimeType(fileName: string) {
         const ext = path.extname(fileName);
-        switch (ext) {
-            case ".png":
-                return "image/png";
-            case ".bmp":
-                return "image/bmp";
-            case ".svg":
-                return "image/svg+xml";
-            case ".jpeg":
-            case ".jpg":
-                return "image/jpeg";
-            default:
-                throw new UnsupportedOperationError(`Unsupported image file extension ${ext} in file ${fileName}`)
+        if (ext === ".png") {
+            return "image/png";
+        } else {
+            throw new UnsupportedOperationError(`Unsupported image file extension ${ext} in file ${fileName}`)
         }
     }
 

@@ -31,6 +31,7 @@ export class FilesStore {
     @observable sourceFileToDelete: string | undefined;
     @observable fontFileToDelete: string | undefined;
     @observable imageFileToDelete: string | undefined;
+    @observable imageInfoPanelOpened = false;
 
     constructor(private readonly filesService: FilesService) {
     }
@@ -219,7 +220,7 @@ export class FilesStore {
     async importImage(projectPaths: ProjectPaths): Promise<void> {
         const dialogResult = await ElectronContext.dialog.showOpenDialog({
             properties: ["multiSelections"],
-            filters: [{extensions: ["png", "bmp", "svg"], name: 'Image Files (*.png,*.bmp,*.svg)'}]
+            filters: [{extensions: ["png"], name: 'Image Files (*.png)'}]
         });
 
         if (dialogResult.canceled) {

@@ -29,10 +29,6 @@ export class FileBrowser extends React.Component<FileBrowserProps> {
             case ".ttf":
                 return FONT;
             case ".png":
-            case ".bmp":
-            case ".svg":
-            case ".jpeg":
-            case ".jpg":
                 return MEDIA;
             default:
                 return undefined;

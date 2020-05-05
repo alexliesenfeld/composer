@@ -9,6 +9,7 @@ export interface IdeService {
     removeDefaultPrototypeSourceFiles(context: WorkspacePaths, defaultPrototypeSourceFiles: string[]): Promise<void>;
     addUserSourceFilesToIDEProject(context: WorkspacePaths): Promise<void>;
     addUserFontFilesToIDEProject(context: WorkspacePaths, translateToVariable: VariableNameTranslator): Promise<void>;
+    addUserImageFilesToIDEProject(context: WorkspacePaths, translateToVariable: VariableNameTranslator): Promise<void>;
     startIDEProject(context: WorkspacePaths): Promise<void>;
     getIPlug2DependencyFileNames(): Promise<string[]>;
 }

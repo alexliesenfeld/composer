@@ -13,6 +13,8 @@ import {FileBrowser} from "@/renderer/app/components/FileBrowser";
 import CreateFileDialog from "@/renderer/app/components/CreateNewFileDialog";
 import {ConfirmDeleteFileDialog} from "@/renderer/app/components/ConfirmDeleteFileDialog";
 import {AppStore} from "@/renderer/app/stores/app-store";
+import {ImageHelpPanel} from "@/renderer/app/containers/pages/files/info-panels/ImageHelpPanel";
+import {HELP} from "@blueprintjs/icons/lib/esm/generated/iconNames";
 
 @inject('workspaceStore', 'filesStore', 'appStore')
 @observer
@@ -169,6 +171,14 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                         onAccept={() => this.props.filesStore!.completeDeletingImageFile(this.props.workspaceStore!.workspacePaths!)}
                         fileName={this.props.filesStore!.imageFileToDelete}
                     />
+                    {!!this.props.filesStore!.selectedImageFile && this.props.filesStore!.imageInfoPanelOpened ?
+                        <ImageHelpPanel fileName={this.props.filesStore!.selectedImageFile!}
+                                        variableName={this.props.workspaceStore!.getResourceAliasName(this.props.filesStore!.selectedImageFile!)}
+                                        isOpen={this.props.filesStore!.imageInfoPanelOpened}
+                                        onClose={
+                                            () => this.props.filesStore!.imageInfoPanelOpened = !this.props.filesStore!.imageInfoPanelOpened
+                                        }/> : null
+                    }
                     <FileBrowser
                         showContentArea={!!this.props.filesStore!.selectedImageFile}
                         fileList={this.props.filesStore!.imageFileNamesList}
@@ -187,6 +197,7 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                             <Navbar.Group align={Alignment.LEFT}>
                                 <Text>{this.props.filesStore!.selectedImageFile}</Text>
                             </Navbar.Group>
+
                             <Navbar.Group align={Alignment.RIGHT}>
                                 <ButtonGroup>
                                     <Button small={true}
@@ -196,6 +207,13 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                                             onClick={() => this.props.filesStore!.imageViewerStretchImage = true}
                                             active={this.props.filesStore!.imageViewerStretchImage}>Stretch</Button>
                                 </ButtonGroup>
+                            </Navbar.Group>
+                            <Navbar.Group align={Alignment.RIGHT}>
+                                <Button small={true}
+                                        icon={HELP}
+                                        onClick={() => this.props.filesStore!.imageInfoPanelOpened = true}
+                                        minimal={true}
+                                        className='helper-button'>How to use?</Button>
                             </Navbar.Group>
                         </Navbar>
                         <ImageViewer fileName={this.props.filesStore!.selectedImageFile!}

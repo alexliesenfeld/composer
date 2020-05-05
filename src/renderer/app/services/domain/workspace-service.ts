@@ -66,6 +66,7 @@ export class WorkspaceService {
 
         await this.ideService.addUserSourceFilesToIDEProject(paths);
         await this.ideService.addUserFontFilesToIDEProject(paths, this.getVariableNameForFile);
+        await this.ideService.addUserImageFilesToIDEProject(paths, this.getVariableNameForFile);
 
         await this.ideService.startIDEProject(paths);
     }

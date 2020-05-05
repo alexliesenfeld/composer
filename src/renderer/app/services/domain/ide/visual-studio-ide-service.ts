@@ -6,13 +6,18 @@ import {FilesService} from "@/renderer/app/services/domain/files-service";
 import {AssertionError} from "@/renderer/app/model/errors";
 import {readFile, writeFile} from "@/renderer/app/services/domain/config-service";
 import {assertReplace, replace, replaceAll, times} from "@/renderer/app/util/string-utils";
-import {assertReplaceContentInFile, createHardLink, deleteFileIfExists} from "@/renderer/app/util/file-utils";
+import {
+    assertReplaceContentInFile,
+    createDirIfNotExists,
+    createHardLink,
+    deleteFileIfExists
+} from "@/renderer/app/util/file-utils";
 import {EOL} from "ts-loader/dist/constants";
 import {IdeService, VariableNameTranslator} from "@/renderer/app/services/domain/common/ide-service";
 import {WorkspacePaths} from "@/renderer/app/services/domain/common/paths";
 
-const MAIN_RC_TEXTINCLUDE_FONT_RESOURCES_PLACEHOLDER = "//MAIN_RC_TEXTINCLUDE_FONT_RESOURCES_PLACEHOLDER";
-const MAIN_RC_FONT_RESOURCES_PLACEHOLDER = "//MAIN_RC_FONT_RESOURCES_PLACEHOLDER";
+const MAIN_RC_TEXTINCLUDE_RESOURCES_PLACEHOLDER = "//MAIN_RC_TEXTINCLUDE_RESOURCES_PLACEHOLDER";
+const MAIN_RC_RESOURCES_PLACEHOLDER = "//MAIN_RC_RESOURCES_PLACEHOLDER";
 
 /**
  * This is a service class to work with the workspace on Windows. It extends the base class with OS-specific
@@ -62,7 +67,7 @@ export class VisualStudioIdeService implements IdeService {
             `"ROBOTO_FN TTF ROBOTO_FN\\0"`,
             // Instead of deleting the old font, we replace it with a placeholder that can be used
             // for insertion later
-            MAIN_RC_TEXTINCLUDE_FONT_RESOURCES_PLACEHOLDER
+            MAIN_RC_TEXTINCLUDE_RESOURCES_PLACEHOLDER
         );
 
         await assertReplaceContentInFile(
@@ -70,7 +75,7 @@ export class VisualStudioIdeService implements IdeService {
             `ROBOTO_FN TTF ROBOTO_FN`,
             // Instead of deleting the old font, we replace it with a placeholder that can be used
             // for insertion later.
-            MAIN_RC_FONT_RESOURCES_PLACEHOLDER
+            MAIN_RC_RESOURCES_PLACEHOLDER
         );
     }
 
@@ -106,6 +111,55 @@ export class VisualStudioIdeService implements IdeService {
             translateToVariable(`Roboto-Regular.ttf`));
     }
 
+    async addUserImageFilesToIDEProject(context: WorkspacePaths, translateToVariable: (filePath: string) => string): Promise<void> {
+        const filePaths = (await this.fileService.loadImageFilesList(context));
+        for (const filePath of filePaths) {
+            await this.addImageFileToVisualStudioProjects(context, filePath, translateToVariable);
+        }
+    }
+
+    private async addImageFileToVisualStudioProjects(paths: WorkspacePaths, fontFileToAdd: string, translateToVariable: VariableNameTranslator): Promise<void> {
+        const variableName = translateToVariable(fontFileToAdd);
+        const imagesDir = paths.getVisualStudioProjectImageResourcesDir();
+
+        await createDirIfNotExists(imagesDir);
+
+        await this.addImageToMainRc(paths, variableName);
+        await this.addImageToConfigH(paths, fontFileToAdd, variableName);
+
+        await createHardLink(fontFileToAdd, path.join(imagesDir, path.basename(fontFileToAdd)));
+    }
+
+    private async addImageToMainRc(paths: WorkspacePaths, variableName: string) {
+        const mainRcPath = paths.getMainRcPath();
+        let mainRcContent = await readFile(mainRcPath);
+
+        // Adding Resource to section "3 TEXTINCLUDE"
+        mainRcContent = assertReplace(mainRcContent, MAIN_RC_TEXTINCLUDE_RESOURCES_PLACEHOLDER,
+            `${MAIN_RC_TEXTINCLUDE_RESOURCES_PLACEHOLDER}${EOL}"${variableName} PNG ${variableName}\\0"${EOL}`);
+
+        // Adding Resource to section "Generated from the TEXTINCLUDE 3 resource."
+        mainRcContent = assertReplace(mainRcContent, MAIN_RC_RESOURCES_PLACEHOLDER,
+            `${MAIN_RC_RESOURCES_PLACEHOLDER}${EOL}${variableName} PNG ${variableName}${EOL}`);
+
+        await writeFile(mainRcPath, mainRcContent);
+    }
+
+    private async addImageToConfigH(paths: WorkspacePaths, fileName: string, variableName: string) {
+        const configHPath = paths.getConfigHPath();
+        const fontDefinition = `#define ${variableName} "${path.basename(fileName)}"`;
+
+        let configHContent = await readFile(configHPath);
+
+        // Adding font to config.h if not already present
+        if (!configHContent.includes(fontDefinition)) {
+            configHContent += `${fontDefinition}${EOL}`;
+        }
+
+        await writeFile(configHPath, configHContent);
+    }
+
+
     private async addFontFileToVisualStudioProjects(context: WorkspacePaths, fontFileToAdd: string, translateToVariable: VariableNameTranslator): Promise<void> {
         const variableName = translateToVariable(fontFileToAdd);
         const fontsDir = context.getVisualStudioProjectFontResourcesDir();
@@ -121,12 +175,12 @@ export class VisualStudioIdeService implements IdeService {
         let mainRcContent = await readFile(mainRcPath);
 
         // Adding Resource to section "3 TEXTINCLUDE"
-        mainRcContent = assertReplace(mainRcContent, MAIN_RC_TEXTINCLUDE_FONT_RESOURCES_PLACEHOLDER,
-            `${MAIN_RC_TEXTINCLUDE_FONT_RESOURCES_PLACEHOLDER}${EOL}"${variableName} TTF ${variableName}\\0"${EOL}`);
+        mainRcContent = assertReplace(mainRcContent, MAIN_RC_TEXTINCLUDE_RESOURCES_PLACEHOLDER,
+            `${MAIN_RC_TEXTINCLUDE_RESOURCES_PLACEHOLDER}${EOL}"${variableName} TTF ${variableName}\\0"${EOL}`);
 
         // Adding Resource to section "Generated from the TEXTINCLUDE 3 resource."
-        mainRcContent = assertReplace(mainRcContent, MAIN_RC_FONT_RESOURCES_PLACEHOLDER,
-            `${MAIN_RC_FONT_RESOURCES_PLACEHOLDER}${EOL}${variableName} TTF ${variableName}${EOL}`);
+        mainRcContent = assertReplace(mainRcContent, MAIN_RC_RESOURCES_PLACEHOLDER,
+            `${MAIN_RC_RESOURCES_PLACEHOLDER}${EOL}${variableName} TTF ${variableName}${EOL}`);
 
         await writeFile(mainRcPath, mainRcContent);
     }
@@ -272,5 +326,7 @@ export class VisualStudioIdeService implements IdeService {
             context.getVisualStudioAaxIDEProjectFiltersFilePath()
         ];
     }
+
+
 
 }
