@@ -1,6 +1,6 @@
 import {
     copyFile,
-    createDirIfNotExists,
+    createDirIfNotExists, createHardLink,
     deleteDirectory,
     deleteFileIfExists,
     directoryDoesNotExistOrIsEmpty,
@@ -23,10 +23,14 @@ import {
     DEFAULT_FONT_FILE_NAME,
     WorkspacePaths
 } from "@/renderer/app/services/domain/common/paths";
+import {readFile, writeFile} from "@/renderer/app/services/domain/config-service";
+import {EOL} from "ts-loader/dist/constants";
+import {FilesService} from "@/renderer/app/services/domain/files-service";
+import {ComposerManagedContentBlock} from "@/renderer/app/util/composer-managed-content-block";
 
 
 export class WorkspaceService {
-    constructor(private ideService: IdeService) {
+    constructor(private fileService: FilesService, private ideService: IdeService) {
     }
 
     public getIdeName(): string {
@@ -59,16 +63,68 @@ export class WorkspaceService {
             await this.initializeFontFiles(paths);
         }
 
-        const defaultPrototypeSourceFiles = this.getDefaultPrototypeSourceFiles(paths, config);
-        await this.ideService.removeDefaultPrototypeSourceFiles(paths, defaultPrototypeSourceFiles);
+        await this.removeDefaultPrototypeFontFiles(paths, config);
 
-        await this.removeDefaultPrototypeFontFiles(paths);
+        // Always start with a clean composer managed configuration to keep files in-sync with config.h
+        await this.writeConfigHComposerBlock(paths, "");
 
         await this.ideService.addUserSourceFilesToIDEProject(paths);
-        await this.ideService.addUserFontFilesToIDEProject(paths, this.getVariableNameForFile);
-        await this.ideService.addUserImageFilesToIDEProject(paths, this.getVariableNameForFile);
+        await this.addUserFontFiles(paths);
+        await this.addUserImageFiles(paths);
 
         await this.ideService.startIDEProject(paths);
+    }
+
+    async addUserFontFiles(paths: WorkspacePaths): Promise<void> {
+        const fontsDir = paths.getIDEProjectFontResourcesDir();
+        await createDirIfNotExists(fontsDir);
+
+        const filePaths = await this.fileService.loadFontFileList(paths);
+
+        for (const filePath of filePaths) {
+            const variableName = this.getVariableNameForFile(filePath);
+            await this.addFontToConfigH(paths, filePath, variableName);
+            await createHardLink(filePath, path.join(fontsDir, path.basename(filePath)));
+            await this.ideService.addImageFileToIdeProject(paths, variableName);
+        }
+    }
+
+    async addUserImageFiles(paths: WorkspacePaths): Promise<void> {
+        const imagesDir = paths.getIDEProjectImageResourcesDir();
+        await createDirIfNotExists(imagesDir);
+
+        const filePaths = await this.fileService.loadImageFilesList(paths);
+
+        for (const filePath of filePaths) {
+            const variableName = this.getVariableNameForFile(filePath);
+            await this.addImageToConfigH(paths, filePath, variableName);
+            await createHardLink(filePath, path.join(imagesDir, path.basename(filePath)));
+            await this.ideService.addImageFileToIdeProject(paths, variableName);
+        }
+    }
+
+    private async addImageToConfigH(paths: WorkspacePaths, fileName: string, variableName: string) {
+        let configHBlockContent = await this.getConfigHComposerBlock(paths);
+        const fontDefinition = `#define ${variableName} "${path.basename(fileName)}"`;
+
+        // Adding font to config.h if not already present
+        if (!configHBlockContent.includes(fontDefinition)) {
+            configHBlockContent += `${fontDefinition}${EOL}`;
+        }
+
+        this.writeConfigHComposerBlock(paths, configHBlockContent);
+    }
+
+    private async addFontToConfigH(paths: WorkspacePaths, fileName: string, variableName: string) {
+        let configHBlockContent = await this.getConfigHComposerBlock(paths);
+        const fontDefinition = `#define ${variableName} "${path.basename(fileName)}"`;
+
+        // Adding font to config.h if not already present
+        if (!configHBlockContent.includes(fontDefinition)) {
+            configHBlockContent += `${fontDefinition}${EOL}`;
+        }
+
+        this.writeConfigHComposerBlock(paths, configHBlockContent);
     }
 
     @logActivity("Cloning iPlug2 Git repo")
@@ -145,7 +201,7 @@ export class WorkspaceService {
         await createDirIfNotExists(resourcesDir);
         await createDirIfNotExists(workspaceFontsDir);
 
-        const vsSolutionFontsDir = paths.getVisualStudioProjectFontResourcesDir();
+        const vsSolutionFontsDir = paths.getIDEProjectFontResourcesDir();
         const filesToCopy = path.join(vsSolutionFontsDir, DEFAULT_FONT_FILE_NAME);
 
         await copyFile(filesToCopy, path.join(workspaceFontsDir, path.basename(filesToCopy)));
@@ -189,9 +245,11 @@ export class WorkspaceService {
             .map(file => path.join(projectBuildDir, file));
     }
 
-    async removeDefaultPrototypeFontFiles(paths: WorkspacePaths): Promise<void> {
+    async removeDefaultPrototypeFontFiles(paths: WorkspacePaths, config: WorkspaceConfig): Promise<void> {
+        const defaultPrototypeSourceFiles = this.getDefaultPrototypeSourceFiles(paths, config);
+        await this.ideService.removeDefaultPrototypeSourceFilesFromIDEProject(paths, defaultPrototypeSourceFiles);
         await this.ideService.removeDefaultPrototypeFontFilesFromIDEProject(paths);
-        const fontPath = paths.getVisualStudioProjectFontResourcesDir();
+        const fontPath = paths.getIDEProjectFontResourcesDir();
         await deleteFileIfExists(path.join(fontPath, DEFAULT_FONT_FILE_NAME));
     }
 
@@ -201,4 +259,19 @@ export class WorkspaceService {
             .toUpperCase();
     }
 
+    async getConfigHComposerBlock(paths: WorkspacePaths): Promise<string> {
+        const configHPath = paths.getConfigHPath();
+        let configHContent = await readFile(configHPath);
+        return ComposerManagedContentBlock.extractFrom(configHContent).payload;
+    }
+
+    async writeConfigHComposerBlock(paths: WorkspacePaths, payload: string): Promise<void> {
+        const configHPath = paths.getConfigHPath();
+        const configHContent = await readFile(configHPath);
+
+        const block = new ComposerManagedContentBlock(payload);
+        const newConfigHContent = block.addToOrReplaceIn(configHContent);
+
+        await writeFile(configHPath, newConfigHContent);
+    }
 }

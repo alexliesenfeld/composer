@@ -4,12 +4,16 @@ export type VariableNameTranslator = (filePath: string) => string;
 
 export interface IdeService {
     getIdeName(): string;
+
     initializeFontFilesInIDEProject(context: WorkspacePaths, translate: VariableNameTranslator): Promise<void>;
+
     removeDefaultPrototypeFontFilesFromIDEProject(context: WorkspacePaths): Promise<void>;
-    removeDefaultPrototypeSourceFiles(context: WorkspacePaths, defaultPrototypeSourceFiles: string[]): Promise<void>;
-    addUserSourceFilesToIDEProject(context: WorkspacePaths): Promise<void>;
-    addUserFontFilesToIDEProject(context: WorkspacePaths, translateToVariable: VariableNameTranslator): Promise<void>;
-    addUserImageFilesToIDEProject(context: WorkspacePaths, translateToVariable: VariableNameTranslator): Promise<void>;
+    removeDefaultPrototypeSourceFilesFromIDEProject(context: WorkspacePaths, defaultPrototypeSourceFiles: string[]): Promise<void>;
+
     startIDEProject(context: WorkspacePaths): Promise<void>;
     getIPlug2DependencyFileNames(): Promise<string[]>;
+
+    addImageFileToIdeProject(paths: WorkspacePaths, variableName: string): Promise<void>;
+    addFontFileToIdeProject(paths: WorkspacePaths, variableName: string): Promise<void>;
+    addUserSourceFilesToIDEProject(context: WorkspacePaths): Promise<void>;
 }

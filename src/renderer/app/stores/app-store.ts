@@ -10,7 +10,6 @@ export interface AppStoreLogMessage {
 }
 
 export enum Page {
-    PROPERTIES,
     FILES,
     PACKAGING,
     SETTINGS,
@@ -23,7 +22,7 @@ export class AppStore implements LoadingServiceContext, LoggingServiceContext, N
     @observable isLoadingScreenShown: boolean;
     @observable loadingScreenText: string | undefined;
     @observable loadingActivities: string[] = [];
-    @observable selectedPage: Page = Page.PROPERTIES;
+    @observable selectedPage: Page = Page.FILES;
 
     constructor(public readonly ideName: string) {
     }

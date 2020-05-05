@@ -73,11 +73,11 @@ export class WorkspacePaths extends ProjectPaths {
         return path.join(this.getProjectBuildDir(), "resources")
     }
 
-    getVisualStudioProjectFontResourcesDir(): string {
+    getIDEProjectFontResourcesDir(): string {
         return path.join(this.getVisualStudioProjectResourcesDir(), "fonts")
     }
 
-    getVisualStudioProjectImageResourcesDir(): string {
+    getIDEProjectImageResourcesDir(): string {
         return path.join(this.getVisualStudioProjectResourcesDir(), "img")
     }
 

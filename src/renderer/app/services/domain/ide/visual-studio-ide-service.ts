@@ -8,8 +8,6 @@ import {readFile, writeFile} from "@/renderer/app/services/domain/config-service
 import {assertReplace, replace, replaceAll, times} from "@/renderer/app/util/string-utils";
 import {
     assertReplaceContentInFile,
-    createDirIfNotExists,
-    createHardLink,
     deleteFileIfExists
 } from "@/renderer/app/util/file-utils";
 import {EOL} from "ts-loader/dist/constants";
@@ -49,7 +47,7 @@ export class VisualStudioIdeService implements IdeService {
         await Cpx.sudoExec(`start ${vsSolutionPath}`);
     }
 
-    async removeDefaultPrototypeSourceFiles(context: WorkspacePaths, defaultPrototypeFiles: string[]): Promise<void> {
+    async removeDefaultPrototypeSourceFilesFromIDEProject(context: WorkspacePaths, defaultPrototypeFiles: string[]): Promise<void> {
         const projectFiles = this.getAllVisualStudioProjectFiles(context);
 
         for (const fileToRemove of defaultPrototypeFiles) {
@@ -94,14 +92,6 @@ export class VisualStudioIdeService implements IdeService {
         await this.addUserSourcesToIncludePath(context);
     }
 
-    @logActivity("Adding font files to Visual Studio solution projects")
-    async addUserFontFilesToIDEProject(context: WorkspacePaths, translateToVariable: VariableNameTranslator): Promise<void> {
-        const filePaths = (await this.fileService.loadFontFileList(context));
-        for (const filePath of filePaths) {
-            await this.addFontFileToVisualStudioProjects(context, filePath, translateToVariable);
-        }
-    }
-
     async initializeFontFilesInIDEProject(context: WorkspacePaths, translateToVariable: VariableNameTranslator): Promise<void> {
         await assertReplaceContentInFile(context.getConfigHPath(), `#define ROBOTO_FN "Roboto-Regular.ttf"`, '');
 
@@ -111,26 +101,7 @@ export class VisualStudioIdeService implements IdeService {
             translateToVariable(`Roboto-Regular.ttf`));
     }
 
-    async addUserImageFilesToIDEProject(context: WorkspacePaths, translateToVariable: (filePath: string) => string): Promise<void> {
-        const filePaths = (await this.fileService.loadImageFilesList(context));
-        for (const filePath of filePaths) {
-            await this.addImageFileToVisualStudioProjects(context, filePath, translateToVariable);
-        }
-    }
-
-    private async addImageFileToVisualStudioProjects(paths: WorkspacePaths, fontFileToAdd: string, translateToVariable: VariableNameTranslator): Promise<void> {
-        const variableName = translateToVariable(fontFileToAdd);
-        const imagesDir = paths.getVisualStudioProjectImageResourcesDir();
-
-        await createDirIfNotExists(imagesDir);
-
-        await this.addImageToMainRc(paths, variableName);
-        await this.addImageToConfigH(paths, fontFileToAdd, variableName);
-
-        await createHardLink(fontFileToAdd, path.join(imagesDir, path.basename(fontFileToAdd)));
-    }
-
-    private async addImageToMainRc(paths: WorkspacePaths, variableName: string) {
+    async addImageFileToIdeProject(paths: WorkspacePaths, variableName: string): Promise<void> {
         const mainRcPath = paths.getMainRcPath();
         let mainRcContent = await readFile(mainRcPath);
 
@@ -145,33 +116,8 @@ export class VisualStudioIdeService implements IdeService {
         await writeFile(mainRcPath, mainRcContent);
     }
 
-    private async addImageToConfigH(paths: WorkspacePaths, fileName: string, variableName: string) {
-        const configHPath = paths.getConfigHPath();
-        const fontDefinition = `#define ${variableName} "${path.basename(fileName)}"`;
-
-        let configHContent = await readFile(configHPath);
-
-        // Adding font to config.h if not already present
-        if (!configHContent.includes(fontDefinition)) {
-            configHContent += `${fontDefinition}${EOL}`;
-        }
-
-        await writeFile(configHPath, configHContent);
-    }
-
-
-    private async addFontFileToVisualStudioProjects(context: WorkspacePaths, fontFileToAdd: string, translateToVariable: VariableNameTranslator): Promise<void> {
-        const variableName = translateToVariable(fontFileToAdd);
-        const fontsDir = context.getVisualStudioProjectFontResourcesDir();
-
-        await this.addFontToMainRc(context, variableName);
-        await this.addFontToConfigH(context, fontFileToAdd, variableName);
-
-        await createHardLink(fontFileToAdd, path.join(fontsDir, path.basename(fontFileToAdd)));
-    }
-
-    private async addFontToMainRc(context: WorkspacePaths, variableName: string) {
-        const mainRcPath = context.getMainRcPath();
+    async addFontFileToIdeProject(paths: WorkspacePaths, variableName: string): Promise<void> {
+        const mainRcPath = paths.getMainRcPath();
         let mainRcContent = await readFile(mainRcPath);
 
         // Adding Resource to section "3 TEXTINCLUDE"
@@ -183,20 +129,6 @@ export class VisualStudioIdeService implements IdeService {
             `${MAIN_RC_RESOURCES_PLACEHOLDER}${EOL}${variableName} TTF ${variableName}${EOL}`);
 
         await writeFile(mainRcPath, mainRcContent);
-    }
-
-    private async addFontToConfigH(context: WorkspacePaths, fileName: string, variableName: string) {
-        const configHPath = context.getConfigHPath();
-        const fontDefinition = `#define ${variableName} "${path.basename(fileName)}"`;
-
-        let configHContent = await readFile(configHPath);
-
-        // Adding font to config.h if not already present
-        if (!configHContent.includes(fontDefinition)) {
-            configHContent += `${fontDefinition}${EOL}`;
-        }
-
-        await writeFile(configHPath, configHContent);
     }
 
     private async addSourceFileToVisualStudioProjectFile(context: WorkspacePaths, vsProjectFile: string, fileToAdd: string): Promise<void> {

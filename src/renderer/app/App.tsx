@@ -25,7 +25,6 @@ import {
 
 import '@public/style.scss';
 import WelcomePage from "@/renderer/app/containers/pages/welcome/WelcomePage";
-import PropertiesPage from "@/renderer/app/containers/pages/properties/PropertiesPage";
 import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 import {AppStore, Page} from "@/renderer/app/stores/app-store";
 import {LogPage} from "@/renderer/app/containers/pages/log/LogPage";
@@ -60,7 +59,6 @@ const App = (props: { appStore?: AppStore, workspaceStore?: WorkspaceStore }) =>
                         <Icon icon={LAYERS} iconSize={20} className='logo'/>
                         <span> {props.workspaceStore!.userConfig!.projectName}</span>
                     </NavbarHeading>
-                    <NavButton text="Properties"  page={Page.PROPERTIES} icon={APPLICATION}/>
                     <NavButton text="Files" page={Page.FILES} icon={DOCUMENT}/>
                     <NavButton text="Packaging"  page={Page.PACKAGING} icon={ARCHIVE}/>
                 </NavbarGroup>
@@ -74,9 +72,6 @@ const App = (props: { appStore?: AppStore, workspaceStore?: WorkspaceStore }) =>
                 </NavbarGroup>
             </Navbar>
             <main className='content custom-scrollbar'>
-                <When condition={props.appStore!.selectedPage === Page.PROPERTIES}>
-                    <PropertiesPage/>
-                </When>
                 <When condition={props.appStore!.selectedPage === Page.FILES}>
                     <FilesPage/>
                 </When>

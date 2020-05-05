@@ -1,4 +1,5 @@
 import {AssertionError} from "@/renderer/app/model/errors";
+import {EOL} from "ts-loader/dist/constants";
 
 export const removeSpaces = (value: string) => value.replace(' ', '');
 export const matchesVersion = (value: string) => !!value.match(/^[0-9]+\.[0-9]+\.[0-9]+$/g);
@@ -27,7 +28,7 @@ export const replaceAll = (content: string, from: string, to: string): string =>
 
 export const times = (text: string, repeatTimes: number): string => {
     let content = "";
-    for(let i=0; i < repeatTimes; i++) {
+    for (let i = 0; i < repeatTimes; i++) {
         content += text;
     }
     return content;
