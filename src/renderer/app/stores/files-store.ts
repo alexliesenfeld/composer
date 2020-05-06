@@ -1,43 +1,42 @@
-import {action, observable, runInAction} from "mobx";
-import {ElectronContext} from "@/renderer/app/model/electron-context";
-import {FilesService} from "@/renderer/app/services/domain/files-service";
-import * as path from "path";
-import {FileWatcher} from "@/renderer/app/util/file-watcher";
-import {ProjectPaths} from "@/renderer/app/services/domain/common/paths";
+import { ElectronContext } from '@/renderer/app/model/electron-context';
+import { ProjectPaths } from '@/renderer/app/services/domain/common/paths';
+import { FilesService } from '@/renderer/app/services/domain/files-service';
+import { FileWatcher } from '@/renderer/app/util/file-watcher';
+import { action, observable, runInAction } from 'mobx';
+import * as path from 'path';
 
 export enum FilesTab {
     SOURCE_FILES_TAB,
     FONTS_TAB,
-    IMAGES_TAB
+    IMAGES_TAB,
 }
 
 export class FilesStore {
+    @observable public activeTab: FilesTab = FilesTab.SOURCE_FILES_TAB;
+    @observable public sourceFileNamesList: string[] = [];
+    @observable public fontFileNamesList: string[] = [];
+    @observable public imageFileNamesList: string[] = [];
+    @observable public selectedSourceFile: string | undefined;
+    @observable public selectedFontFile: string | undefined;
+    @observable public selectedImageFile: string | undefined;
+    @observable public selectedSourceFileContent: string | undefined;
+    @observable public selectedFontFileContent: Buffer | undefined;
+    @observable public selectedImageFileContent: string | undefined;
+    @observable public fontViewerFontSize = 18;
+    @observable public createNewSourceFileDialogOpened = false;
+    @observable public sourceFileToDelete: string | undefined;
+    @observable public fontFileToDelete: string | undefined;
+    @observable public imageFileToDelete: string | undefined;
+    @observable public imageInfoPanelOpened = false;
+    @observable public fontInfoPanelOpened = false;
     private sourceFilesWatcher: FileWatcher | undefined;
     private fontFilesWatcher: FileWatcher | undefined;
     private imageFilesWatcher: FileWatcher | undefined;
-    @observable activeTab: FilesTab = FilesTab.SOURCE_FILES_TAB;
-    @observable sourceFileNamesList: string[] = [];
-    @observable fontFileNamesList: string[] = [];
-    @observable imageFileNamesList: string[] = [];
-    @observable selectedSourceFile: string | undefined;
-    @observable selectedFontFile: string | undefined;
-    @observable selectedImageFile: string | undefined;
-    @observable selectedSourceFileContent: string | undefined;
-    @observable selectedFontFileContent: Buffer | undefined;
-    @observable selectedImageFileContent: string | undefined;
-    @observable fontViewerFontSize = 18;
-    @observable createNewSourceFileDialogOpened = false;
-    @observable sourceFileToDelete: string | undefined;
-    @observable fontFileToDelete: string | undefined;
-    @observable imageFileToDelete: string | undefined;
-    @observable imageInfoPanelOpened = false;
-    @observable fontInfoPanelOpened = false;
 
-    constructor(private readonly filesService: FilesService) {
-    }
+    constructor(private readonly filesService: FilesService) {}
 
     @action.bound
-    async refreshSourceFilesList(projectPaths: ProjectPaths): Promise<void> {
+    public async refreshSourceFilesList(projectPaths: ProjectPaths): Promise<void> {
         const paths = await this.filesService.loadSourceFilesList(projectPaths);
         const names = paths.map((filePath) => path.basename(filePath));
 
@@ -51,11 +50,11 @@ export class FilesStore {
             }
         });
 
-       return this.setSelectedSourceFile(projectPaths, this.selectedSourceFile!);
+        return this.setSelectedSourceFile(projectPaths, this.selectedSourceFile!);
     }
 
     @action.bound
-    async refreshFontFilesList(projectPaths: ProjectPaths): Promise<void> {
+    public async refreshFontFilesList(projectPaths: ProjectPaths): Promise<void> {
         const paths = await this.filesService.loadFontFileList(projectPaths);
         const names = paths.map((filePath) => path.basename(filePath));
 
@@ -73,7 +72,7 @@ export class FilesStore {
     }
 
     @action.bound
-    async refreshImageFilesList(projectPaths: ProjectPaths): Promise<void> {
+    public async refreshImageFilesList(projectPaths: ProjectPaths): Promise<void> {
         const paths = await this.filesService.loadImageFilesList(projectPaths);
         const names = paths.map((filePath) => path.basename(filePath));
 
@@ -91,56 +90,57 @@ export class FilesStore {
     }
 
     @action.bound
-    async setSelectedFontFile(projectPaths: ProjectPaths, file: string | undefined): Promise<void> {
+    public async setSelectedFontFile(projectPaths: ProjectPaths, file: string | undefined): Promise<void> {
         if (file) {
             const content = await this.filesService.loadFontContent(projectPaths, file);
             runInAction(() => {
                 this.selectedFontFile = file;
-                this.selectedFontFileContent = content
+                this.selectedFontFileContent = content;
             });
         }
     }
 
     @action.bound
-    async setSelectedSourceFile(projectPaths: ProjectPaths, file: string | undefined): Promise<void> {
+    public async setSelectedSourceFile(projectPaths: ProjectPaths, file: string | undefined): Promise<void> {
         if (file) {
             const content = await this.filesService.loadSourceFileContent(projectPaths, file);
             runInAction(() => {
                 this.selectedSourceFile = file;
-                this.selectedSourceFileContent = content
+                this.selectedSourceFileContent = content;
             });
         }
     }
 
     @action.bound
-    async setSelectedImageFile(projectPaths: ProjectPaths, file: string | undefined): Promise<void> {
+    public async setSelectedImageFile(projectPaths: ProjectPaths, file: string | undefined): Promise<void> {
         if (file) {
             const content = await this.filesService.loadImageFileContent(projectPaths, file);
             runInAction(() => {
                 this.selectedImageFile = file;
-                this.selectedImageFileContent = content
+                this.selectedImageFileContent = content;
             });
         }
     }
 
     @action.bound
-    async createNewSourceFile(projectPaths: ProjectPaths, fileName: string): Promise<void> {
+    public async createNewSourceFile(projectPaths: ProjectPaths, fileName: string): Promise<void> {
         await this.filesService.addNewSourceFile(projectPaths, fileName);
+
         return this.refreshSourceFilesList(projectPaths);
     }
 
     @action.bound
-    async startDeletingSourceFile(fileName: string): Promise<void> {
+    public async startDeletingSourceFile(fileName: string): Promise<void> {
         this.sourceFileToDelete = fileName;
     }
 
     @action.bound
-    async cancelDeletingSourceFile(): Promise<void> {
+    public async cancelDeletingSourceFile(): Promise<void> {
         this.sourceFileToDelete = undefined;
     }
 
     @action.bound
-    async completeDeletingSourceFile(projectPaths: ProjectPaths): Promise<void> {
+    public async completeDeletingSourceFile(projectPaths: ProjectPaths): Promise<void> {
         await this.filesService.deleteSourceFile(projectPaths, this.sourceFileToDelete!);
         await this.refreshSourceFilesList(projectPaths);
         runInAction(() => {
@@ -149,17 +149,17 @@ export class FilesStore {
     }
 
     @action.bound
-    async startDeletingFontFile(fileName: string): Promise<void> {
+    public async startDeletingFontFile(fileName: string): Promise<void> {
         this.fontFileToDelete = fileName;
     }
 
     @action.bound
-    async cancelDeletingFontFile(): Promise<void> {
+    public async cancelDeletingFontFile(): Promise<void> {
         this.fontFileToDelete = undefined;
     }
 
     @action.bound
-    async completeDeletingFontFile(projectPaths: ProjectPaths): Promise<void> {
+    public async completeDeletingFontFile(projectPaths: ProjectPaths): Promise<void> {
         await this.filesService.deleteFontFile(projectPaths, this.fontFileToDelete!);
         await this.refreshSourceFilesList(projectPaths);
         runInAction(() => {
@@ -168,17 +168,17 @@ export class FilesStore {
     }
 
     @action.bound
-    async startDeletingImageFile(fileName: string): Promise<void> {
+    public async startDeletingImageFile(fileName: string): Promise<void> {
         this.imageFileToDelete = fileName;
     }
 
     @action.bound
-    async cancelDeletingImageFile(): Promise<void> {
+    public async cancelDeletingImageFile(): Promise<void> {
         this.imageFileToDelete = undefined;
     }
 
     @action.bound
-    async completeDeletingImageFile(projectPaths: ProjectPaths): Promise<void> {
+    public async completeDeletingImageFile(projectPaths: ProjectPaths): Promise<void> {
         await this.filesService.deleteImageFile(projectPaths, this.imageFileToDelete!);
         await this.refreshSourceFilesList(projectPaths);
         runInAction(() => {
@@ -187,10 +187,15 @@ export class FilesStore {
     }
 
     @action.bound
-    async importSourceFile(projectPaths: ProjectPaths): Promise<void> {
+    public async importSourceFile(projectPaths: ProjectPaths): Promise<void> {
         const dialogResult = await ElectronContext.dialog.showOpenDialog({
-            properties: ["multiSelections"],
-            filters: [{extensions: ["h", "hpp", "cpp"], name: 'Source Files (*.h,*.hpp,*.cpp)'}]
+            properties: ['multiSelections'],
+            filters: [
+                {
+                    extensions: ['h', 'hpp', 'cpp'],
+                    name: 'Source Files (*.h,*.hpp,*.cpp)',
+                },
+            ],
         });
 
         if (dialogResult.canceled) {
@@ -198,14 +203,15 @@ export class FilesStore {
         }
 
         await this.filesService.importSourceFiles(projectPaths, dialogResult.filePaths);
+
         return this.refreshSourceFilesList(projectPaths);
     }
 
     @action.bound
-    async importFontFile(projectPaths: ProjectPaths): Promise<void> {
+    public async importFontFile(projectPaths: ProjectPaths): Promise<void> {
         const dialogResult = await ElectronContext.dialog.showOpenDialog({
-            properties: ["multiSelections"],
-            filters: [{extensions: ["ttf"], name: 'Font Files (*.ttf)'}]
+            properties: ['multiSelections'],
+            filters: [{ extensions: ['ttf'], name: 'Font Files (*.ttf)' }],
         });
 
         if (dialogResult.canceled) {
@@ -213,14 +219,15 @@ export class FilesStore {
         }
 
         await this.filesService.addFontFiles(projectPaths, dialogResult.filePaths);
+
         return this.refreshFontFilesList(projectPaths);
     }
 
     @action.bound
-    async importImage(projectPaths: ProjectPaths): Promise<void> {
+    public async importImage(projectPaths: ProjectPaths): Promise<void> {
         const dialogResult = await ElectronContext.dialog.showOpenDialog({
-            properties: ["multiSelections"],
-            filters: [{extensions: ["png"], name: 'Image Files (*.png)'}]
+            properties: ['multiSelections'],
+            filters: [{ extensions: ['png'], name: 'Image Files (*.png)' }],
         });
 
         if (dialogResult.canceled) {
@@ -228,50 +235,49 @@ export class FilesStore {
         }
 
         await this.filesService.addImageFiles(projectPaths, dialogResult.filePaths);
+
         return this.refreshImageFilesList(projectPaths);
     }
 
     @action.bound
-    async watchSourcesDir(projectPaths: ProjectPaths, onDirChange: () => void) {
+    public async watchSourcesDir(projectPaths: ProjectPaths, onDirChange: () => void) {
         this.unwatchSourcesDir();
         this.sourceFilesWatcher = new FileWatcher(projectPaths.getSourcesDir(), onDirChange);
         await this.sourceFilesWatcher.start();
     }
 
     @action.bound
-    async unwatchSourcesDir() {
+    public async unwatchSourcesDir() {
         if (this.sourceFilesWatcher) {
             await this.sourceFilesWatcher.stop();
         }
     }
 
     @action.bound
-    async watchFontsDir(projectPaths: ProjectPaths, onDirChange: () => void) {
+    public async watchFontsDir(projectPaths: ProjectPaths, onDirChange: () => void) {
         this.unwatchFontsDir();
         this.fontFilesWatcher = new FileWatcher(projectPaths.getFontsDir(), onDirChange);
         await this.fontFilesWatcher.start();
     }
 
     @action.bound
-    async unwatchFontsDir() {
+    public async unwatchFontsDir() {
         if (this.fontFilesWatcher) {
             await this.fontFilesWatcher.stop();
         }
     }
 
     @action.bound
-    async watchImageDir(projectPaths: ProjectPaths, onDirChange: () => void) {
+    public async watchImageDir(projectPaths: ProjectPaths, onDirChange: () => void) {
         this.unwatchImageDir();
         this.imageFilesWatcher = new FileWatcher(projectPaths.getImagesDir(), onDirChange);
         await this.imageFilesWatcher.start();
     }
 
     @action.bound
-    async unwatchImageDir() {
+    public async unwatchImageDir() {
         if (this.imageFilesWatcher) {
             await this.imageFilesWatcher.stop();
         }
     }
-
-
 }

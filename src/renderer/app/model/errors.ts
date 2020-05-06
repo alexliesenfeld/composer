@@ -10,13 +10,16 @@ export class CustomError extends Error {
 
 export class DirectoryNotEmptyError extends CustomError {
     constructor(public customMessage?: string, public filePath?: string) {
-        super(DirectoryNotEmptyError, customMessage ? customMessage : `Directory is not empty${filePath ? ': ' + filePath : ''}.`);
+        super(
+            DirectoryNotEmptyError,
+            customMessage ? customMessage : `Directory is not empty${filePath ? ': ' + filePath : ''}.`,
+        );
     }
 }
 
 export class FileNotFoundError extends CustomError {
     constructor(public filePath?: string) {
-        super(FileNotFoundError, "File was not found" + (filePath ? ": " + filePath : '')  + ".");
+        super(FileNotFoundError, 'File was not found' + (filePath ? ': ' + filePath : '') + '.');
     }
 }
 
@@ -27,8 +30,16 @@ export class OperationFailedError extends CustomError {
 }
 
 export class CommandFailedError extends CustomError {
-    constructor(public command: string,  public output: string, public errorOutput: string,public statusCode: number | null) {
-        super(CommandFailedError, `Command "${command}" failed with error code "${statusCode}". Output: ${output}, Error output: "${errorOutput}".`);
+    constructor(
+        public command: string,
+        public output: string,
+        public errorOutput: string,
+        public statusCode: number | null,
+    ) {
+        super(
+            CommandFailedError,
+            `Command "${command}" failed with error code "${statusCode}". Output: ${output}, Error output: "${errorOutput}".`,
+        );
     }
 }
 
@@ -37,7 +48,6 @@ export class UnsupportedOperationError extends CustomError {
         super(UnsupportedOperationError, customMessage ? customMessage : `Operation is unsupported.`);
     }
 }
-
 
 export class AssertionError extends CustomError {
     constructor(public customMessage?: string) {

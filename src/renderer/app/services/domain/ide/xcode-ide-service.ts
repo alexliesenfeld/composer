@@ -1,5 +1,1 @@
-
-export class XcodeIdeService {
-
-
-}
+export class XcodeIdeService {}

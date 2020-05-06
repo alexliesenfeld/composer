@@ -219,7 +219,7 @@ WelcomePage
   min-width: 10px;
 }
 
-.WelcomePage .recent-files-section h1,h2,h3,h4,h5,h6 {
+.WelcomePage .recent-files-section h1, h2, h3, h4, h5, h6 {
   text-align: center;
 }
 
@@ -239,7 +239,7 @@ WelcomePage
 /*****************************************************************
 LogPage
 ******************************************************************/
-.LogPage{
+.LogPage {
   background-color: #10161a;
   width: 100%;
   height: calc(100% - #{$pt-navbar-height});
@@ -342,7 +342,7 @@ FileBrowser
 /*****************************************************************
 FontViewer
 ******************************************************************/
-.FontViewer  {
+.FontViewer {
   @extend .custom-scrollbar;
   padding: 2em;
   height: calc(100% - 50px);

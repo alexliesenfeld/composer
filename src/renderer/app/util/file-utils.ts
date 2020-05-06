@@ -1,25 +1,22 @@
-import * as request from "request";
-import * as AdmZip from "adm-zip";
-import * as fs from "fs";
-import * as path from "path";
-import {Fsx} from "@/renderer/app/util/fsx";
-import {readFile, writeFile} from "@/renderer/app/services/domain/config-service";
-import {AssertionError, OperationFailedError} from "@/renderer/app/model/errors";
-import {assertReplace} from "@/renderer/app/util/string-utils";
+import { OperationFailedError } from '@/renderer/app/model/errors';
+import { readFile, writeFile } from '@/renderer/app/services/domain/config-service';
+import { Fsx } from '@/renderer/app/util/fsx';
+import { assertReplace } from '@/renderer/app/util/string-utils';
+import * as AdmZip from 'adm-zip';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as request from 'request';
 
 export const downloadFile = (url: string, target: string) => {
     return new Promise(function (resolve, reject) {
-        request.get(url)
-            .pipe(fs.createWriteStream(target))
-            .on('finish', resolve)
-            .on('error', reject)
+        request.get(url).pipe(fs.createWriteStream(target)).on('finish', resolve).on('error', reject);
     });
 };
 
 export const unzipFile = async (zipFilePath: string, targetDir: string) => {
     return new Promise((resolve, reject) => {
         const zip = new AdmZip(zipFilePath);
-        zip.extractAllToAsync(targetDir, true, (err: Error) => err ? reject(err) : resolve())
+        zip.extractAllToAsync(targetDir, true, (err: Error) => (err ? reject(err) : resolve()));
     });
 };
 
@@ -30,9 +27,11 @@ export const deleteDirectory = async (dirPath: string) => {
             const curPath = path.join(dirPath, file);
             // We need this for files that have been created with write protection.
             await addFilePermissions(curPath, 0o666);
-            if ((await Fsx.lstat(curPath)).isDirectory()) { // recurse
+            if ((await Fsx.lstat(curPath)).isDirectory()) {
+                // recurse
                 await deleteDirectory(curPath);
-            } else { // delete file
+            } else {
+                // delete file
                 await Fsx.unlink(curPath);
             }
         }
@@ -47,8 +46,10 @@ async function addFilePermissions(filePath: string, mode: number) {
 export const deleteFileIfExists = async (filePath: string) => {
     if (await Fsx.exists(filePath)) {
         await Fsx.unlink(filePath);
+
         return true;
     }
+
     return false;
 };
 
@@ -68,26 +69,27 @@ export const moveDir = async (fromPath: string, toPath: string) => {
 };
 
 export const ensureDirExists = async (dirPath: string): Promise<string> => {
-    if (!await Fsx.exists(dirPath)) {
-        await Fsx.mkdir(dirPath, {recursive: true})
+    if (!(await Fsx.exists(dirPath))) {
+        await Fsx.mkdir(dirPath, { recursive: true });
     }
+
     return dirPath;
 };
 
 export const recreateDir = async (dependenciesDirectory: string): Promise<string> => {
     if (await Fsx.exists(dependenciesDirectory)) {
-        await deleteDirectory(dependenciesDirectory)
+        await deleteDirectory(dependenciesDirectory);
     }
     await Fsx.mkdir(dependenciesDirectory);
+
     return dependenciesDirectory;
 };
 
 export const createDirIfNotExists = async (dirPath: string): Promise<void> => {
-    if (!await Fsx.exists(dirPath)) {
+    if (!(await Fsx.exists(dirPath))) {
         await Fsx.mkdir(dirPath);
     }
 };
-
 
 export const directoryIsEmpty = async (dirPath: string, fileNamesToIgnore?: string[]): Promise<boolean> => {
     const files = await Fsx.readdir(dirPath);
@@ -113,12 +115,15 @@ export const directoryIsEmpty = async (dirPath: string, fileNamesToIgnore?: stri
     return true;
 };
 
-export const directoryDoesNotExistOrIsEmpty = async (dirPath: string, fileNamesToIgnore?: string[]): Promise<boolean> => {
-    return !await Fsx.exists(dirPath) || await directoryIsEmpty(dirPath, fileNamesToIgnore);
+export const directoryDoesNotExistOrIsEmpty = async (
+    dirPath: string,
+    fileNamesToIgnore?: string[],
+): Promise<boolean> => {
+    return !(await Fsx.exists(dirPath)) || directoryIsEmpty(dirPath, fileNamesToIgnore);
 };
 
 export const copyFile = async (sourceFile: string, targetPath: string) => {
-  await Fsx.copyFile(sourceFile, targetPath);
+    await Fsx.copyFile(sourceFile, targetPath);
 };
 
 export const createHardLink = async (sourceFile: string, targetPath: string) => {
@@ -132,7 +137,7 @@ export const createSoftLink = async (sourceFile: string, targetPath: string) => 
 export const assertReplaceContentInFile = async (filePath: string, from: string, to: string) => {
     const fileContent = await readFile(filePath);
     if (!fileContent) {
-        throw new OperationFailedError(`Could not open '${filePath}'.`)
+        throw new OperationFailedError(`Could not open '${filePath}'.`);
     }
 
     const replacedFileContent = assertReplace(fileContent, from, to);

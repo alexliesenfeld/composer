@@ -14,8 +14,11 @@ const isEnvDevelopment = process.env.NODE_ENV === 'development';
 const commonConfig = {
     devtool: isEnvDevelopment ? 'source-map' : false,
     mode: isEnvProduction ? 'production' : 'development',
-    output: {path: srcPaths('dist')},
-    node: {__dirname: false, __filename: false},
+    output: { path: srcPaths('dist') },
+    node: {
+        __dirname: false,
+        __filename: false,
+    },
     resolve: {
         alias: {
             '@': srcPaths('src'),
@@ -68,7 +71,7 @@ mainConfig.plugins = [
         remove: ['scripts', 'devDependencies', 'build'],
         replace: {
             main: './main.bundle.js',
-            scripts: {start: 'electron ./main.bundle.js'},
+            scripts: { start: 'electron ./main.bundle.js' },
             postinstall: 'electron-builder install-app-deps',
         },
     }),
@@ -84,9 +87,9 @@ rendererConfig.plugins = [
     }),
     /* This is a workaround to the following blueprint.js problem: https://github.com/palantir/blueprint/issues/3739 */
     new webpack.DefinePlugin({
-        'global': {},
-        'process.env': {}
-    })
+        global: {},
+        'process.env': {},
+    }),
 ];
 
 module.exports = [mainConfig, rendererConfig];

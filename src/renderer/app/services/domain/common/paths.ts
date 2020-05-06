@@ -1,144 +1,139 @@
-import * as path from "path";
-import {WorkspaceConfig} from "@/renderer/app/model/workspace-config";
+import { WorkspaceConfig } from '@/renderer/app/model/workspace-config';
+import * as path from 'path';
 
 export const CONFIG_HEADER_FILE_NAME = 'config.h';
 export const DEFAULT_FONT_FILE_NAME = 'Roboto-Regular.ttf';
 
 export class ProjectPaths {
-    constructor(protected configFilePath: string) {
+    constructor(protected configFilePath: string) {}
 
+    public getWorkspaceDir(): string {
+        return path.dirname(this.configFilePath);
     }
 
-    getWorkspaceDir(): string {
-        return path.dirname(this.configFilePath)
+    public getSourcesDir(): string {
+        return path.join(this.getWorkspaceDir(), 'Source');
     }
 
-    getSourcesDir(): string {
-        return path.join(this.getWorkspaceDir(), "Source")
+    public getResourcesDir(): string {
+        return path.join(this.getWorkspaceDir(), 'Resources');
     }
 
-    getResourcesDir(): string {
-        return path.join(this.getWorkspaceDir(), "Resources")
+    public getFontsDir(): string {
+        return path.join(this.getResourcesDir(), 'Fonts');
     }
 
-    getFontsDir(): string {
-        return path.join(this.getResourcesDir(), "Fonts")
+    public getImagesDir(): string {
+        return path.join(this.getResourcesDir(), 'Images');
     }
 
-    getImagesDir(): string {
-        return path.join(this.getResourcesDir(), "Images")
+    public getDependenciesDirPath(): string {
+        return path.join(this.getWorkspaceDir(), 'Dependencies');
     }
 
-    getDependenciesDirPath(): string {
-        return path.join(this.getWorkspaceDir(), "Dependencies")
+    public getIPlug2BaseDirPath(): string {
+        return path.join(this.getDependenciesDirPath(), 'iPlug2');
     }
 
-    getIPlug2BaseDirPath(): string {
-        return path.join(this.getDependenciesDirPath(), "iPlug2")
+    public getVst3SdkDirPath(): string {
+        return path.join(this.getIPlug2DependenciesPath(), 'IPlug', 'VST3_SDK');
     }
 
-    getVst3SdkDirPath(): string {
-        return path.join(this.getIPlug2DependenciesPath(), "IPlug", "VST3_SDK")
+    public getIPlug2DependenciesPath(): string {
+        return path.join(this.getIPlug2BaseDirPath(), 'Dependencies');
     }
 
-    getIPlug2DependenciesPath(): string {
-        return path.join(this.getIPlug2BaseDirPath(), "Dependencies")
+    public getIPlug2DependenciesBuildPath(): string {
+        return path.join(this.getIPlug2DependenciesPath(), 'Build');
     }
 
-    getIPlug2DependenciesBuildPath(): string {
-        return path.join(this.getIPlug2DependenciesPath(), "Build")
+    public getBuildsDir(): string {
+        return path.join(this.getWorkspaceDir(), 'Build');
     }
-
-    getBuildsDir(): string {
-        return path.join(this.getWorkspaceDir(), "Build")
-    }
-
 }
 
 export class WorkspacePaths extends ProjectPaths {
-
     constructor(configFilePath: string, protected config: WorkspaceConfig) {
         super(configFilePath);
     }
 
-    getWorkDirPath(): string {
-        return path.join(this.getWorkspaceDir(), ".work")
+    public getWorkDirPath(): string {
+        return path.join(this.getWorkspaceDir(), '.work');
     }
 
-    getProjectBuildDir(): string {
-        return path.join(this.getBuildsDir(), this.config.projectName.toString())
+    public getProjectBuildDir(): string {
+        return path.join(this.getBuildsDir(), this.config.projectName.toString());
     }
 
-    getVisualStudioProjectResourcesDir(): string {
-        return path.join(this.getProjectBuildDir(), "resources")
+    public getVisualStudioProjectResourcesDir(): string {
+        return path.join(this.getProjectBuildDir(), 'resources');
     }
 
-    getIDEProjectFontResourcesDir(): string {
-        return path.join(this.getVisualStudioProjectResourcesDir(), "fonts")
+    public getIDEProjectFontResourcesDir(): string {
+        return path.join(this.getVisualStudioProjectResourcesDir(), 'fonts');
     }
 
-    getIDEProjectImageResourcesDir(): string {
-        return path.join(this.getVisualStudioProjectResourcesDir(), "img")
+    public getIDEProjectImageResourcesDir(): string {
+        return path.join(this.getVisualStudioProjectResourcesDir(), 'img');
     }
 
-    getVisualStudioProjectConfigDir(): string {
-        return path.join(this.getProjectBuildDir(), "config")
+    public getVisualStudioProjectConfigDir(): string {
+        return path.join(this.getProjectBuildDir(), 'config');
     }
 
-    getVisualStudioProjectWinPropsPath(): string {
-        return path.join(this.getVisualStudioProjectConfigDir(), `${this.config.projectName}-win.props`)
+    public getVisualStudioProjectWinPropsPath(): string {
+        return path.join(this.getVisualStudioProjectConfigDir(), `${this.config.projectName}-win.props`);
     }
 
-    getMainRcPath(): string {
-        return path.join(this.getVisualStudioProjectResourcesDir(), "main.rc")
+    public getMainRcPath(): string {
+        return path.join(this.getVisualStudioProjectResourcesDir(), 'main.rc');
     }
 
-    getConfigHPath(): string {
-        return path.join(this.getSourcesDir(), CONFIG_HEADER_FILE_NAME)
+    public getConfigHPath(): string {
+        return path.join(this.getSourcesDir(), CONFIG_HEADER_FILE_NAME);
     }
 
-    getMainPluginCppFile(): string {
-        return path.join(this.getSourcesDir(), `${this.config.projectName}.cpp`)
+    public getMainPluginCppFile(): string {
+        return path.join(this.getSourcesDir(), `${this.config.projectName}.cpp`);
     }
 
-    getVisualStudioSolutionFilePath(): string {
-        return path.join(this.getProjectBuildDir(), this.config.projectName + ".sln")
+    public getVisualStudioSolutionFilePath(): string {
+        return path.join(this.getProjectBuildDir(), this.config.projectName + '.sln');
     }
 
-    getVisualStudioIDEProjectsDir(): string {
-        return path.join(this.getProjectBuildDir(), "projects")
+    public getVisualStudioIDEProjectsDir(): string {
+        return path.join(this.getProjectBuildDir(), 'projects');
     }
 
-    getVisualStudioAppIDEProjectFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + "-app.vcxproj")
+    public getVisualStudioAppIDEProjectFilePath(): string {
+        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-app.vcxproj');
     }
 
-    getVisualStudioAppIDEProjectFiltersFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + "-app.vcxproj.filters")
+    public getVisualStudioAppIDEProjectFiltersFilePath(): string {
+        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-app.vcxproj.filters');
     }
 
-    getVisualStudioAaxIDEProjectFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + "-aax.vcxproj")
+    public getVisualStudioAaxIDEProjectFilePath(): string {
+        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-aax.vcxproj');
     }
 
-    getVisualStudioAaxIDEProjectFiltersFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + "-aax.vcxproj.filters")
+    public getVisualStudioAaxIDEProjectFiltersFilePath(): string {
+        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-aax.vcxproj.filters');
     }
 
-    getVisualStudioVst2IDEProjectFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + "-vst2.vcxproj")
+    public getVisualStudioVst2IDEProjectFilePath(): string {
+        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-vst2.vcxproj');
     }
 
-    getVisualStudioVst2IDEProjectFiltersFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + "-vst2.vcxproj.filters")
+    public getVisualStudioVst2IDEProjectFiltersFilePath(): string {
+        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-vst2.vcxproj.filters');
     }
 
-    getVisualStudioVst3IDEProjectFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + "-vst3.vcxproj")
+    public getVisualStudioVst3IDEProjectFilePath(): string {
+        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-vst3.vcxproj');
     }
 
-    getVisualStudioVst3IDEProjectFiltersFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + "-vst3.vcxproj.filters")
+    public getVisualStudioVst3IDEProjectFiltersFilePath(): string {
+        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-vst3.vcxproj.filters');
     }
-
 }

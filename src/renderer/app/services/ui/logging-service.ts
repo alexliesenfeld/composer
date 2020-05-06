@@ -1,7 +1,7 @@
 export enum LogLevel {
-    DEBUG = "DEBUG",
-    INFO = "INFO",
-    ERROR = "ERROR"
+    DEBUG = 'DEBUG',
+    INFO = 'INFO',
+    ERROR = 'ERROR',
 }
 
 export interface LoggingServiceContext {
@@ -14,7 +14,7 @@ export interface LoggingServiceContext {
 
 let loggingContext: LoggingServiceContext | undefined;
 
-export const setLoggingServiceContext = (context: LoggingServiceContext) => loggingContext = context;
+export const setLoggingServiceContext = (context: LoggingServiceContext) => (loggingContext = context);
 
 const substitute = (input: string, variables: RegExpMatchArray | null, args: any[]): string => {
     if (!variables) {
@@ -37,7 +37,6 @@ export function logActivity(description: string) {
         const originalMethod = descriptor.value;
 
         descriptor.value = function (...args: any[]) {
-
             // Set the loading frame text
             const substitutedDescription = substitute(description, variables, args);
             const activityId = loggingContext!.logActivityStarted(substitutedDescription);
@@ -51,13 +50,16 @@ export function logActivity(description: string) {
                 const promisifiedResult = Promise.resolve(result);
 
                 // The description will be popped from the execution context once the promise resolves
-                promisifiedResult.then((...args: any[]) => {
-                    loggingContext!.logActivityEnded(activityId);
-                    return args;
-                }).catch((error) => {
-                    loggingContext!.logActivityEnded(activityId, error);
-                    throw error;
-                });
+                promisifiedResult
+                    .then((...args: any[]) => {
+                        loggingContext!.logActivityEnded(activityId);
+
+                        return args;
+                    })
+                    .catch((error) => {
+                        loggingContext!.logActivityEnded(activityId, error);
+                        throw error;
+                    });
 
                 return promisifiedResult;
             } catch (error) {
@@ -67,7 +69,7 @@ export function logActivity(description: string) {
         };
 
         return descriptor;
-    }
+    };
 }
 
 export const log = (message: string) => {

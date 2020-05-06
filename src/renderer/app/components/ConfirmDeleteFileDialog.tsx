@@ -1,6 +1,5 @@
+import { Alert, Intent } from '@blueprintjs/core';
 import * as React from 'react';
-import {Alert, Intent,} from "@blueprintjs/core";
-
 
 export interface ConfirmDeleteFileDialogProps {
     fileName: string | undefined;
@@ -29,6 +28,5 @@ export const ConfirmDeleteFileDialog = (props: ConfirmDeleteFileDialogProps) => 
                 Do your really want to delete <b>{props.fileName}</b>?
             </p>
         </Alert>
-
     );
 };

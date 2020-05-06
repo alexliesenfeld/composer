@@ -1,15 +1,18 @@
-import * as child_process from "child_process";
-import {CommandFailedError, OperationFailedError} from "@/renderer/app/model/errors";
+import { CommandFailedError, OperationFailedError } from '@/renderer/app/model/errors';
+import * as child_process from 'child_process';
 
 const sudo = require('sudo-prompt');
 
 const spawn = (cmd: string, cwd?: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
         const parts = cmd.split(/\s+/g);
-        const cp = child_process.spawn(parts[0], parts.slice(1), {stdio: ['ignore', 'pipe', 'pipe'], cwd: cwd});
+        const cp = child_process.spawn(parts[0], parts.slice(1), {
+            stdio: ['ignore', 'pipe', 'pipe'],
+            cwd: cwd,
+        });
 
-        let output = "";
-        let errorOutput = "";
+        let output = '';
+        let errorOutput = '';
 
         cp.stdout!.on('data', function (chunk) {
             output += chunk;
@@ -21,7 +24,7 @@ const spawn = (cmd: string, cwd?: string): Promise<string> => {
 
         cp.on('exit', function (code) {
             if (code != 0) {
-                reject(new CommandFailedError(cmd, output, errorOutput, code))
+                reject(new CommandFailedError(cmd, output, errorOutput, code));
             } else {
                 resolve(output);
             }
@@ -31,22 +34,19 @@ const spawn = (cmd: string, cwd?: string): Promise<string> => {
 
 const sudoExec = (cmd: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
-        sudo.exec(cmd, {name: 'Composer'},
-            function (error: any, stdout: any, stderr: any) {
-                if (error) {
-                    reject(error);
-                } else if (stderr) {
-                    reject(new OperationFailedError(stderr));
-                } else {
-                    resolve();
-                }
+        sudo.exec(cmd, { name: 'Composer' }, function (error: any, stdout: any, stderr: any) {
+            if (error) {
+                reject(error);
+            } else if (stderr) {
+                reject(new OperationFailedError(stderr));
+            } else {
+                resolve();
             }
-        );
+        });
     });
 };
 
 export abstract class Cpx {
-    static readonly spawn = spawn;
-    static readonly sudoExec = sudoExec;
+    public static readonly spawn = spawn;
+    public static readonly sudoExec = sudoExec;
 }
-

@@ -1,33 +1,35 @@
+import { DirectoryNotEmptyError } from '@/renderer/app/model/errors';
 import {
     AudioUnitPluginType,
     PluginFormat,
     Prototype,
     Vst3Subcategory,
-    WorkspaceConfig
-} from "@/renderer/app/model/workspace-config";
-import * as path from "path";
-import {DirectoryNotEmptyError} from "@/renderer/app/model/errors";
-import {Fsx} from "@/renderer/app/util/fsx";
-import * as fs from "fs";
+    WorkspaceConfig,
+} from '@/renderer/app/model/workspace-config';
+import { Fsx } from '@/renderer/app/util/fsx';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export const writeNewConfigToPath = async (filePath: string): Promise<unknown> => {
     const directoryPath = path.dirname(filePath);
     const filesInDirectory = await Fsx.readdir(directoryPath);
 
     if (filesInDirectory && filesInDirectory.length > 0) {
-        throw new DirectoryNotEmptyError("The directory of a new project must be empty.", directoryPath)
+        throw new DirectoryNotEmptyError('The directory of a new project must be empty.', directoryPath);
     }
 
     return writeConfigToPath(filePath, createInitialConfig());
 };
 
 export const loadConfigFromPath = async (path: string): Promise<WorkspaceConfig> => {
-    const fileContent = await Fsx.readFile(path, {encoding: 'utf-8'});
+    const fileContent = await Fsx.readFile(path, { encoding: 'utf-8' });
+
     return parseConfig(fileContent);
 };
 
 export const loadConfigFromPathSync = (path: string): WorkspaceConfig => {
-    const fileContent = fs.readFileSync(path, {encoding: 'utf-8'});
+    const fileContent = fs.readFileSync(path, { encoding: 'utf-8' });
+
     return parseConfig(fileContent);
 };
 
@@ -64,18 +66,18 @@ const createInitialConfig = (): WorkspaceConfig => {
         outputChannels: 2,
         inputChannels: 2,
         pluginLatency: 0,
-        manufacturerWebsite: "www.my-plugin-company.com",
-        manufacturerCopyrightNotice: "© www.my-plugin-company.com",
-        manufacturerEmail: "mail@my-plugin-company.com",
-        manufacturerName: "MyPlugInCompany",
-        audioUnitBundleManufacturer: "MyPlugInCompany",
-        audioUnitBundleDomain: "com",
-        audioUnitManufacturerId: "MPIC",
-        audioUnitBundleName: "NewProject",
+        manufacturerWebsite: 'www.my-plugin-company.com',
+        manufacturerCopyrightNotice: '© www.my-plugin-company.com',
+        manufacturerEmail: 'mail@my-plugin-company.com',
+        manufacturerName: 'MyPlugInCompany',
+        audioUnitBundleManufacturer: 'MyPlugInCompany',
+        audioUnitBundleDomain: 'com',
+        audioUnitManufacturerId: 'MPIC',
+        audioUnitBundleName: 'NewProject',
         audioUnitPluginType: AudioUnitPluginType.EFFECT_OR_MUSIC_EFFECT,
         vst3Subcategory: Vst3Subcategory.FX,
-        vstUniqueId: "nprj",
+        vstUniqueId: 'nprj',
         uiResizable: false,
-        iPlug2GitSha: "044fd947051f1ef267870a565890263ce2f8a53c"
+        iPlug2GitSha: '044fd947051f1ef267870a565890263ce2f8a53c',
     };
 };

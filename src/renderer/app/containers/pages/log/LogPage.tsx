@@ -1,9 +1,9 @@
-import * as React from 'react';
+import { LogLevel } from '@/renderer/app/services/ui/logging-service';
+import { AppStore, AppStoreLogMessage } from '@/renderer/app/stores/app-store';
 
-import {Pre, ResizeSensor} from "@blueprintjs/core";
-import {inject, observer} from "mobx-react";
-import {AppStore, AppStoreLogMessage} from "@/renderer/app/stores/app-store";
-import {LogLevel} from "@/renderer/app/services/ui/logging-service";
+import { Pre, ResizeSensor } from '@blueprintjs/core';
+import { inject, observer } from 'mobx-react';
+import * as React from 'react';
 
 /**
  <TextArea fill={true} draggable={"false"} growVertically={false}
@@ -27,26 +27,27 @@ export class LogPage extends React.PureComponent<{ appStore?: AppStore }> {
     }
 
     getLogMessageCssClass(level: LogLevel) {
-        return 'log-message ' + (level === LogLevel.ERROR ? 'error' : (level === LogLevel.DEBUG ? 'debug' : ''));
+        return 'log-message ' + (level === LogLevel.ERROR ? 'error' : level === LogLevel.DEBUG ? 'debug' : '');
     }
 
     render() {
         return (
-            <div className='LogPage custom-scrollbar' ref={this.element}>
+            <div className="LogPage custom-scrollbar" ref={this.element}>
                 <ResizeSensor onResize={() => this.scrollLogToBottom()}>
                     <Pre>
-
                         {this.props.appStore!.logMessages.map((e: AppStoreLogMessage, index: number) => {
                             return (
                                 <span key={index} className={this.getLogMessageCssClass(e.level)}>
-                                        <span className='timestamp'>{e.timestamp.toLocaleTimeString()}</span>
-                                        <span className='message'>{e.message}</span>
+                                    <span className="timestamp">{e.timestamp.toLocaleTimeString()}</span>
+                                    <span className="message">{e.message}</span>
                                 </span>
                             );
                         })}
-                        {
-                            this.props.appStore!.logMessages.length === 0 ? <span className='log-message debug'>The log is empty.</span> : ''
-                        }
+                        {this.props.appStore!.logMessages.length === 0 ? (
+                            <span className="log-message debug">The log is empty.</span>
+                        ) : (
+                            ''
+                        )}
                     </Pre>
                 </ResizeSensor>
             </div>
@@ -55,7 +56,7 @@ export class LogPage extends React.PureComponent<{ appStore?: AppStore }> {
 
     private scrollLogToBottom() {
         if (this.element && this.element.current) {
-            this.element.current.scrollTop = this.element.current.scrollHeight
+            this.element.current.scrollTop = this.element.current.scrollHeight;
         }
     }
 }

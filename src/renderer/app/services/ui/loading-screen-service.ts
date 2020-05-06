@@ -6,7 +6,7 @@ export interface LoadingServiceContext {
 
 let loadingScreenContext: LoadingServiceContext | undefined;
 
-export const setLoadingServiceContext = (context: LoadingServiceContext) => loadingScreenContext = context;
+export const setLoadingServiceContext = (context: LoadingServiceContext) => (loadingScreenContext = context);
 
 export function withLoadingScreen(description: string) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor): PropertyDescriptor {
@@ -26,7 +26,7 @@ export function withLoadingScreen(description: string) {
 
                 // The description will be popped from the execution context once the promise resolves
                 promisifiedResult.finally(() => {
-                    loadingScreenContext!.hideLoadingScreen()
+                    loadingScreenContext!.hideLoadingScreen();
                 });
 
                 return promisifiedResult;
@@ -37,6 +37,5 @@ export function withLoadingScreen(description: string) {
         };
 
         return descriptor;
-    }
+    };
 }
-

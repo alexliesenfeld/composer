@@ -1,30 +1,29 @@
-import {ipcRenderer, remote} from 'electron';
-import {IPCMainEvents} from "@common/constants";
-import {UnsupportedOperationError} from "@/renderer/app/model/errors";
-import {OperatingSystem} from "@/renderer/app/services/domain/common/model";
+import { UnsupportedOperationError } from '@/renderer/app/model/errors';
+import { OperatingSystem } from '@/renderer/app/services/domain/common/model';
+import { IPCMainEvents } from '@common/constants';
+import { ipcRenderer, remote } from 'electron';
 
 export abstract class ElectronContext {
-    static readonly dialog = remote.dialog;
+    public static readonly dialog = remote.dialog;
 
-    static registerSaveProjectEventListener(listener: () => void) {
+    public static registerSaveProjectEventListener(listener: () => void) {
         ipcRenderer.on(IPCMainEvents.INIT_SAVE_PROJECT, listener);
     }
 
-    static deregisterSaveProjectEventListener(listener: () => void) {
+    public static deregisterSaveProjectEventListener(listener: () => void) {
         ipcRenderer.removeListener(IPCMainEvents.INIT_SAVE_PROJECT, listener);
     }
 
-    static currentOperatingSystem(): OperatingSystem {
+    public static currentOperatingSystem(): OperatingSystem {
         switch (process.platform) {
-            case "win32":
+            case 'win32':
                 return OperatingSystem.WINDOWS;
-            case "linux":
+            case 'linux':
                 return OperatingSystem.LINUX;
-            case "darwin":
+            case 'darwin':
                 return OperatingSystem.MACOS;
             default:
                 throw new UnsupportedOperationError(`Operating system ${process.platform} mot supported`);
         }
     }
 }
-

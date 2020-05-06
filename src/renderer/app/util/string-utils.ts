@@ -1,24 +1,23 @@
-import {AssertionError} from "@/renderer/app/model/errors";
-import {EOL} from "ts-loader/dist/constants";
+import { AssertionError } from '@/renderer/app/model/errors';
 
 export const removeSpaces = (value: string) => value.replace(' ', '');
 export const matchesVersion = (value: string) => !!value.match(/^[0-9]+\.[0-9]+\.[0-9]+$/g);
 
-
-export const replace = (content: string, from: string, to: string): { success: boolean, newContent: string } => {
+export const replace = (content: string, from: string, to: string): { success: boolean; newContent: string } => {
     const replacedFileContent = content.replace(from, to);
+
     return {
         success: !!replacedFileContent && replacedFileContent !== content,
-        newContent: replacedFileContent
+        newContent: replacedFileContent,
     };
 };
 
-
 export const assertReplace = (content: string, from: string, to: string): string => {
-    const {newContent, success} = replace(content, from, to);
+    const { newContent, success } = replace(content, from, to);
     if (!success) {
-        throw new AssertionError(`Could not replace string '${from}' to '${to}'.`)
+        throw new AssertionError(`Could not replace string '${from}' to '${to}'.`);
     }
+
     return newContent;
 };
 
@@ -27,10 +26,11 @@ export const replaceAll = (content: string, from: string, to: string): string =>
 };
 
 export const times = (text: string, repeatTimes: number): string => {
-    let content = "";
+    let content = '';
     for (let i = 0; i < repeatTimes; i++) {
         content += text;
     }
+
     return content;
 };
 

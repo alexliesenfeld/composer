@@ -1,18 +1,16 @@
+import { loremIpsum } from '@/renderer/app/util/string-utils';
+import { Slider } from '@blueprintjs/core';
 import * as React from 'react';
-import {PureComponent} from 'react';
-import {loremIpsum} from "@/renderer/app/util/string-utils";
-import {Navbar, Slider} from "@blueprintjs/core";
 
-const FONT_NAME = "CurrentFontViewerFont";
+const FONT_NAME = 'CurrentFontViewerFont';
 
 interface FontViewerProps {
-    fontFileBuffer: Buffer
-    fontSize: number
+    fontFileBuffer: Buffer;
+    fontSize: number;
     onFontSizeChanged: (value: number) => void;
 }
 
 export class FontViewer extends React.Component<FontViewerProps> {
-
     async componentDidUpdate(): Promise<void> {
         return this.loadFont();
     }
@@ -30,7 +28,7 @@ export class FontViewer extends React.Component<FontViewerProps> {
 
     render() {
         return (
-            <div className='FontViewer'>
+            <div className="FontViewer">
                 <Slider
                     min={0}
                     max={100}
@@ -39,9 +37,16 @@ export class FontViewer extends React.Component<FontViewerProps> {
                     onChange={(value) => this.props.onFontSizeChanged(value)}
                     value={this.props.fontSize}
                 />
-                <div className='font-presentation-area' style={{fontFamily: FONT_NAME, fontSize: this.props.fontSize}}>{loremIpsum}</div>
+                <div
+                    className="font-presentation-area"
+                    style={{
+                        fontFamily: FONT_NAME,
+                        fontSize: this.props.fontSize,
+                    }}
+                >
+                    {loremIpsum}
+                </div>
             </div>
-
         );
     }
 }

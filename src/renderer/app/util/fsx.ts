@@ -1,25 +1,24 @@
-import * as fs from "fs";
-import * as util from "util";
-import * as mv from "mv";
-
+import * as fs from 'fs';
+import * as mv from 'mv';
+import * as util from 'util';
 
 /**
  * Contains promisified functions from the node "fs" package.
  */
 export abstract class Fsx {
-    static readonly readFile = util.promisify(fs.readFile);
-    static readonly writeFile = util.promisify(fs.writeFile);
-    static readonly readdir = util.promisify(fs.readdir);
-    static readonly mkdir = util.promisify(fs.mkdir);
-    static readonly exists = util.promisify(fs.exists);
-    static readonly unlink = util.promisify(fs.unlink); // Asynchronously removes a file or symbolic link.
-    static readonly lstat = util.promisify(fs.lstat);
-    static readonly stat = util.promisify(fs.stat);
-    static readonly chmod = util.promisify(fs.chmod);
-    static readonly rmdir = util.promisify(fs.rmdir);
-    static readonly rename = util.promisify(fs.rename);
-    static readonly move = (util.promisify(mv));
-    static readonly copyFile = util.promisify(fs.copyFile);
-    static readonly link = util.promisify(fs.link);
-    static readonly symlink = util.promisify(fs.symlink);
+    public static readonly readFile = util.promisify(fs.readFile);
+    public static readonly writeFile = util.promisify(fs.writeFile);
+    public static readonly readdir = util.promisify(fs.readdir);
+    public static readonly mkdir = util.promisify(fs.mkdir);
+    public static readonly exists = util.promisify(fs.exists);
+    public static readonly unlink = util.promisify(fs.unlink); // Asynchronously removes a file or symbolic link.
+    public static readonly lstat = util.promisify(fs.lstat);
+    public static readonly stat = util.promisify(fs.stat);
+    public static readonly chmod = util.promisify(fs.chmod);
+    public static readonly rmdir = util.promisify(fs.rmdir);
+    public static readonly rename = util.promisify(fs.rename);
+    public static readonly move = util.promisify(mv);
+    public static readonly copyFile = util.promisify(fs.copyFile);
+    public static readonly link = util.promisify(fs.link);
+    public static readonly symlink = util.promisify(fs.symlink);
 }

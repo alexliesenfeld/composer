@@ -1,25 +1,22 @@
-import {Intent, Position, Toaster} from "@blueprintjs/core";
-import {logError} from "@/renderer/app/services/ui/logging-service";
-import {times} from "@/renderer/app/util/string-utils";
-import {EOL} from "os";
-import {scryRenderedComponentsWithType} from "react-dom/test-utils";
+import { logError } from '@/renderer/app/services/ui/logging-service';
+import { Intent, Position, Toaster } from '@blueprintjs/core';
 
 export interface NotificationServiceContext {
     showLog(): void;
 }
 
 let notificationContext: NotificationServiceContext | undefined;
-export const setNotificationServiceContext = (context: NotificationServiceContext) => notificationContext = context;
+export const setNotificationServiceContext = (context: NotificationServiceContext) => (notificationContext = context);
 
 const toaster = Toaster.create({
     position: Position.TOP,
-    maxToasts: 1
+    maxToasts: 1,
 });
 
 export interface WithNotificationOptions {
-    onError?: string,
-    onSuccess?: string,
-    showLogButton?: boolean
+    onError?: string;
+    onSuccess?: string;
+    showLogButton?: boolean;
 }
 
 export function withNotification(options: WithNotificationOptions) {
@@ -40,6 +37,7 @@ export function withNotification(options: WithNotificationOptions) {
                     if (options.onSuccess) {
                         showSuccessNotification(options.onSuccess);
                     }
+
                     return args;
                 });
 
@@ -61,7 +59,7 @@ export function withNotification(options: WithNotificationOptions) {
         };
 
         return descriptor;
-    }
+    };
 }
 
 export function showErrorNotification(message: string, error: Error, withLogOnError?: boolean) {
@@ -69,17 +67,22 @@ export function showErrorNotification(message: string, error: Error, withLogOnEr
     logError(errorMessage);
     toaster.show({
         message: errorMessage,
-        icon: "warning-sign",
+        icon: 'warning-sign',
         intent: Intent.DANGER,
-        action: withLogOnError ? {onClick: () => notificationContext!.showLog(), text: "Show Log"} : undefined,
-        timeout: 60000
+        action: withLogOnError
+            ? {
+                  onClick: () => notificationContext!.showLog(),
+                  text: 'Show Log',
+              }
+            : undefined,
+        timeout: 60000,
     });
 }
 
 export function showSuccessNotification(message: string) {
     toaster.show({
         message: `${message}${message.endsWith('.') ? '' : '.'}`,
-        icon: "tick-circle",
+        icon: 'tick-circle',
         intent: Intent.SUCCESS,
         timeout: 2000,
     });
