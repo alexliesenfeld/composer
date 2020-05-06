@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {Alignment, Button, ButtonGroup, Navbar, Slider, Tab, Tabs, Tag, Text} from "@blueprintjs/core";
+import {Alignment, Button, Navbar, Tab, Tabs, Text} from "@blueprintjs/core";
 import {inject, observer} from "mobx-react";
 import {WorkspaceStore} from "@/renderer/app/stores/workspace-store";
 import {FilesStore, FilesTab} from "@/renderer/app/stores/files-store";
@@ -15,6 +15,7 @@ import {ConfirmDeleteFileDialog} from "@/renderer/app/components/ConfirmDeleteFi
 import {AppStore} from "@/renderer/app/stores/app-store";
 import {ImageHelpPanel} from "@/renderer/app/containers/pages/files/info-panels/ImageHelpPanel";
 import {HELP} from "@blueprintjs/icons/lib/esm/generated/iconNames";
+import {FontHelpPanel} from "@/renderer/app/containers/pages/files/info-panels/FontHelpPanel";
 
 @inject('workspaceStore', 'filesStore', 'appStore')
 @observer
@@ -126,6 +127,13 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                         onAccept={() => this.props.filesStore!.completeDeletingFontFile(this.props.workspaceStore!.workspacePaths!)}
                         fileName={this.props.filesStore!.fontFileToDelete}
                     />
+                    {!!this.props.filesStore!.selectedFontFile && this.props.filesStore!.fontInfoPanelOpened ?
+                        <FontHelpPanel fileName={this.props.filesStore!.selectedFontFile!}
+                                       variableName={this.props.workspaceStore!.getResourceAliasName(this.props.filesStore!.selectedFontFile!)}
+                                       isOpen={this.props.filesStore!.fontInfoPanelOpened}
+                                       onClose={() => this.props.filesStore!.fontInfoPanelOpened = !this.props.filesStore!.fontInfoPanelOpened}
+                        /> : null
+                    }
                     <FileBrowser
                         showContentArea={!!this.props.filesStore!.selectedFontFile}
                         fileList={this.props.filesStore!.fontFileNamesList}
@@ -142,26 +150,18 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                     >
                         <Navbar>
                             <Navbar.Group align={Alignment.LEFT}>
-                                {!!this.props.filesStore!.selectedFontFile ?
-                                    <Text>{this.props.filesStore!.selectedFontFile}
-                                        <Tag minimal={true} className='resource-variable-tag'> {
-                                            this.props.workspaceStore!.getResourceAliasName(this.props.filesStore!.selectedFontFile!)
-                                        }</Tag>
-                                    </Text> : null}
+                                <Text>{this.props.filesStore!.selectedFontFile}</Text>
                             </Navbar.Group>
-                            <Navbar.Group align={Alignment.RIGHT} className='font-size-slider-nav'>
-                                <Slider
-                                    min={0}
-                                    max={100}
-                                    stepSize={1}
-                                    labelStepSize={10}
-                                    onChange={(value) => this.props.filesStore!.fontViewerFontSize = value}
-                                    value={this.props.filesStore!.fontViewerFontSize}
-                                />
+                            <Navbar.Group align={Alignment.RIGHT}>
+                                <Button small={true}
+                                        icon={HELP}
+                                        onClick={() => this.props.filesStore!.fontInfoPanelOpened = true}
+                                        minimal={true}>How to use?</Button>
                             </Navbar.Group>
                         </Navbar>
                         <FontViewer fontFileBuffer={this.props.filesStore!.selectedFontFileContent!}
-                                    fontSize={this.props.filesStore!.fontViewerFontSize}/>
+                                    fontSize={this.props.filesStore!.fontViewerFontSize}
+                                    onFontSizeChanged={(value) => this.props.filesStore!.fontViewerFontSize = value}/>
                     </FileBrowser>
                 </When>
                 <When condition={this.props.filesStore!.activeTab == FilesTab.IMAGES_TAB}>
@@ -197,28 +197,15 @@ export class FilesPage extends React.Component<{ workspaceStore?: WorkspaceStore
                             <Navbar.Group align={Alignment.LEFT}>
                                 <Text>{this.props.filesStore!.selectedImageFile}</Text>
                             </Navbar.Group>
-
-                            <Navbar.Group align={Alignment.RIGHT}>
-                                <ButtonGroup>
-                                    <Button small={true}
-                                            onClick={() => this.props.filesStore!.imageViewerStretchImage = false}
-                                            active={!this.props.filesStore!.imageViewerStretchImage}>Original</Button>
-                                    <Button small={true}
-                                            onClick={() => this.props.filesStore!.imageViewerStretchImage = true}
-                                            active={this.props.filesStore!.imageViewerStretchImage}>Stretch</Button>
-                                </ButtonGroup>
-                            </Navbar.Group>
                             <Navbar.Group align={Alignment.RIGHT}>
                                 <Button small={true}
                                         icon={HELP}
                                         onClick={() => this.props.filesStore!.imageInfoPanelOpened = true}
-                                        minimal={true}
-                                        className='helper-button'>How to use?</Button>
+                                        minimal={true}>How to use?</Button>
                             </Navbar.Group>
                         </Navbar>
                         <ImageViewer fileName={this.props.filesStore!.selectedImageFile!}
-                                     imageFileBuffer={this.props.filesStore!.selectedImageFileContent!}
-                                     fullSize={this.props.filesStore!.imageViewerStretchImage}/>
+                                     imageFileBuffer={this.props.filesStore!.selectedImageFileContent!}/>
                     </FileBrowser>
                 </When>
             </div>

@@ -26,12 +26,12 @@ export class FilesStore {
     @observable selectedFontFileContent: Buffer | undefined;
     @observable selectedImageFileContent: string | undefined;
     @observable fontViewerFontSize = 18;
-    @observable imageViewerStretchImage = false;
     @observable createNewSourceFileDialogOpened = false;
     @observable sourceFileToDelete: string | undefined;
     @observable fontFileToDelete: string | undefined;
     @observable imageFileToDelete: string | undefined;
     @observable imageInfoPanelOpened = false;
+    @observable fontInfoPanelOpened = false;
 
     constructor(private readonly filesService: FilesService) {
     }

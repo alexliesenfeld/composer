@@ -6,7 +6,6 @@ import {When} from "@/renderer/app/components/When";
 interface ImageViewerProps {
     imageFileBuffer: string,
     fileName: string
-    fullSize: boolean
 }
 
 export class ImageViewer extends React.Component<ImageViewerProps> {
@@ -17,7 +16,6 @@ export class ImageViewer extends React.Component<ImageViewerProps> {
                 <When condition={!!this.props.fileName && !!this.props.imageFileBuffer}>
                     <img src={`data:${this.getMimeType(this.props.fileName)};base64,${this.props.imageFileBuffer}`}
                          alt={'No image available'}
-                         className={this.props.fullSize ? 'stretched' : 'original'}
                         />
                 </When>
             </div>
