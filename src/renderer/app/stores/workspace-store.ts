@@ -1,14 +1,11 @@
-import {action, computed, observable, runInAction} from "mobx";
+import {action, observable, runInAction} from "mobx";
 import {WorkspaceConfig} from "@/renderer/app/model/workspace-config";
 import {ElectronContext} from "@/renderer/app/model/electron-context";
 import * as configService from "@/renderer/app/services/domain/config-service";
 import {withLoadingScreen} from "@/renderer/app/services/ui/loading-screen-service";
 import {showSuccessNotification, withNotification} from "@/renderer/app/services/ui/notification-service";
-import {trySilently} from "@/renderer/app/util/error-utils";
 import {WorkspaceService} from "@/renderer/app/services/domain/workspace-service";
 import {WorkspacePaths} from "@/renderer/app/services/domain/common/paths";
-
-const CONFIG_PATH_KEY = 'configPath';
 
 export class WorkspaceStore {
     @observable userConfig: WorkspaceConfig | undefined = undefined;
@@ -17,7 +14,6 @@ export class WorkspaceStore {
     @observable workspacePaths: WorkspacePaths | undefined = undefined;
 
     constructor(private readonly workspaceService: WorkspaceService) {
-        trySilently(() => this.loadConfigFromPathSync(localStorage.getItem(CONFIG_PATH_KEY)!));
     }
 
     @action.bound
@@ -68,6 +64,13 @@ export class WorkspaceStore {
         await this.workspaceService.startIDE(this.userConfig!, this.workspacePaths!);
     }
 
+    @action.bound
+    @withLoadingScreen("Loading recent project")
+    @withNotification({onError: "Failed load recently used project", showLogButton: true})
+    async loadConfigFromPathUi(path: string): Promise<void> {
+        await this.loadConfigFromPath(path);
+    }
+
     getResourceAliasName(filePath: string): string {
         return this.workspaceService.getVariableNameForFile(filePath);
     }
@@ -77,20 +80,11 @@ export class WorkspaceStore {
         this.setNewConfig(path, userConfig);
     }
 
-    private loadConfigFromPathSync(path: string): void {
-        const userConfig = configService.loadConfigFromPathSync(path);
-        this.setNewConfig(path, userConfig);
-    }
-
     private setNewConfig(configPath: string, userConfig: WorkspaceConfig) {
         runInAction(() => {
             this.userConfig = userConfig;
             this.configPath = configPath;
             this.workspacePaths = new WorkspacePaths(configPath, userConfig);
         });
-
-        localStorage.setItem(CONFIG_PATH_KEY, configPath);
-
-        ElectronContext.enableSaveItemInWindowMenu(true);
     }
 }

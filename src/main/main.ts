@@ -1,8 +1,6 @@
 import {app, BrowserWindow, ipcMain, Menu} from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import {buildMenuTemplate, SAVE_MENU_ITEM_ID} from "@main/menu";
-import {IPCMainEvents, IPCRendererEvents} from "@common/constants";
 import installExtension, {REACT_DEVELOPER_TOOLS} from 'electron-devtools-installer';
 
 let mainWindow: BrowserWindow | null;
@@ -19,8 +17,10 @@ function createWindow(): void {
         }
     });
 
-    const menu = Menu.buildFromTemplate(buildMenuTemplate(mainWindow));
-    Menu.setApplicationMenu(menu);
+    // There is no menu in production
+    if (process.env.NODE_ENV === 'production') {
+        mainWindow.setMenu(null);
+    }
 
     mainWindow.loadURL(
         url.format({
@@ -42,13 +42,6 @@ function createWindow(): void {
         mainWindow!.focus();
     });
 
-    registerRendererEventListeners(mainWindow, menu);
-}
-
-function registerRendererEventListeners(mainWindow: BrowserWindow, menu: Electron.Menu) {
-    ipcMain.on(IPCRendererEvents.INIT_SET_CAN_SAVE, (event, enabled: boolean) => {
-        menu.getMenuItemById(SAVE_MENU_ITEM_ID).enabled = enabled;
-    });
 }
 
 app.on('ready', createWindow);

@@ -197,15 +197,47 @@ WelcomePage
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  text-align: center;
+  padding: 2em;
 
   button {
     margin-bottom: 1em;
   }
 }
 
+.WelcomePage .welcome-section {
+  width: 25em;
+  text-align: center;
+  margin-bottom: 2em;
+}
+
+.WelcomePage .recent-files-section {
+  width: 25em;
+  margin-top: 1em;
+}
+
+.WelcomePage .recent-files-section .bp3-tree-node-caret, .bp3-tree-node-caret-none {
+  min-width: 10px;
+}
+
+.WelcomePage .recent-files-section h1,h2,h3,h4,h5,h6 {
+  text-align: center;
+}
+
+.WelcomePage .recent-files-section .bp3-tree-node {
+  cursor: pointer;
+}
+
+.WelcomePage .recent-files-section .bp3-tree-node .bp3-tree-node-secondary-label .bp3-button {
+  margin: 0;
+}
+
+.WelcomePage .recent-files-section .bp3-tree-node-content {
+  height: 40px;
+}
+
+
 /*****************************************************************
-WelcomePage
+LogPage
 ******************************************************************/
 .LogPage{
   background-color: #10161a;
