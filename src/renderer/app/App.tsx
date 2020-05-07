@@ -17,7 +17,14 @@ import {
     NavbarGroup,
     NavbarHeading,
 } from '@blueprintjs/core';
-import { ARCHIVE, COG, CONSOLE, DOCUMENT, LAYERS, PLAY } from '@blueprintjs/icons/lib/esm/generated/iconNames';
+import {
+    ARCHIVE,
+    COG,
+    CONSOLE,
+    DOCUMENT,
+    LAYERS,
+    PLAY,
+} from '@blueprintjs/icons/lib/esm/generated/iconNames';
 
 import '@public/style.scss';
 import { inject, observer } from 'mobx-react';

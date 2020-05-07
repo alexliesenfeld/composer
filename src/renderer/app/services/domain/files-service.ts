@@ -56,7 +56,10 @@ export class FilesService {
         return (await Fsx.readdir(dir)).map((fileName) => path.join(dir, fileName));
     }
 
-    public async loadSourceFileContent(projectPaths: ProjectPaths, fileName: string): Promise<string> {
+    public async loadSourceFileContent(
+        projectPaths: ProjectPaths,
+        fileName: string,
+    ): Promise<string> {
         const dir = projectPaths.getSourcesDir();
         const filePath = path.join(dir, fileName);
         const buffer = await Fsx.readFile(filePath);
@@ -71,7 +74,10 @@ export class FilesService {
         return Fsx.readFile(filePath);
     }
 
-    public async loadImageFileContent(projectPaths: ProjectPaths, fileName: string): Promise<string> {
+    public async loadImageFileContent(
+        projectPaths: ProjectPaths,
+        fileName: string,
+    ): Promise<string> {
         const dir = projectPaths.getImagesDir();
         const filePath = path.join(dir, fileName);
         const buffer = await Fsx.readFile(filePath);
@@ -80,7 +86,10 @@ export class FilesService {
     }
 
     @logActivity('Adding multiple source files')
-    public async addNewSourceFiles(projectPaths: ProjectPaths, newSourceFilePaths: string[]): Promise<void> {
+    public async addNewSourceFiles(
+        projectPaths: ProjectPaths,
+        newSourceFilePaths: string[],
+    ): Promise<void> {
         for (const newSourceFilePath of newSourceFilePaths) {
             await this.addNewSourceFile(projectPaths, newSourceFilePath);
         }
@@ -104,14 +113,20 @@ export class FilesService {
     }
 
     @logActivity('Importing multiple source files')
-    public async importSourceFiles(projectPaths: ProjectPaths, newSourceFilePaths: string[]): Promise<void> {
+    public async importSourceFiles(
+        projectPaths: ProjectPaths,
+        newSourceFilePaths: string[],
+    ): Promise<void> {
         for (const newSourceFilePath of newSourceFilePaths) {
             await this.importSourceFile(projectPaths, newSourceFilePath);
         }
     }
 
     @logActivity('Importing source file {1}')
-    public async importSourceFile(projectPaths: ProjectPaths, newSourceFilePath: string): Promise<void> {
+    public async importSourceFile(
+        projectPaths: ProjectPaths,
+        newSourceFilePath: string,
+    ): Promise<void> {
         const sourcesDir = projectPaths.getSourcesDir();
         const fileName = path.basename(newSourceFilePath);
         const filePath = path.join(sourcesDir, fileName);
@@ -121,7 +136,10 @@ export class FilesService {
     }
 
     @logActivity('Adding multiple font files')
-    public async addFontFiles(projectPaths: ProjectPaths, newFontFilePaths: string[]): Promise<void> {
+    public async addFontFiles(
+        projectPaths: ProjectPaths,
+        newFontFilePaths: string[],
+    ): Promise<void> {
         for (const newSourceFilePath of newFontFilePaths) {
             await this.addFontFile(projectPaths, newSourceFilePath);
         }
@@ -149,7 +167,10 @@ export class FilesService {
     }
 
     @logActivity('Adding multiple image files')
-    public async addImageFiles(projectPaths: ProjectPaths, newImageFilePaths: string[]): Promise<void> {
+    public async addImageFiles(
+        projectPaths: ProjectPaths,
+        newImageFilePaths: string[],
+    ): Promise<void> {
         for (const newSourceFilePath of newImageFilePaths) {
             await this.addImageFile(projectPaths, newSourceFilePath);
         }

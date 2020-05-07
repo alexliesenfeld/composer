@@ -27,7 +27,8 @@ export const FontHelpPanel = (props: FontHelpPanelProps) => {
                         pGraphics->LoadFont("{fontId}", {props.variableName});
                     </Pre>
                     <p>
-                        Based on the example above the font will be available using the font id <Code>{fontId}</Code>.
+                        Based on the example above the font will be available using the font id{' '}
+                        <Code>{fontId}</Code>.
                     </p>
                 </div>
             </div>

@@ -6,7 +6,8 @@ export interface NotificationServiceContext {
 }
 
 let notificationContext: NotificationServiceContext | undefined;
-export const setNotificationServiceContext = (context: NotificationServiceContext) => (notificationContext = context);
+export const setNotificationServiceContext = (context: NotificationServiceContext) =>
+    (notificationContext = context);
 
 const toaster = Toaster.create({
     position: Position.TOP,
@@ -20,7 +21,11 @@ export interface WithNotificationOptions {
 }
 
 export function withNotification(options: WithNotificationOptions) {
-    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor): PropertyDescriptor {
+    return function (
+        target: any,
+        propertyKey: string,
+        descriptor: PropertyDescriptor,
+    ): PropertyDescriptor {
         const originalMethod = descriptor.value;
 
         descriptor.value = function (...args: any[]) {

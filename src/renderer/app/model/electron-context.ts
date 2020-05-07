@@ -23,7 +23,9 @@ export abstract class ElectronContext {
             case 'darwin':
                 return OperatingSystem.MACOS;
             default:
-                throw new UnsupportedOperationError(`Operating system ${process.platform} mot supported`);
+                throw new UnsupportedOperationError(
+                    `Operating system ${process.platform} mot supported`,
+                );
         }
     }
 }

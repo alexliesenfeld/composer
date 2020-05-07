@@ -82,7 +82,10 @@ export class WorkspacePaths extends ProjectPaths {
     }
 
     public getVisualStudioProjectWinPropsPath(): string {
-        return path.join(this.getVisualStudioProjectConfigDir(), `${this.config.projectName}-win.props`);
+        return path.join(
+            this.getVisualStudioProjectConfigDir(),
+            `${this.config.projectName}-win.props`,
+        );
     }
 
     public getMainRcPath(): string {
@@ -106,34 +109,58 @@ export class WorkspacePaths extends ProjectPaths {
     }
 
     public getVisualStudioAppIDEProjectFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-app.vcxproj');
+        return path.join(
+            this.getVisualStudioIDEProjectsDir(),
+            this.config.projectName + '-app.vcxproj',
+        );
     }
 
     public getVisualStudioAppIDEProjectFiltersFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-app.vcxproj.filters');
+        return path.join(
+            this.getVisualStudioIDEProjectsDir(),
+            this.config.projectName + '-app.vcxproj.filters',
+        );
     }
 
     public getVisualStudioAaxIDEProjectFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-aax.vcxproj');
+        return path.join(
+            this.getVisualStudioIDEProjectsDir(),
+            this.config.projectName + '-aax.vcxproj',
+        );
     }
 
     public getVisualStudioAaxIDEProjectFiltersFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-aax.vcxproj.filters');
+        return path.join(
+            this.getVisualStudioIDEProjectsDir(),
+            this.config.projectName + '-aax.vcxproj.filters',
+        );
     }
 
     public getVisualStudioVst2IDEProjectFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-vst2.vcxproj');
+        return path.join(
+            this.getVisualStudioIDEProjectsDir(),
+            this.config.projectName + '-vst2.vcxproj',
+        );
     }
 
     public getVisualStudioVst2IDEProjectFiltersFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-vst2.vcxproj.filters');
+        return path.join(
+            this.getVisualStudioIDEProjectsDir(),
+            this.config.projectName + '-vst2.vcxproj.filters',
+        );
     }
 
     public getVisualStudioVst3IDEProjectFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-vst3.vcxproj');
+        return path.join(
+            this.getVisualStudioIDEProjectsDir(),
+            this.config.projectName + '-vst3.vcxproj',
+        );
     }
 
     public getVisualStudioVst3IDEProjectFiltersFilePath(): string {
-        return path.join(this.getVisualStudioIDEProjectsDir(), this.config.projectName + '-vst3.vcxproj.filters');
+        return path.join(
+            this.getVisualStudioIDEProjectsDir(),
+            this.config.projectName + '-vst3.vcxproj.filters',
+        );
     }
 }

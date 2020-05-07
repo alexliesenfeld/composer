@@ -2,7 +2,15 @@ import { When } from '@/renderer/app/components/When';
 import { Button, ButtonGroup, Card, ITreeNode, Navbar, Tree } from '@blueprintjs/core';
 import { ELEVATION_2 } from '@blueprintjs/core/lib/esm/common/classes';
 import { IconName } from '@blueprintjs/icons';
-import { ADD, CLEAN, FONT, HEADER, IMPORT, MEDIA, TRASH } from '@blueprintjs/icons/lib/esm/generated/iconNames';
+import {
+    ADD,
+    CLEAN,
+    FONT,
+    HEADER,
+    IMPORT,
+    MEDIA,
+    TRASH,
+} from '@blueprintjs/icons/lib/esm/generated/iconNames';
 import * as path from 'path';
 import * as React from 'react';
 
@@ -90,7 +98,9 @@ export class FileBrowser extends React.Component<FileBrowserProps> {
                 </div>
                 <div className="right-column viewer-container">
                     <When condition={this.props.showContentArea}>
-                        <Card className={`${ELEVATION_2} full-width no-padding`}>{this.props.children}</Card>
+                        <Card className={`${ELEVATION_2} full-width no-padding`}>
+                            {this.props.children}
+                        </Card>
                     </When>
                 </div>
             </div>

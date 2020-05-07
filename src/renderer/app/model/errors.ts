@@ -12,7 +12,9 @@ export class DirectoryNotEmptyError extends CustomError {
     constructor(public customMessage?: string, public filePath?: string) {
         super(
             DirectoryNotEmptyError,
-            customMessage ? customMessage : `Directory is not empty${filePath ? ': ' + filePath : ''}.`,
+            customMessage
+                ? customMessage
+                : `Directory is not empty${filePath ? ': ' + filePath : ''}.`,
         );
     }
 }
@@ -45,7 +47,10 @@ export class CommandFailedError extends CustomError {
 
 export class UnsupportedOperationError extends CustomError {
     constructor(public customMessage?: string) {
-        super(UnsupportedOperationError, customMessage ? customMessage : `Operation is unsupported.`);
+        super(
+            UnsupportedOperationError,
+            customMessage ? customMessage : `Operation is unsupported.`,
+        );
     }
 }
 

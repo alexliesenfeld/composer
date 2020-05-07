@@ -15,7 +15,10 @@ export const writeNewConfigToPath = async (filePath: string): Promise<unknown> =
     const filesInDirectory = await Fsx.readdir(directoryPath);
 
     if (filesInDirectory && filesInDirectory.length > 0) {
-        throw new DirectoryNotEmptyError('The directory of a new project must be empty.', directoryPath);
+        throw new DirectoryNotEmptyError(
+            'The directory of a new project must be empty.',
+            directoryPath,
+        );
     }
 
     return writeConfigToPath(filePath, createInitialConfig());
@@ -37,7 +40,10 @@ const parseConfig = (content: string): WorkspaceConfig => {
     return JSON.parse(content);
 };
 
-export const writeConfigToPath = async (path: string, config: WorkspaceConfig): Promise<unknown> => {
+export const writeConfigToPath = async (
+    path: string,
+    config: WorkspaceConfig,
+): Promise<unknown> => {
     return Fsx.writeFile(path, JSON.stringify(config, null, 4));
 };
 

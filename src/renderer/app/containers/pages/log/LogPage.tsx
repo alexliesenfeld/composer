@@ -27,7 +27,10 @@ export class LogPage extends React.PureComponent<{ appStore?: AppStore }> {
     }
 
     getLogMessageCssClass(level: LogLevel) {
-        return 'log-message ' + (level === LogLevel.ERROR ? 'error' : level === LogLevel.DEBUG ? 'debug' : '');
+        return (
+            'log-message ' +
+            (level === LogLevel.ERROR ? 'error' : level === LogLevel.DEBUG ? 'debug' : '')
+        );
     }
 
     render() {
@@ -35,14 +38,21 @@ export class LogPage extends React.PureComponent<{ appStore?: AppStore }> {
             <div className="LogPage custom-scrollbar" ref={this.element}>
                 <ResizeSensor onResize={() => this.scrollLogToBottom()}>
                     <Pre>
-                        {this.props.appStore!.logMessages.map((e: AppStoreLogMessage, index: number) => {
-                            return (
-                                <span key={index} className={this.getLogMessageCssClass(e.level)}>
-                                    <span className="timestamp">{e.timestamp.toLocaleTimeString()}</span>
-                                    <span className="message">{e.message}</span>
-                                </span>
-                            );
-                        })}
+                        {this.props.appStore!.logMessages.map(
+                            (e: AppStoreLogMessage, index: number) => {
+                                return (
+                                    <span
+                                        key={index}
+                                        className={this.getLogMessageCssClass(e.level)}
+                                    >
+                                        <span className="timestamp">
+                                            {e.timestamp.toLocaleTimeString()}
+                                        </span>
+                                        <span className="message">{e.message}</span>
+                                    </span>
+                                );
+                            },
+                        )}
                         {this.props.appStore!.logMessages.length === 0 ? (
                             <span className="log-message debug">The log is empty.</span>
                         ) : (

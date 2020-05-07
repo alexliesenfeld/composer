@@ -132,9 +132,15 @@ export class WorkspaceService {
     }
 
     @logActivity('Downloading iPlug2 prebuilt dependency file #{0}')
-    public async downloadIPlug2DependenciesFile(fileName: string, targetDirPath: string): Promise<void> {
+    public async downloadIPlug2DependenciesFile(
+        fileName: string,
+        targetDirPath: string,
+    ): Promise<void> {
         const filePath = path.join(targetDirPath, fileName);
-        await downloadFile(`https://github.com/iPlug2/iPlug2/releases/download/setup/${fileName}`, filePath);
+        await downloadFile(
+            `https://github.com/iPlug2/iPlug2/releases/download/setup/${fileName}`,
+            filePath,
+        );
         await unzipFile(filePath, targetDirPath);
         await deleteFileIfExists(filePath);
 
@@ -149,7 +155,11 @@ export class WorkspaceService {
         const targetDir = paths.getVst3SdkDirPath();
         await recreateDir(targetDir);
 
-        await git.cloneRepo('git clone https://github.com/steinbergmedia/vst3sdk.git', sha1, targetDir);
+        await git.cloneRepo(
+            'git clone https://github.com/steinbergmedia/vst3sdk.git',
+            sha1,
+            targetDir,
+        );
         await git.initSubmodule('pluginterfaces', targetDir);
         await git.initSubmodule('base', targetDir);
         await git.initSubmodule('public.sdk', targetDir);
@@ -157,7 +167,10 @@ export class WorkspaceService {
     }
 
     @logActivity('Creating project from iPlug2 prototype')
-    public async generateProjectFromPrototype(paths: WorkspacePaths, config: WorkspaceConfig): Promise<void> {
+    public async generateProjectFromPrototype(
+        paths: WorkspacePaths,
+        config: WorkspaceConfig,
+    ): Promise<void> {
         const buildsDir = paths.getBuildsDir();
         const examplesPath = path.join(paths.getIPlug2BaseDirPath(), 'Examples');
 
@@ -187,12 +200,17 @@ export class WorkspaceService {
     }
 
     @logActivity('Copying initial sources from iPlug prototype project to project sources')
-    public async initializeSourceFiles(paths: WorkspacePaths, config: WorkspaceConfig): Promise<void> {
+    public async initializeSourceFiles(
+        paths: WorkspacePaths,
+        config: WorkspaceConfig,
+    ): Promise<void> {
         const sourcesDir = paths.getSourcesDir();
         await createDirIfNotExists(sourcesDir);
 
         const filesToCopy = this.getDefaultPrototypeSourceFiles(paths, config);
-        await Promise.all(filesToCopy.map((f) => copyFile(f, path.join(sourcesDir, path.basename(f)))));
+        await Promise.all(
+            filesToCopy.map((f) => copyFile(f, path.join(sourcesDir, path.basename(f)))),
+        );
     }
 
     public async shouldSetupIPlug2(paths: WorkspacePaths): Promise<boolean> {
@@ -215,17 +233,28 @@ export class WorkspaceService {
         return directoryDoesNotExistOrIsEmpty(paths.getFontsDir());
     }
 
-    public getDefaultPrototypeSourceFiles(paths: WorkspacePaths, config: WorkspaceConfig): string[] {
+    public getDefaultPrototypeSourceFiles(
+        paths: WorkspacePaths,
+        config: WorkspaceConfig,
+    ): string[] {
         const projectBuildDir = paths.getProjectBuildDir();
 
-        return [CONFIG_HEADER_FILE_NAME, `${config.projectName}.h`, `${config.projectName}.cpp`].map((file) =>
-            path.join(projectBuildDir, file),
-        );
+        return [
+            CONFIG_HEADER_FILE_NAME,
+            `${config.projectName}.h`,
+            `${config.projectName}.cpp`,
+        ].map((file) => path.join(projectBuildDir, file));
     }
 
-    public async removeDefaultPrototypeFontFiles(paths: WorkspacePaths, config: WorkspaceConfig): Promise<void> {
+    public async removeDefaultPrototypeFontFiles(
+        paths: WorkspacePaths,
+        config: WorkspaceConfig,
+    ): Promise<void> {
         const defaultPrototypeSourceFiles = this.getDefaultPrototypeSourceFiles(paths, config);
-        await this.ideService.removeDefaultPrototypeSourceFilesFromIDEProject(paths, defaultPrototypeSourceFiles);
+        await this.ideService.removeDefaultPrototypeSourceFilesFromIDEProject(
+            paths,
+            defaultPrototypeSourceFiles,
+        );
         await this.ideService.removeDefaultPrototypeFontFilesFromIDEProject(paths);
         const fontPath = paths.getIDEProjectFontResourcesDir();
         await deleteFileIfExists(path.join(fontPath, DEFAULT_FONT_FILE_NAME));

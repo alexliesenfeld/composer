@@ -14,7 +14,8 @@ export interface LoggingServiceContext {
 
 let loggingContext: LoggingServiceContext | undefined;
 
-export const setLoggingServiceContext = (context: LoggingServiceContext) => (loggingContext = context);
+export const setLoggingServiceContext = (context: LoggingServiceContext) =>
+    (loggingContext = context);
 
 const substitute = (input: string, variables: RegExpMatchArray | null, args: any[]): string => {
     if (!variables) {
@@ -33,7 +34,11 @@ const substitute = (input: string, variables: RegExpMatchArray | null, args: any
 export function logActivity(description: string) {
     const variables: RegExpMatchArray | null = description.match(/#{([0-9]+)}/g);
 
-    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor): PropertyDescriptor {
+    return function (
+        target: any,
+        propertyKey: string,
+        descriptor: PropertyDescriptor,
+    ): PropertyDescriptor {
         const originalMethod = descriptor.value;
 
         descriptor.value = function (...args: any[]) {

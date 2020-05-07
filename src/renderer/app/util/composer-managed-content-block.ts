@@ -35,7 +35,10 @@ export class ComposerManagedContentBlock {
         const endIdx = content.lastIndexOf(HEADER_FILE_COMPOSER_BLOCK_END);
 
         if (startIdx >= 0 && endIdx >= 0) {
-            const oldBlock = content.substring(startIdx, endIdx + HEADER_FILE_COMPOSER_BLOCK_END.length);
+            const oldBlock = content.substring(
+                startIdx,
+                endIdx + HEADER_FILE_COMPOSER_BLOCK_END.length,
+            );
 
             return content.replace(oldBlock, block);
         }

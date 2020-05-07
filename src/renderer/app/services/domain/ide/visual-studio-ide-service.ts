@@ -1,5 +1,8 @@
 import { AssertionError } from '@/renderer/app/model/errors';
-import { IdeService, VariableNameTranslator } from '@/renderer/app/services/domain/common/ide-service';
+import {
+    IdeService,
+    VariableNameTranslator,
+} from '@/renderer/app/services/domain/common/ide-service';
 import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 import { readFile, writeFile } from '@/renderer/app/services/domain/config-service';
 import { FilesService } from '@/renderer/app/services/domain/files-service';
@@ -50,14 +53,20 @@ export class VisualStudioIdeService implements IdeService {
         for (const fileToRemove of defaultPrototypeFiles) {
             await Promise.all(
                 projectFiles.map((projectFile) =>
-                    this.removeSourceFileFromVisualStudioProjectFile(context, projectFile, fileToRemove),
+                    this.removeSourceFileFromVisualStudioProjectFile(
+                        context,
+                        projectFile,
+                        fileToRemove,
+                    ),
                 ),
             );
             await deleteFileIfExists(fileToRemove);
         }
     }
 
-    public async removeDefaultPrototypeFontFilesFromIDEProject(context: WorkspacePaths): Promise<void> {
+    public async removeDefaultPrototypeFontFilesFromIDEProject(
+        context: WorkspacePaths,
+    ): Promise<void> {
         const mainRcPath = context.getMainRcPath();
 
         await assertReplaceContentInFile(
@@ -98,7 +107,11 @@ export class VisualStudioIdeService implements IdeService {
         context: WorkspacePaths,
         translateToVariable: VariableNameTranslator,
     ): Promise<void> {
-        await assertReplaceContentInFile(context.getConfigHPath(), `#define ROBOTO_FN "Roboto-Regular.ttf"`, '');
+        await assertReplaceContentInFile(
+            context.getConfigHPath(),
+            `#define ROBOTO_FN "Roboto-Regular.ttf"`,
+            '',
+        );
 
         // As fonts have a naming scheme. We are therefore removing the default iPlug name for roboto and re-adding it
         // with the standard naming scheme.
@@ -109,7 +122,10 @@ export class VisualStudioIdeService implements IdeService {
         );
     }
 
-    public async addImageFileToIdeProject(paths: WorkspacePaths, variableName: string): Promise<void> {
+    public async addImageFileToIdeProject(
+        paths: WorkspacePaths,
+        variableName: string,
+    ): Promise<void> {
         const mainRcPath = paths.getMainRcPath();
         let mainRcContent = await readFile(mainRcPath);
 
@@ -130,7 +146,10 @@ export class VisualStudioIdeService implements IdeService {
         await writeFile(mainRcPath, mainRcContent);
     }
 
-    public async addFontFileToIdeProject(paths: WorkspacePaths, variableName: string): Promise<void> {
+    public async addFontFileToIdeProject(
+        paths: WorkspacePaths,
+        variableName: string,
+    ): Promise<void> {
         const mainRcPath = paths.getMainRcPath();
         let mainRcContent = await readFile(mainRcPath);
 
@@ -180,7 +199,10 @@ export class VisualStudioIdeService implements IdeService {
         await assertReplaceContentInFile(
             winPropsPath,
             `</AdditionalIncludeDirectories>`,
-            `;$(SolutionDir)${path.relative(solutionDir, sourcesDir)}</AdditionalIncludeDirectories>`,
+            `;$(SolutionDir)${path.relative(
+                solutionDir,
+                sourcesDir,
+            )}</AdditionalIncludeDirectories>`,
         );
     }
 
@@ -203,7 +225,11 @@ export class VisualStudioIdeService implements IdeService {
         await assertReplaceContentInFile(
             mainRcPath,
             `"#include ""..\\\\config.h""\\r\\n"`,
-            `"#include ""${replaceAll(path.relative(projectDir, configHPath), path.sep, times(path.sep, 2))}""\\r\\n"`,
+            `"#include ""${replaceAll(
+                path.relative(projectDir, configHPath),
+                path.sep,
+                times(path.sep, 2),
+            )}""\\r\\n"`,
         );
     }
 
@@ -216,17 +242,28 @@ export class VisualStudioIdeService implements IdeService {
         let fileContent = await readFile(vsProjectFile);
 
         if (this.projectFileContainsSourceFile(fileContent, projectDir, fileToRemove)) {
-            fileContent = this.removeSourceFileFromProjectFile(vsProjectFile, fileContent, projectDir, fileToRemove);
+            fileContent = this.removeSourceFileFromProjectFile(
+                vsProjectFile,
+                fileContent,
+                projectDir,
+                fileToRemove,
+            );
         }
 
         await writeFile(vsProjectFile, fileContent);
     }
 
-    private projectFileContainsSourceFile(vsProjectFileContent: string, projectDir: string, filePath: string) {
+    private projectFileContainsSourceFile(
+        vsProjectFileContent: string,
+        projectDir: string,
+        filePath: string,
+    ) {
         const allRelativeFilePaths = this.getPossibleFilePaths(path.relative(projectDir, filePath));
 
         for (const relativeFilePath of allRelativeFilePaths) {
-            if (vsProjectFileContent.includes(this.getSourceFileInclusionSnippet(relativeFilePath))) {
+            if (
+                vsProjectFileContent.includes(this.getSourceFileInclusionSnippet(relativeFilePath))
+            ) {
                 return true;
             }
         }
@@ -242,10 +279,18 @@ export class VisualStudioIdeService implements IdeService {
         ];
     }
 
-    private addSourceFileToProjectFile(vsProjectFileContent: string, projectDir: string, filePath: string): string {
+    private addSourceFileToProjectFile(
+        vsProjectFileContent: string,
+        projectDir: string,
+        filePath: string,
+    ): string {
         const snippet = this.getSourceFileInclusionSnippet(path.relative(projectDir, filePath));
 
-        return assertReplace(vsProjectFileContent, `</Project>`, `<ItemGroup>${snippet}</ItemGroup></Project>`);
+        return assertReplace(
+            vsProjectFileContent,
+            `</Project>`,
+            `<ItemGroup>${snippet}</ItemGroup></Project>`,
+        );
     }
 
     private removeSourceFileFromProjectFile(

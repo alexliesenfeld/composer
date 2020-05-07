@@ -7,7 +7,11 @@ import * as React from 'react';
 class ThemeProvider extends React.Component<{ appStore?: AppStore }> {
     render() {
         return (
-            <div className={this.props.appStore!.darkTheme ? 'bp3-dark ThemeProvider' : 'ThemeProvider'}>
+            <div
+                className={
+                    this.props.appStore!.darkTheme ? 'bp3-dark ThemeProvider' : 'ThemeProvider'
+                }
+            >
                 {this.props.children}
             </div>
         );

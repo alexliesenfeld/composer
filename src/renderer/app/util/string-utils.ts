@@ -3,7 +3,11 @@ import { AssertionError } from '@/renderer/app/model/errors';
 export const removeSpaces = (value: string) => value.replace(' ', '');
 export const matchesVersion = (value: string) => !!value.match(/^[0-9]+\.[0-9]+\.[0-9]+$/g);
 
-export const replace = (content: string, from: string, to: string): { success: boolean; newContent: string } => {
+export const replace = (
+    content: string,
+    from: string,
+    to: string,
+): { success: boolean; newContent: string } => {
     const replacedFileContent = content.replace(from, to);
 
     return {

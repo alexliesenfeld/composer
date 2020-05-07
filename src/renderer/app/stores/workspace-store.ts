@@ -4,7 +4,10 @@ import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 import * as configService from '@/renderer/app/services/domain/config-service';
 import { WorkspaceService } from '@/renderer/app/services/domain/workspace-service';
 import { withLoadingScreen } from '@/renderer/app/services/ui/loading-screen-service';
-import { showSuccessNotification, withNotification } from '@/renderer/app/services/ui/notification-service';
+import {
+    showSuccessNotification,
+    withNotification,
+} from '@/renderer/app/services/ui/notification-service';
 import { action, observable, runInAction } from 'mobx';
 
 export class WorkspaceStore {

@@ -6,10 +6,15 @@ export interface LoadingServiceContext {
 
 let loadingScreenContext: LoadingServiceContext | undefined;
 
-export const setLoadingServiceContext = (context: LoadingServiceContext) => (loadingScreenContext = context);
+export const setLoadingServiceContext = (context: LoadingServiceContext) =>
+    (loadingScreenContext = context);
 
 export function withLoadingScreen(description: string) {
-    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor): PropertyDescriptor {
+    return function (
+        target: any,
+        propertyKey: string,
+        descriptor: PropertyDescriptor,
+    ): PropertyDescriptor {
         const originalMethod = descriptor.value;
 
         descriptor.value = function (...args: any[]) {

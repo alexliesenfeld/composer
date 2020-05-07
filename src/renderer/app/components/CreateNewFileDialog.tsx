@@ -13,7 +13,11 @@ export interface CreateNewFileDialogProps {
     fileExists: (fileName: string | undefined) => boolean;
 }
 
-const getErrorText = (touched: boolean, value: string | undefined, props: CreateNewFileDialogProps) => {
+const getErrorText = (
+    touched: boolean,
+    value: string | undefined,
+    props: CreateNewFileDialogProps,
+) => {
     if (!touched) {
         return undefined;
     }
@@ -37,7 +41,13 @@ function CreateFileDialog(props: CreateNewFileDialogProps) {
     const errorText = getErrorText(touched, value, props);
 
     return (
-        <Dialog isOpen={props.isOpen} icon={ADD} onClose={props.onCancel} title={props.title} usePortal={false}>
+        <Dialog
+            isOpen={props.isOpen}
+            icon={ADD}
+            onClose={props.onCancel}
+            title={props.title}
+            usePortal={false}
+        >
             <div className={Classes.DIALOG_BODY}>
                 <FormGroup
                     label="File name"

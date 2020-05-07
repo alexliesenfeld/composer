@@ -9,7 +9,11 @@ import * as request from 'request';
 
 export const downloadFile = (url: string, target: string) => {
     return new Promise(function (resolve, reject) {
-        request.get(url).pipe(fs.createWriteStream(target)).on('finish', resolve).on('error', reject);
+        request
+            .get(url)
+            .pipe(fs.createWriteStream(target))
+            .on('finish', resolve)
+            .on('error', reject);
     });
 };
 
@@ -91,7 +95,10 @@ export const createDirIfNotExists = async (dirPath: string): Promise<void> => {
     }
 };
 
-export const directoryIsEmpty = async (dirPath: string, fileNamesToIgnore?: string[]): Promise<boolean> => {
+export const directoryIsEmpty = async (
+    dirPath: string,
+    fileNamesToIgnore?: string[],
+): Promise<boolean> => {
     const files = await Fsx.readdir(dirPath);
 
     if (files.length == 0) {

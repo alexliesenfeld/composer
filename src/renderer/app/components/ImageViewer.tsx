@@ -14,7 +14,9 @@ export class ImageViewer extends React.Component<ImageViewerProps> {
             <div className="ImageViewer">
                 <When condition={!!this.props.fileName && !!this.props.imageFileBuffer}>
                     <img
-                        src={`data:${this.getMimeType(this.props.fileName)};base64,${this.props.imageFileBuffer}`}
+                        src={`data:${this.getMimeType(this.props.fileName)};base64,${
+                            this.props.imageFileBuffer
+                        }`}
                         alt={'No image available'}
                     />
                 </When>
@@ -27,7 +29,9 @@ export class ImageViewer extends React.Component<ImageViewerProps> {
         if (ext === '.png') {
             return 'image/png';
         } else {
-            throw new UnsupportedOperationError(`Unsupported image file extension ${ext} in file ${fileName}`);
+            throw new UnsupportedOperationError(
+                `Unsupported image file extension ${ext} in file ${fileName}`,
+            );
         }
     }
 }

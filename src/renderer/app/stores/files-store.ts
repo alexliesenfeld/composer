@@ -42,7 +42,10 @@ export class FilesStore {
 
         runInAction(() => {
             this.sourceFileNamesList = names;
-            if (this.selectedSourceFile && !this.sourceFileNamesList.includes(this.selectedSourceFile)) {
+            if (
+                this.selectedSourceFile &&
+                !this.sourceFileNamesList.includes(this.selectedSourceFile)
+            ) {
                 this.selectedSourceFile = undefined;
             }
             if (!this.selectedSourceFile && this.sourceFileNamesList.length > 0) {
@@ -78,7 +81,10 @@ export class FilesStore {
 
         runInAction(() => {
             this.imageFileNamesList = names;
-            if (this.selectedImageFile && !this.imageFileNamesList.includes(this.selectedImageFile)) {
+            if (
+                this.selectedImageFile &&
+                !this.imageFileNamesList.includes(this.selectedImageFile)
+            ) {
                 this.selectedImageFile = undefined;
             }
             if (!this.selectedImageFile && this.imageFileNamesList.length > 0) {
@@ -90,7 +96,10 @@ export class FilesStore {
     }
 
     @action.bound
-    public async setSelectedFontFile(projectPaths: ProjectPaths, file: string | undefined): Promise<void> {
+    public async setSelectedFontFile(
+        projectPaths: ProjectPaths,
+        file: string | undefined,
+    ): Promise<void> {
         if (file) {
             const content = await this.filesService.loadFontContent(projectPaths, file);
             runInAction(() => {
@@ -101,7 +110,10 @@ export class FilesStore {
     }
 
     @action.bound
-    public async setSelectedSourceFile(projectPaths: ProjectPaths, file: string | undefined): Promise<void> {
+    public async setSelectedSourceFile(
+        projectPaths: ProjectPaths,
+        file: string | undefined,
+    ): Promise<void> {
         if (file) {
             const content = await this.filesService.loadSourceFileContent(projectPaths, file);
             runInAction(() => {
@@ -112,7 +124,10 @@ export class FilesStore {
     }
 
     @action.bound
-    public async setSelectedImageFile(projectPaths: ProjectPaths, file: string | undefined): Promise<void> {
+    public async setSelectedImageFile(
+        projectPaths: ProjectPaths,
+        file: string | undefined,
+    ): Promise<void> {
         if (file) {
             const content = await this.filesService.loadImageFileContent(projectPaths, file);
             runInAction(() => {

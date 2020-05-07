@@ -22,7 +22,8 @@ export interface ProjectMetadata {
     filePath: string;
 }
 
-export class AppStore implements LoadingServiceContext, LoggingServiceContext, NotificationServiceContext {
+export class AppStore
+    implements LoadingServiceContext, LoggingServiceContext, NotificationServiceContext {
     @observable public darkTheme = true;
     @observable public logMessages: AppStoreLogMessage[] = [];
     @observable public isLoadingScreenShown: boolean;
@@ -35,7 +36,9 @@ export class AppStore implements LoadingServiceContext, LoggingServiceContext, N
         const lastOpenedProjectsJson = localStorage.getItem('recentlyOpenedProjects');
         if (lastOpenedProjectsJson) {
             this.recentlyOpenedProjects = JSON.parse(lastOpenedProjectsJson);
-            this.recentlyOpenedProjects = this.recentlyOpenedProjects.filter((f) => fileExistsSync(f.filePath));
+            this.recentlyOpenedProjects = this.recentlyOpenedProjects.filter((f) =>
+                fileExistsSync(f.filePath),
+            );
         }
     }
 
@@ -57,10 +60,15 @@ export class AppStore implements LoadingServiceContext, LoggingServiceContext, N
 
     @action.bound
     public removeRecentlyOpenedProject(filePath: string): void {
-        const recentProjectIdx = this.recentlyOpenedProjects.findIndex((e) => e.filePath === filePath);
+        const recentProjectIdx = this.recentlyOpenedProjects.findIndex(
+            (e) => e.filePath === filePath,
+        );
         if (recentProjectIdx > -1) {
             this.recentlyOpenedProjects.splice(recentProjectIdx, 1);
-            localStorage.setItem('recentlyOpenedProjects', JSON.stringify(this.recentlyOpenedProjects));
+            localStorage.setItem(
+                'recentlyOpenedProjects',
+                JSON.stringify(this.recentlyOpenedProjects),
+            );
         }
     }
 

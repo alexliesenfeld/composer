@@ -1,9 +1,9 @@
 import { ConfirmDeleteFileDialog } from '@/renderer/app/components/ConfirmDeleteFileDialog';
-import CreateFileDialog from '@/renderer/app/components/CreateNewFileDialog';
 import { FileBrowser } from '@/renderer/app/components/FileBrowser';
 import { FontViewer } from '@/renderer/app/components/FontViewer';
 import { ImageViewer } from '@/renderer/app/components/ImageViewer';
 import { When } from '@/renderer/app/components/When';
+import { SourceFileTabPage } from '@/renderer/app/containers/pages/files/components/SourceFileTabPage';
 import { FontHelpPanel } from '@/renderer/app/containers/pages/files/info-panels/FontHelpPanel';
 import { ImageHelpPanel } from '@/renderer/app/containers/pages/files/info-panels/ImageHelpPanel';
 import { AppStore } from '@/renderer/app/stores/app-store';
@@ -11,144 +11,81 @@ import { FilesStore, FilesTab } from '@/renderer/app/stores/files-store';
 import { WorkspaceStore } from '@/renderer/app/stores/workspace-store';
 import { Alignment, Button, Navbar, Tab, Tabs, Text } from '@blueprintjs/core';
 import { HELP } from '@blueprintjs/icons/lib/esm/generated/iconNames';
-import * as React from 'react';
+
 import { inject, observer } from 'mobx-react';
+import * as React from 'react';
 
-import AceEditor from 'react-ace';
-import 'ace-builds/webpack-resolver';
-
-@inject('workspaceStore', 'filesStore', 'appStore')
-@observer
-export class FilesPage extends React.Component<{
+export interface FilesPageProps {
     workspaceStore?: WorkspaceStore;
     filesStore?: FilesStore;
     appStore?: AppStore;
-}> {
-    async componentDidMount(): Promise<void> {
-        const paths = this.props.workspaceStore!.workspacePaths!;
-        await Promise.all([
-            this.props.filesStore!.refreshSourceFilesList(paths),
-            this.props.filesStore!.refreshFontFilesList(paths),
-            this.props.filesStore!.refreshImageFilesList(paths),
-        ]);
+}
+@inject('workspaceStore', 'filesStore', 'appStore')
+@observer
+export class FilesPage extends React.Component<FilesPageProps> {
+    constructor(props: FilesPageProps) {
+        super(props);
 
-        await Promise.all([
-            this.props.filesStore!.watchSourcesDir(paths, () => {
-                this.props.filesStore!.refreshSourceFilesList(paths);
-            }),
-            this.props.filesStore!.watchFontsDir(paths, () => {
-                this.props.filesStore!.refreshFontFilesList(paths);
-            }),
-            this.props.filesStore!.watchImageDir(paths, () => {
-                this.props.filesStore!.refreshImageFilesList(paths);
-            }),
-        ]);
-    }
-
-    async componentWillUnmount() {
-        await Promise.all([
-            this.props.filesStore!.unwatchSourcesDir(),
-            this.props.filesStore!.unwatchFontsDir(),
-            this.props.filesStore!.unwatchImageDir(),
-        ]);
+        // This binding is necessary to make `this` work in callbacks
+        // Official recommendation: https://reactjs.org/docs/handling-events.html
+        this.setActiveTab = this.setActiveTab.bind(this);
+        this.onAcceptCreateSourceFileDialog = this.onAcceptCreateSourceFileDialog.bind(this);
+        this.onCancelCreateSourceFileDialog = this.onCancelCreateSourceFileDialog.bind(this);
+        this.onConfirmDeleteFileDialog = this.onConfirmDeleteFileDialog.bind(this);
+        this.onSourceFileSelected = this.onSourceFileSelected.bind(this);
+        this.onCreateNewSourceFile = this.onCreateNewSourceFile.bind(this);
+        this.onImportSourceFile = this.onImportSourceFile.bind(this);
+        this.onDeleteSourceFile = this.onDeleteSourceFile.bind(this);
     }
 
     render() {
+        const filesStore = this.props.filesStore!;
+        const appStore = this.props.appStore!;
+
         return (
             <div className="FilesPage">
                 <Tabs
                     animate={false}
                     large={false}
-                    selectedTabId={this.props.filesStore!.activeTab}
-                    onChange={(tab: FilesTab) => {
-                        this.props.filesStore!.activeTab = tab;
-                    }}
+                    selectedTabId={filesStore.activeTab}
+                    onChange={this.setActiveTab}
                 >
                     <Tab id={FilesTab.SOURCE_FILES_TAB} title="Source Files" />
                     <Tab id={FilesTab.FONTS_TAB} title="Fonts" />
                     <Tab id={FilesTab.IMAGES_TAB} title="Images" />
                 </Tabs>
-                <When condition={this.props.filesStore!.activeTab == FilesTab.SOURCE_FILES_TAB}>
-                    <CreateFileDialog
-                        isOpen={this.props.filesStore!.createNewSourceFileDialogOpened}
-                        title={'Create new source file'}
-                        onAccept={(fileName) => {
-                            this.props.filesStore!.createNewSourceFile(
-                                this.props.workspaceStore!.workspacePaths!,
-                                fileName,
-                            );
-                            this.props.filesStore!.createNewSourceFileDialogOpened = false;
-                        }}
-                        onCancel={() => (this.props.filesStore!.createNewSourceFileDialogOpened = false)}
-                        fileExists={(value: string) => this.props.filesStore!.sourceFileNamesList.includes(value)}
-                        allowedFileExtensions={['.h', '.hpp', '.cpp']}
+                <When condition={filesStore.activeTab == FilesTab.SOURCE_FILES_TAB}>
+                    <SourceFileTabPage
+                        darkTheme={appStore.darkTheme}
+                        isCreateFileDialogOpen={filesStore.createNewSourceFileDialogOpened}
+                        onAcceptCreateSourceFileDialog={this.onAcceptCreateSourceFileDialog}
+                        onCancelCreateSourceFileDialog={this.onCancelCreateSourceFileDialog}
+                        checkFileExists={filesStore.sourceFileNamesList.includes}
+                        fileToDelete={filesStore.sourceFileToDelete}
+                        onCancelDeletingSourceFile={filesStore.cancelDeletingSourceFile}
+                        onConfirmDeleteFileDialog={this.onConfirmDeleteFileDialog}
+                        sourceFileNamesList={filesStore.sourceFileNamesList}
+                        selectedFile={filesStore.selectedSourceFile}
+                        onFileSelected={this.onSourceFileSelected}
+                        onImportFile={this.onImportSourceFile}
+                        onCreateNewItem={this.onCreateNewSourceFile}
+                        onDeleteItem={this.onDeleteSourceFile}
+                        selectedSourceFileContent={filesStore.selectedSourceFileContent}
                     />
-                    <ConfirmDeleteFileDialog
-                        darkTheme={this.props.appStore!.darkTheme}
-                        onCancel={() => this.props.filesStore!.cancelDeletingSourceFile()}
-                        onAccept={() =>
-                            this.props.filesStore!.completeDeletingSourceFile(
-                                this.props.workspaceStore!.workspacePaths!,
-                            )
-                        }
-                        fileName={this.props.filesStore!.sourceFileToDelete}
-                    />
-                    <FileBrowser
-                        showContentArea={true}
-                        fileList={this.props.filesStore!.sourceFileNamesList}
-                        selectedFile={this.props.filesStore!.selectedSourceFile}
-                        onSelectFile={(file) => {
-                            this.props.filesStore!.setSelectedSourceFile(
-                                this.props.workspaceStore!.workspacePaths!,
-                                file,
-                            );
-                        }}
-                        onImportExistingItem={() => {
-                            this.props.filesStore!.importSourceFile(this.props.workspaceStore!.workspacePaths!);
-                        }}
-                        onCreateNewItem={() => {
-                            this.props.filesStore!.createNewSourceFileDialogOpened = true;
-                        }}
-                        onDelete={(fileName: string) => {
-                            this.props.filesStore!.startDeletingSourceFile(fileName);
-                        }}
-                    >
-                        <AceEditor
-                            style={{ width: '100%', height: '100%' }}
-                            placeholder="No content"
-                            mode="c_cpp"
-                            theme="tomorrow_night"
-                            name="source-file-editor"
-                            value={
-                                this.props.filesStore!.selectedSourceFile
-                                    ? this.props.filesStore!.selectedSourceFileContent
-                                    : undefined
-                            }
-                            fontSize={16}
-                            showPrintMargin={false}
-                            showGutter={true}
-                            highlightActiveLine={false}
-                            setOptions={{
-                                useWorker: false,
-                                enableBasicAutocompletion: true,
-                                enableLiveAutocompletion: true,
-                                showLineNumbers: true,
-                                tabSize: 4,
-                                readOnly: true,
-                            }}
-                        />
-                    </FileBrowser>
                 </When>
                 <When condition={this.props.filesStore!.activeTab == FilesTab.FONTS_TAB}>
                     <ConfirmDeleteFileDialog
                         darkTheme={this.props.appStore!.darkTheme}
                         onCancel={() => this.props.filesStore!.cancelDeletingFontFile()}
                         onAccept={() =>
-                            this.props.filesStore!.completeDeletingFontFile(this.props.workspaceStore!.workspacePaths!)
+                            this.props.filesStore!.completeDeletingFontFile(
+                                this.props.workspaceStore!.workspacePaths!,
+                            )
                         }
                         fileName={this.props.filesStore!.fontFileToDelete}
                     />
-                    {!!this.props.filesStore!.selectedFontFile && this.props.filesStore!.fontInfoPanelOpened ? (
+                    {!!this.props.filesStore!.selectedFontFile &&
+                    this.props.filesStore!.fontInfoPanelOpened ? (
                         <FontHelpPanel
                             fileName={this.props.filesStore!.selectedFontFile!}
                             variableName={this.props.workspaceStore!.getResourceAliasName(
@@ -156,8 +93,8 @@ export class FilesPage extends React.Component<{
                             )}
                             isOpen={this.props.filesStore!.fontInfoPanelOpened}
                             onClose={() =>
-                                (this.props.filesStore!.fontInfoPanelOpened = !this.props.filesStore!
-                                    .fontInfoPanelOpened)
+                                (this.props.filesStore!.fontInfoPanelOpened = !this.props
+                                    .filesStore!.fontInfoPanelOpened)
                             }
                         />
                     ) : null}
@@ -172,7 +109,9 @@ export class FilesPage extends React.Component<{
                             );
                         }}
                         onImportExistingItem={() => {
-                            this.props.filesStore!.importFontFile(this.props.workspaceStore!.workspacePaths!);
+                            this.props.filesStore!.importFontFile(
+                                this.props.workspaceStore!.workspacePaths!,
+                            );
                         }}
                         onDelete={(fileName: string) => {
                             this.props.filesStore!.startDeletingFontFile(fileName);
@@ -186,7 +125,9 @@ export class FilesPage extends React.Component<{
                                 <Button
                                     small={true}
                                     icon={HELP}
-                                    onClick={() => (this.props.filesStore!.fontInfoPanelOpened = true)}
+                                    onClick={() =>
+                                        (this.props.filesStore!.fontInfoPanelOpened = true)
+                                    }
                                     minimal={true}
                                 >
                                     How to use?
@@ -196,7 +137,9 @@ export class FilesPage extends React.Component<{
                         <FontViewer
                             fontFileBuffer={this.props.filesStore!.selectedFontFileContent!}
                             fontSize={this.props.filesStore!.fontViewerFontSize}
-                            onFontSizeChanged={(value) => (this.props.filesStore!.fontViewerFontSize = value)}
+                            onFontSizeChanged={(value) =>
+                                (this.props.filesStore!.fontViewerFontSize = value)
+                            }
                         />
                     </FileBrowser>
                 </When>
@@ -205,11 +148,14 @@ export class FilesPage extends React.Component<{
                         darkTheme={this.props.appStore!.darkTheme}
                         onCancel={() => this.props.filesStore!.cancelDeletingImageFile()}
                         onAccept={() =>
-                            this.props.filesStore!.completeDeletingImageFile(this.props.workspaceStore!.workspacePaths!)
+                            this.props.filesStore!.completeDeletingImageFile(
+                                this.props.workspaceStore!.workspacePaths!,
+                            )
                         }
                         fileName={this.props.filesStore!.imageFileToDelete}
                     />
-                    {!!this.props.filesStore!.selectedImageFile && this.props.filesStore!.imageInfoPanelOpened ? (
+                    {!!this.props.filesStore!.selectedImageFile &&
+                    this.props.filesStore!.imageInfoPanelOpened ? (
                         <ImageHelpPanel
                             fileName={this.props.filesStore!.selectedImageFile!}
                             variableName={this.props.workspaceStore!.getResourceAliasName(
@@ -217,8 +163,8 @@ export class FilesPage extends React.Component<{
                             )}
                             isOpen={this.props.filesStore!.imageInfoPanelOpened}
                             onClose={() =>
-                                (this.props.filesStore!.imageInfoPanelOpened = !this.props.filesStore!
-                                    .imageInfoPanelOpened)
+                                (this.props.filesStore!.imageInfoPanelOpened = !this.props
+                                    .filesStore!.imageInfoPanelOpened)
                             }
                         />
                     ) : null}
@@ -233,7 +179,9 @@ export class FilesPage extends React.Component<{
                             );
                         }}
                         onImportExistingItem={() => {
-                            this.props.filesStore!.importImage(this.props.workspaceStore!.workspacePaths!);
+                            this.props.filesStore!.importImage(
+                                this.props.workspaceStore!.workspacePaths!,
+                            );
                         }}
                         onDelete={(fileName: string) => {
                             this.props.filesStore!.startDeletingImageFile(fileName);
@@ -247,7 +195,9 @@ export class FilesPage extends React.Component<{
                                 <Button
                                     small={true}
                                     icon={HELP}
-                                    onClick={() => (this.props.filesStore!.imageInfoPanelOpened = true)}
+                                    onClick={() =>
+                                        (this.props.filesStore!.imageInfoPanelOpened = true)
+                                    }
                                     minimal={true}
                                 >
                                     How to use?
@@ -262,5 +212,78 @@ export class FilesPage extends React.Component<{
                 </When>
             </div>
         );
+    }
+
+    async componentDidMount(): Promise<void> {
+        const paths = this.props.workspaceStore!.workspacePaths!;
+        const filesStore = this.props.filesStore!;
+
+        await Promise.all([
+            filesStore.refreshSourceFilesList(paths),
+            filesStore.refreshFontFilesList(paths),
+            filesStore.refreshImageFilesList(paths),
+        ]);
+
+        await Promise.all([
+            filesStore.watchSourcesDir(paths, () => {
+                filesStore.refreshSourceFilesList(paths);
+            }),
+            filesStore.watchFontsDir(paths, () => {
+                filesStore.refreshFontFilesList(paths);
+            }),
+            filesStore.watchImageDir(paths, () => {
+                filesStore.refreshImageFilesList(paths);
+            }),
+        ]);
+    }
+
+    async componentWillUnmount() {
+        const filesStore = this.props.filesStore!;
+        await Promise.all([
+            filesStore.unwatchSourcesDir(),
+            filesStore.unwatchFontsDir(),
+            filesStore.unwatchImageDir(),
+        ]);
+    }
+
+    setActiveTab(tab: FilesTab) {
+        this.props.filesStore!.activeTab = tab;
+    }
+
+    async onAcceptCreateSourceFileDialog(fileName: string) {
+        this.props.filesStore!.createNewSourceFile(
+            this.props.workspaceStore!.workspacePaths!,
+            fileName,
+        );
+        this.props.filesStore!.createNewSourceFileDialogOpened = false;
+    }
+
+    onCancelCreateSourceFileDialog() {
+        this.props.filesStore!.createNewSourceFileDialogOpened = false;
+    }
+
+    async onConfirmDeleteFileDialog() {
+        const filesStore = this.props.filesStore!;
+        const workspaceStore = this.props.workspaceStore!;
+        return filesStore.completeDeletingSourceFile(workspaceStore.workspacePaths!);
+    }
+
+    onSourceFileSelected(fileName: string) {
+        this.props.filesStore!.setSelectedSourceFile(
+            this.props.workspaceStore!.workspacePaths!,
+            fileName,
+        );
+    }
+
+    onCreateNewSourceFile() {
+        this.props.filesStore!.createNewSourceFileDialogOpened = true;
+    }
+
+    onImportSourceFile() {
+        this.props.filesStore!.importSourceFile(this.props.workspaceStore!.workspacePaths!);
+    }
+
+    onDeleteSourceFile(fileName: string) {
+        this.props.filesStore!.startDeletingSourceFile(fileName);
     }
 }
