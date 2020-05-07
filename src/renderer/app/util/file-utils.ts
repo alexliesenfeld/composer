@@ -7,6 +7,16 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as request from 'request';
 
+async function addFilePermissions(filePath: string, mode: number) {
+    await Fsx.chmod(filePath, (await Fsx.stat(filePath)).mode | mode);
+}
+
+export const createDirIfNotExists = async (dirPath: string): Promise<void> => {
+    if (!(await Fsx.exists(dirPath))) {
+        await Fsx.mkdir(dirPath);
+    }
+};
+
 export const downloadFile = (url: string, target: string) => {
     return new Promise(function (resolve, reject) {
         request
@@ -42,10 +52,6 @@ export const deleteDirectory = async (dirPath: string) => {
         await Fsx.rmdir(dirPath);
     }
 };
-
-async function addFilePermissions(filePath: string, mode: number) {
-    await Fsx.chmod(filePath, (await Fsx.stat(filePath)).mode | mode);
-}
 
 export const deleteFileIfExists = async (filePath: string) => {
     if (await Fsx.exists(filePath)) {
@@ -87,12 +93,6 @@ export const recreateDir = async (dependenciesDirectory: string): Promise<string
     await Fsx.mkdir(dependenciesDirectory);
 
     return dependenciesDirectory;
-};
-
-export const createDirIfNotExists = async (dirPath: string): Promise<void> => {
-    if (!(await Fsx.exists(dirPath))) {
-        await Fsx.mkdir(dirPath);
-    }
 };
 
 export const directoryIsEmpty = async (

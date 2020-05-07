@@ -14,6 +14,32 @@ const toaster = Toaster.create({
     maxToasts: 1,
 });
 
+export function showErrorNotification(message: string, error: Error, withLogOnError?: boolean) {
+    const errorMessage = `${message}. Error: ${error.message}`;
+    logError(errorMessage);
+    toaster.show({
+        message: errorMessage,
+        icon: 'warning-sign',
+        intent: Intent.DANGER,
+        action: withLogOnError
+            ? {
+                  onClick: () => notificationContext!.showLog(),
+                  text: 'Show Log',
+              }
+            : undefined,
+        timeout: 60000,
+    });
+}
+
+export function showSuccessNotification(message: string) {
+    toaster.show({
+        message: `${message}${message.endsWith('.') ? '' : '.'}`,
+        icon: 'tick-circle',
+        intent: Intent.SUCCESS,
+        timeout: 2000,
+    });
+}
+
 export interface WithNotificationOptions {
     onError?: string;
     onSuccess?: string;
@@ -65,30 +91,4 @@ export function withNotification(options: WithNotificationOptions) {
 
         return descriptor;
     };
-}
-
-export function showErrorNotification(message: string, error: Error, withLogOnError?: boolean) {
-    const errorMessage = `${message}. Error: ${error.message}`;
-    logError(errorMessage);
-    toaster.show({
-        message: errorMessage,
-        icon: 'warning-sign',
-        intent: Intent.DANGER,
-        action: withLogOnError
-            ? {
-                  onClick: () => notificationContext!.showLog(),
-                  text: 'Show Log',
-              }
-            : undefined,
-        timeout: 60000,
-    });
-}
-
-export function showSuccessNotification(message: string) {
-    toaster.show({
-        message: `${message}${message.endsWith('.') ? '' : '.'}`,
-        icon: 'tick-circle',
-        intent: Intent.SUCCESS,
-        timeout: 2000,
-    });
 }

@@ -1,12 +1,11 @@
 import { CommandFailedError, OperationFailedError } from '@/renderer/app/model/errors';
-import * as child_process from 'child_process';
-
-const sudo = require('sudo-prompt');
+import * as childProcess from 'child_process';
+import * as sudo from 'sudo-prompt';
 
 const spawn = (cmd: string, cwd?: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
         const parts = cmd.split(/\s+/g);
-        const cp = child_process.spawn(parts[0], parts.slice(1), {
+        const cp = childProcess.spawn(parts[0], parts.slice(1), {
             stdio: ['ignore', 'pipe', 'pipe'],
             cwd: cwd,
         });
@@ -34,11 +33,15 @@ const spawn = (cmd: string, cwd?: string): Promise<string> => {
 
 const sudoExec = (cmd: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
-        sudo.exec(cmd, { name: 'Composer' }, function (error: any, stdout: any, stderr: any) {
+        sudo.exec(cmd, { name: 'Composer' }, function (
+            error: Error | undefined,
+            stdout: string | Buffer | undefined,
+            stderr: string | Buffer | undefined,
+        ) {
             if (error) {
                 reject(error);
             } else if (stderr) {
-                reject(new OperationFailedError(stderr));
+                reject(new OperationFailedError(stderr.toString()));
             } else {
                 resolve();
             }

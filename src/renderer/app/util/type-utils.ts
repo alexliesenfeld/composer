@@ -1,8 +1,9 @@
 export function enumEntries<T>(t: T): ReadonlyArray<readonly [keyof T, T[keyof T]]> {
     const entries = Object.entries(t);
-    const plainStringEnum = entries.every(([key, value]) => typeof value === 'string');
+    const plainStringEnum = entries.every(([, value]) => typeof value === 'string');
 
-    return (plainStringEnum ? entries : entries.filter(([k, v]) => typeof v !== 'string')) as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (plainStringEnum ? entries : entries.filter(([, v]) => typeof v !== 'string')) as any;
 }
 
 export function enumKeys<T>(t: T): ReadonlyArray<keyof T> {
@@ -22,6 +23,7 @@ export function cheapUUID() {
     );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function arraysEqual(a: any[], b: any[]) {
     if (a == b) {
         return true;

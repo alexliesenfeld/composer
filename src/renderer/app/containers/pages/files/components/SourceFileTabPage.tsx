@@ -1,6 +1,8 @@
 import { ConfirmDeleteFileDialog } from '@/renderer/app/components/ConfirmDeleteFileDialog';
 import CreateFileDialog from '@/renderer/app/components/CreateNewFileDialog';
 import { FileBrowser } from '@/renderer/app/components/FileBrowser';
+import { Alignment, Navbar, Text } from '@blueprintjs/core';
+
 import * as React from 'react';
 
 import AceEditor from 'react-ace';
@@ -50,8 +52,13 @@ export const SourceFileTabPage = (props: SourceFileTabPageProps) => {
                 onCreateNewItem={props.onCreateNewItem}
                 onDelete={props.onDeleteItem}
             >
+                <Navbar>
+                    <Navbar.Group align={Alignment.LEFT}>
+                        <Text>{props.selectedFile}</Text>
+                    </Navbar.Group>
+                </Navbar>
                 <AceEditor
-                    style={{ width: '100%', height: '100%' }}
+                    className="source-file-editor"
                     placeholder="No content"
                     mode="c_cpp"
                     theme="tomorrow_night"

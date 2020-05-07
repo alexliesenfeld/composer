@@ -130,7 +130,6 @@ SelectInput Component
 App
 ******************************************************************/
 .App {
-
   width: 100%;
   background-color: $light-gray2;
 
@@ -192,7 +191,7 @@ LoadingPanel
 /*****************************************************************
 SourceFileTabPage, FontFileTabPage
 ******************************************************************/
-.SourceFileTabPage, .FontFileTabPage{
+.SourceFileTabPage, .FontFileTabPage, .ImageFileTabPage {
   width: 100%;
   height: 100%;
 }
@@ -244,6 +243,13 @@ WelcomePage
   height: 40px;
 }
 
+.page {
+  position: absolute;
+  top: calc(#{$pt-navbar-height} + 1em);
+  left: 1em;
+  bottom: 2em;
+  right: 1em;
+}
 
 /*****************************************************************
 LogPage
@@ -297,9 +303,6 @@ LogPage
 /*****************************************************************
 FilesPage
 ******************************************************************/
-.FilesPage {
-  height: calc(100% - 1em);
-}
 
 .FilesPage .file-list-tab-page {
   height: 100%;
@@ -320,6 +323,11 @@ FileBrowser
   cursor: pointer;
 }
 
+.FileBrowser .source-file-editor {
+  width: 100% !important;
+  height: calc(100% - #{$pt-navbar-height}) !important;
+}
+
 .FileBrowser .ace_scrollbar {
   @extend .custom-scrollbar;
 }
@@ -327,10 +335,9 @@ FileBrowser
 .FileBrowser .file-list-container {
   @extend .custom-scrollbar;
   max-height: 100%;
-  max-width: 25em;
+  max-width: 22em;
   padding-left: 1px;
 }
-
 
 .FileBrowser .file-tree {
   @extend .custom-scrollbar;

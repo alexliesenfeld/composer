@@ -10,32 +10,6 @@ import { Fsx } from '@/renderer/app/util/fsx';
 import * as fs from 'fs';
 import * as path from 'path';
 
-export const writeNewConfigToPath = async (filePath: string): Promise<unknown> => {
-    const directoryPath = path.dirname(filePath);
-    const filesInDirectory = await Fsx.readdir(directoryPath);
-
-    if (filesInDirectory && filesInDirectory.length > 0) {
-        throw new DirectoryNotEmptyError(
-            'The directory of a new project must be empty.',
-            directoryPath,
-        );
-    }
-
-    return writeConfigToPath(filePath, createInitialConfig());
-};
-
-export const loadConfigFromPath = async (path: string): Promise<WorkspaceConfig> => {
-    const fileContent = await Fsx.readFile(path, { encoding: 'utf-8' });
-
-    return parseConfig(fileContent);
-};
-
-export const loadConfigFromPathSync = (path: string): WorkspaceConfig => {
-    const fileContent = fs.readFileSync(path, { encoding: 'utf-8' });
-
-    return parseConfig(fileContent);
-};
-
 const parseConfig = (content: string): WorkspaceConfig => {
     return JSON.parse(content);
 };
@@ -86,4 +60,30 @@ const createInitialConfig = (): WorkspaceConfig => {
         uiResizable: false,
         iPlug2GitSha: '044fd947051f1ef267870a565890263ce2f8a53c',
     };
+};
+
+export const writeNewConfigToPath = async (filePath: string): Promise<unknown> => {
+    const directoryPath = path.dirname(filePath);
+    const filesInDirectory = await Fsx.readdir(directoryPath);
+
+    if (filesInDirectory && filesInDirectory.length > 0) {
+        throw new DirectoryNotEmptyError(
+            'The directory of a new project must be empty.',
+            directoryPath,
+        );
+    }
+
+    return writeConfigToPath(filePath, createInitialConfig());
+};
+
+export const loadConfigFromPath = async (path: string): Promise<WorkspaceConfig> => {
+    const fileContent = await Fsx.readFile(path, { encoding: 'utf-8' });
+
+    return parseConfig(fileContent);
+};
+
+export const loadConfigFromPathSync = (path: string): WorkspaceConfig => {
+    const fileContent = fs.readFileSync(path, { encoding: 'utf-8' });
+
+    return parseConfig(fileContent);
 };

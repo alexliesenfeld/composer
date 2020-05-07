@@ -15,7 +15,7 @@ export class FontViewer extends React.Component<FontViewerProps> {
         return this.loadFont();
     }
 
-    async componentWillMount(): Promise<void> {
+    async componentDidMount(): Promise<void> {
         return this.loadFont();
     }
 
@@ -34,7 +34,7 @@ export class FontViewer extends React.Component<FontViewerProps> {
                     max={100}
                     stepSize={1}
                     labelStepSize={10}
-                    onChange={(value) => this.props.onFontSizeChanged(value)}
+                    onChange={this.props.onFontSizeChanged}
                     value={this.props.fontSize}
                 />
                 <div

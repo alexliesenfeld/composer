@@ -23,9 +23,9 @@ export const ImageHelpPanel = (props: ImageHelpPanelProps) => {
                 <div className={Classes.DIALOG_BODY}>
                     <p>You can use the image like demonstrated in the following example:</p>
                     <Pre>
-                        const IBitmap bitmap1 = pGraphics->LoadBitmap({props.variableName}, 1);
+                        const IBitmap bitmap1 = pGraphics-&gt;LoadBitmap({props.variableName}, 1);
                         <br />
-                        pGraphics->AttachControl(new IBitmapControl(0, 0, bitmap1));
+                        pGraphics-&gt;AttachControl(new IBitmapControl(0, 0, bitmap1));
                     </Pre>
                 </div>
             </div>

@@ -40,6 +40,15 @@ function CreateFileDialog(props: CreateNewFileDialogProps) {
     const [touched, setTouched] = useState(false);
     const errorText = getErrorText(touched, value, props);
 
+    const onTextChanged = (v: React.ChangeEvent<HTMLInputElement>) => {
+        setTouched(true);
+        setValue(v.target.value);
+    };
+
+    const onAccept = () => {
+        props.onAccept(value);
+    };
+
     return (
         <Dialog
             isOpen={props.isOpen}
@@ -60,10 +69,7 @@ function CreateFileDialog(props: CreateNewFileDialogProps) {
                         placeholder="Please enter a file name ..."
                         value={value}
                         intent={errorText ? Intent.WARNING : Intent.NONE}
-                        onChange={(v: React.ChangeEvent<HTMLInputElement>) => {
-                            setTouched(true);
-                            setValue(v.target.value);
-                        }}
+                        onChange={onTextChanged}
                     />
                 </FormGroup>
             </div>
@@ -71,7 +77,7 @@ function CreateFileDialog(props: CreateNewFileDialogProps) {
                 <div className={Classes.DIALOG_FOOTER_ACTIONS}>
                     <Button onClick={props.onCancel}>Cancel</Button>
                     <Button
-                        onClick={() => props.onAccept(value)}
+                        onClick={onAccept}
                         intent={Intent.PRIMARY}
                         disabled={!!getErrorText(touched, value, props)}
                     >
