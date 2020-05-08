@@ -62,7 +62,6 @@ export enum Vst3Subcategory {
 export interface WorkspaceConfig {
     projectName: string;
     prototype: Prototype;
-    formats: PluginFormat[];
     pluginVersion: string;
     uiWidth: number;
     uiHeight: number;

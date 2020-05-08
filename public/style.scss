@@ -55,10 +55,6 @@ Generic
   padding-right: 0.5em;
 }
 
-.page-sections-container section {
-  margin-bottom: 1em;
-}
-
 .full-width {
   width: 100%;
 }
@@ -227,7 +223,7 @@ WelcomePage
   min-width: 10px;
 }
 
-.WelcomePage .recent-files-section h1, h2, h3, h4, h5, h6 {
+.WelcomePage .recent-files-section h6 {
   text-align: center;
 }
 
@@ -386,3 +382,38 @@ ImageViewer
   max-height: 100%;
 }
 
+/*****************************************************************
+PropertiesPage
+******************************************************************/
+.PropertiesPage .tab-pages .bp3-tab-list {
+  width: 15em;
+}
+
+.PropertiesPage .bp3-tabs.bp3-vertical > .bp3-tab-panel {
+  width: 100%;
+}
+
+.PropertiesPage .bp3-tabs.bp3-vertical > .bp3-tab-panel .bp3-card {
+  margin-bottom: 1em;
+}
+
+
+.PropertiesPage .bp3-form-group.bp3-inline {
+  width: 100%;
+}
+
+.PropertiesPage .bp3-form-group.bp3-inline label.bp3-label {
+  min-width: 10em;
+}
+
+.PropertiesPage .bp3-form-group.bp3-inline .bp3-form-content {
+  width: 100%;
+}
+
+.PropertiesPage .bp3-form-group.bp3-inline .bp3-form-content .bp3-control.bp3-checkbox {
+  width: auto;
+}
+
+.PropertiesPage .tab-pages .tab-page-card-content {
+  margin-top: 1em;
+}

@@ -35,7 +35,6 @@ const createInitialConfig = (): WorkspaceConfig => {
         prototype: Prototype.IPLIGEFFECT,
         uiEnabled: true,
         fps: 60,
-        formats: [PluginFormat.AU2, PluginFormat.VST3],
         uiHeight: 600,
         uiWidth: 600,
         pluginVersion: '0.0.0',

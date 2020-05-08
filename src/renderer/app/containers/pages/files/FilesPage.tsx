@@ -14,6 +14,7 @@ export interface FilesPageProps {
     filesStore?: FilesStore;
     appStore?: AppStore;
 }
+
 @inject('workspaceStore', 'filesStore', 'appStore')
 @observer
 export class FilesPage extends React.Component<FilesPageProps> {

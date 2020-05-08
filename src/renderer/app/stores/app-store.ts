@@ -11,6 +11,7 @@ export interface AppStoreLogMessage {
 }
 
 export enum Page {
+    PROPERTIES,
     FILES,
     PACKAGING,
     SETTINGS,
