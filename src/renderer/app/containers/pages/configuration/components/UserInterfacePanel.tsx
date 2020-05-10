@@ -29,15 +29,15 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
         <Card elevation={Elevation.TWO}>
             <H5>Graphical User Interface</H5>
             <Divider />
-            <div className="tab-page-card-content">
+            <div className="card-content">
                 <FormGroup
                     label="Width"
                     labelFor="prototype-input"
                     disabled={!props.uiEnabled}
                     inline={true}
+                    helperText={`The width of the plugin window in pixels.`}
                 >
                     <NumericInput
-                        placeholder="Enter a number..."
                         fill={true}
                         value={props.uiWidth}
                         onValueChange={(value) => props.setUiWidth(value)}
@@ -49,9 +49,9 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                     labelFor="prototype-input"
                     disabled={!props.uiEnabled}
                     inline={true}
+                    helperText={`The height of the plugin window in pixels.`}
                 >
                     <NumericInput
-                        placeholder="Enter a number..."
                         fill={true}
                         value={props.uiHeight}
                         onValueChange={(value) => props.setUiHeight(value)}
@@ -63,9 +63,9 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                     labelFor="prototype-input"
                     disabled={!props.uiEnabled}
                     inline={true}
+                    helperText={`The target frames per second that the window will be rendering at.`}
                 >
                     <NumericInput
-                        placeholder="Enter a number..."
                         fill={true}
                         value={props.fps}
                         onValueChange={(value) => props.setFps(value)}
@@ -73,24 +73,11 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                     />
                 </FormGroup>
                 <FormGroup
-                    label="Resizable"
+                    label="Enabled"
                     labelFor="prototype-input"
                     inline={true}
-                    disabled={!props.uiEnabled}
+                    helperText={`If the plugin has a GUI.`}
                 >
-                    <RadioGroup
-                        inline={true}
-                        disabled={!props.uiEnabled}
-                        onChange={(value) =>
-                            props.setUiResizable(value.currentTarget.value === 'yes')
-                        }
-                        selectedValue={props.uiResizable ? 'yes' : 'no'}
-                    >
-                        <Radio label="Yes" value="yes" />
-                        <Radio label="No" value="no" />
-                    </RadioGroup>
-                </FormGroup>
-                <FormGroup label="Enabled" labelFor="prototype-input" inline={true}>
                     <RadioGroup
                         inline={true}
                         onChange={(value) =>

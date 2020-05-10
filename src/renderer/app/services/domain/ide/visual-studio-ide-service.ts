@@ -193,20 +193,6 @@ export class VisualStudioIdeService implements IdeService {
         for (const projectFile of projectFiles) {
             let content = await readFile(projectFile);
 
-            // Create a new "Generated" filter
-            content = assertReplace(
-                content,
-                `</Project>`,
-                multiline(
-                    `<ItemGroup>`,
-                    `<Filter Include="Generated">`,
-                    `<UniqueIdentifier>{2fdc99c6-a22e-4fd5-a4e9-e68aedc36c66}</UniqueIdentifier>`,
-                    `</Filter>`,
-                    `</ItemGroup>`,
-                    `</Project>`,
-                ),
-            );
-
             // Put all files other than user source files into the "Generated" filter
             content = assertReplaceRegex(
                 content,
@@ -226,6 +212,20 @@ export class VisualStudioIdeService implements IdeService {
                 content,
                 /(<ClInclude Include="\.\.)([\/|\\])(config\.h"\s*)(\/>)/g,
                 multiline(`$1$2$3>`, `<Filter>Generated</Filter>`, `</ClInclude>`),
+            );
+
+            // Create the new "Generated" filter
+            content = assertReplace(
+                content,
+                `</Project>`,
+                multiline(
+                    `<ItemGroup>`,
+                    `<Filter Include="Generated">`,
+                    `<UniqueIdentifier>{2fdc99c6-a22e-4fd5-a4e9-e68aedc36c66}</UniqueIdentifier>`,
+                    `</Filter>`,
+                    `</ItemGroup>`,
+                    `</Project>`,
+                ),
             );
 
             await writeFile(projectFile, content);
@@ -320,7 +320,6 @@ export class VisualStudioIdeService implements IdeService {
         filePath: string,
     ): string {
         const snippet = this.getSourceFileInclusionSnippet(path.relative(projectDir, filePath));
-
         return assertReplace(
             vsProjectFileContent,
             `</Project>`,

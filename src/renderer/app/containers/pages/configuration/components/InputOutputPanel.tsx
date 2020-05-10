@@ -35,33 +35,50 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
         <Card elevation={Elevation.TWO}>
             <H5>Input/Output</H5>
             <Divider />
-            <div className="tab-page-card-content">
-                <FormGroup label="Input-Channels" labelFor="prototype-input" inline={true}>
+            <div className="card-content">
+                <FormGroup
+                    label="Input-Channels"
+                    labelFor="prototype-input"
+                    inline={true}
+                    helperText={'The number of input channels.'}
+                >
                     <NumericInput
-                        placeholder="Enter a number..."
                         fill={true}
                         value={props.inputChannels}
                         onValueChange={(value) => props.setInputChannels(value)}
                     />
                 </FormGroup>
-                <FormGroup label="Output-Channels" labelFor="prototype-input" inline={true}>
+                <FormGroup
+                    label="Output-Channels"
+                    labelFor="prototype-input"
+                    inline={true}
+                    helperText={'The number of output channels.'}
+                >
                     <NumericInput
-                        placeholder="Enter a number..."
                         fill={true}
                         value={props.outputChannels}
                         onValueChange={(value) => props.setOutputChannels(value)}
                     />
                 </FormGroup>
-                <FormGroup label="Plug-In Latency" labelFor="prototype-input" inline={true}>
+                <FormGroup
+                    label="Plug-In Latency"
+                    labelFor="prototype-input"
+                    inline={true}
+                    helperText={'The plugin latency announced to hosts.'}
+                >
                     <NumericInput
-                        placeholder="Enter a number..."
                         fill={true}
                         value={props.pluginLatency}
                         onValueChange={(value) => props.setPluginLatency(value)}
                     />
                 </FormGroup>
 
-                <FormGroup label="MIDI-In" labelFor="midi-in" inline={true}>
+                <FormGroup
+                    label="MIDI-In"
+                    labelFor="midi-in"
+                    inline={true}
+                    helperText={'If the plugin needs to receive MIDI.'}
+                >
                     <RadioGroup
                         inline={true}
                         onChange={(value) => props.setMidiIn(value.currentTarget.value === 'yes')}
@@ -72,7 +89,12 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     </RadioGroup>
                 </FormGroup>
 
-                <FormGroup label="MIDI-Out" labelFor="midi-out" inline={true}>
+                <FormGroup
+                    label="MIDI-Out"
+                    labelFor="midi-out"
+                    inline={true}
+                    helperText={'If the plugin needs to send MIDI.'}
+                >
                     <RadioGroup
                         inline={true}
                         onChange={(value) => props.setMidiOut(value.currentTarget.value === 'yes')}
@@ -83,7 +105,12 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     </RadioGroup>
                 </FormGroup>
 
-                <FormGroup label="MPE" labelFor="mpe" inline={true}>
+                <FormGroup
+                    label="MPE"
+                    labelFor="mpe"
+                    inline={true}
+                    helperText={'If the plugin uses MPE (MIDI Polyphonic Expression).'}
+                >
                     <RadioGroup
                         inline={true}
                         onChange={(value) => props.setMpe(value.currentTarget.value === 'yes')}
@@ -94,7 +121,12 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     </RadioGroup>
                 </FormGroup>
 
-                <FormGroup label="State Chunks" labelFor="state-chunks" inline={true}>
+                <FormGroup
+                    label="State Chunks"
+                    labelFor="state-chunks"
+                    inline={true}
+                    helperText={'If the plugin needs to receive state as chunks of memory.'}
+                >
                     <RadioGroup
                         inline={true}
                         onChange={(value) =>

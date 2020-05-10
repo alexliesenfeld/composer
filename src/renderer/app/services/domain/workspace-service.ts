@@ -1,11 +1,10 @@
-import { WorkspaceConfig } from '@/renderer/app/model/workspace-config';
+import { AudioUnitPluginType, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
 import { IdeService } from '@/renderer/app/services/domain/common/ide-service';
 import {
-    CONFIG_HEADER_FILE_NAME,
     DEFAULT_FONT_FILE_NAME,
     WorkspacePaths,
 } from '@/renderer/app/services/domain/common/paths';
-import { readFile, writeFile } from '@/renderer/app/services/domain/config-service';
+import { writeFile } from '@/renderer/app/services/domain/config-service';
 import { FilesService } from '@/renderer/app/services/domain/files-service';
 import { logActivity } from '@/renderer/app/services/ui/logging-service';
 import { Cpx } from '@/renderer/app/util/cpx';
@@ -26,8 +25,8 @@ import {
 import { Fsx } from '@/renderer/app/util/fsx';
 import * as git from '@/renderer/app/util/git-utils';
 import { multiline } from '@/renderer/app/util/string-utils';
+import { enumValues } from '@/renderer/app/util/type-utils';
 import * as path from 'path';
-import { EOL } from 'ts-loader/dist/constants';
 
 export class WorkspaceService {
     constructor(private fileService: FilesService, private ideService: IdeService) {}
@@ -49,7 +48,7 @@ export class WorkspaceService {
         }
 
         if (await this.shouldSetupVst3Sdk(paths)) {
-            await this.downloadVstSdk(paths, '0908f47');
+            await this.downloadVstSdk(paths, config);
         }
 
         await this.generateProjectFromPrototype(paths, config);
@@ -64,7 +63,6 @@ export class WorkspaceService {
 
         await this.removeDefaultPrototypeFontFiles(paths, config);
 
-        // Always start with a clean composer managed configuration to keep files in-sync with config.h
         await this.writeConfigHeaderFile(paths, config);
 
         await this.ideService.addUserSourceFilesToIDEProject(paths);
@@ -75,6 +73,7 @@ export class WorkspaceService {
         await this.ideService.startIDEProject(paths);
     }
 
+    @logActivity('Adding user font files to IDE project')
     public async addUserFontFiles(paths: WorkspacePaths): Promise<void> {
         const fontsDir = paths.getIDEProjectFontResourcesDir();
         await createDirIfNotExists(fontsDir);
@@ -89,6 +88,7 @@ export class WorkspaceService {
         }
     }
 
+    @logActivity('Adding user image files to IDE project')
     public async addUserImageFiles(paths: WorkspacePaths): Promise<void> {
         const imagesDir = paths.getIDEProjectImageResourcesDir();
         await createDirIfNotExists(imagesDir);
@@ -153,13 +153,13 @@ export class WorkspaceService {
     }
 
     @logActivity('Cloning VST3 SDK Git repo')
-    public async downloadVstSdk(paths: WorkspacePaths, sha1: string) {
+    public async downloadVstSdk(paths: WorkspacePaths, config: WorkspaceConfig) {
         const targetDir = paths.getVst3SdkDirPath();
         await recreateDir(targetDir);
 
         await git.cloneRepo(
             'git clone https://github.com/steinbergmedia/vst3sdk.git',
-            sha1,
+            config.vst3SdkGitSha,
             targetDir,
         );
         await git.initSubmodule('pluginterfaces', targetDir);
@@ -295,12 +295,12 @@ export class WorkspaceService {
                 ``,
                 `#define PLUG_CHANNEL_IO "${config.inputChannels}-${config.outputChannels}"`,
                 `#define PLUG_LATENCY ${config.pluginLatency}`,
-                `#define PLUG_TYPE ${config.audioUnitPluginType}`,
-                `#define PLUG_DOES_MIDI_IN ${config.midiIn}`,
-                `#define PLUG_DOES_MIDI_OUT ${config.midiOut}`,
-                `#define PLUG_DOES_MPE ${config.mpe}`,
-                `#define PLUG_DOES_STATE_CHUNKS ${config.stateChunks}`,
-                `#define PLUG_HAS_UI ${config.uiEnabled}`,
+                `#define PLUG_TYPE ${this.mapAudioUnitTypeForConfig(config.audioUnitPluginType)}`,
+                `#define PLUG_DOES_MIDI_IN ${this.mapBooleanForConfig(config.midiIn)}`,
+                `#define PLUG_DOES_MIDI_OUT ${this.mapBooleanForConfig(config.midiOut)}`,
+                `#define PLUG_DOES_MPE ${this.mapBooleanForConfig(config.mpe)}`,
+                `#define PLUG_DOES_STATE_CHUNKS ${this.mapBooleanForConfig(config.stateChunks)}`,
+                `#define PLUG_HAS_UI ${this.mapBooleanForConfig(config.uiEnabled)}`,
                 `#define PLUG_WIDTH ${config.uiWidth}`,
                 `#define PLUG_HEIGHT ${config.uiHeight}`,
                 `#define PLUG_FPS ${config.fps}`,
@@ -345,5 +345,13 @@ export class WorkspaceService {
             paths.getConfigHPath(),
             `#define ${variableName} "${path.basename(fileName)}"`,
         );
+    }
+
+    private mapAudioUnitTypeForConfig(value: AudioUnitPluginType) {
+        return enumValues(AudioUnitPluginType).indexOf(value);
+    }
+
+    private mapBooleanForConfig(value: boolean) {
+        return value ? '1' : '0';
     }
 }

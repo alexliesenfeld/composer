@@ -17,41 +17,57 @@ const ManufacturerPanel = (props: ManufacturerPanelProps) => {
         <Card elevation={Elevation.TWO}>
             <H5>Manufacturer</H5>
             <Divider />
-            <div className="tab-page-card-content">
-                <FormGroup label="Name" labelFor="text-input" inline={true}>
+            <div className="card-content">
+                <FormGroup
+                    label="Name"
+                    labelFor="text-input"
+                    inline={true}
+                    helperText={`The name of the manufacturer. It must not contain spaces.`}
+                >
                     <InputGroup
                         id="text-input"
-                        placeholder="Please enter the manufacturer name"
                         value={props.manufacturerName}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             props.setManufacturerName(e.target.value)
                         }
                     />
                 </FormGroup>
-                <FormGroup label="E-Mail" labelFor="text-input" inline={true}>
+                <FormGroup
+                    label="E-Mail"
+                    labelFor="text-input"
+                    inline={true}
+                    helperText={`The email address of the manufacturer. This field is optional.`}
+                >
                     <InputGroup
                         id="text-input"
-                        placeholder="Please enter the manufacturer E-Mail address"
                         value={props.manufacturerEmail}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             props.setManufacturerEmail(e.target.value)
                         }
                     />
                 </FormGroup>
-                <FormGroup label="Copyright" labelFor="text-input" inline={true}>
+                <FormGroup
+                    label="Copyright"
+                    labelFor="text-input"
+                    inline={true}
+                    helperText={`The copyright notice of the manufacturer. This field is optional.`}
+                >
                     <InputGroup
                         id="text-input"
-                        placeholder="Please enter the copyright string"
                         value={props.manufacturerCopyrightNotice}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             props.setManufacturerCopyrightNotice(e.target.value)
                         }
                     />
                 </FormGroup>
-                <FormGroup label="Website" labelFor="text-input" inline={true}>
+                <FormGroup
+                    label="Website"
+                    labelFor="text-input"
+                    inline={true}
+                    helperText={`The manufacturer or product website URL. This field is optional.`}
+                >
                     <InputGroup
                         id="text-input"
-                        placeholder="Please enter the web address of the plug-in or manufacturer website"
                         value={props.manufacturerWebsite}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                             props.setManufacturerWebsite(e.target.value)

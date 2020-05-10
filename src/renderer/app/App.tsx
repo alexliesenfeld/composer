@@ -2,8 +2,8 @@ import {NavButton} from '@/renderer/app/components/NavButton';
 import {When} from '@/renderer/app/components/When';
 import {FilesPage} from '@/renderer/app/containers/pages/files/FilesPage';
 import {LogPage} from '@/renderer/app/containers/pages/log/LogPage';
-import PropertiesPage
-    from '@/renderer/app/containers/pages/properties/PropertiesPage';
+import ConfigurationPage
+    from '@/renderer/app/containers/pages/configuration/ConfigurationPage';
 import WelcomePage from '@/renderer/app/containers/pages/welcome/WelcomePage';
 import {AppStore, Page} from '@/renderer/app/stores/app-store';
 import {WorkspaceStore} from '@/renderer/app/stores/workspace-store';
@@ -22,8 +22,8 @@ import {
     COG,
     CONSOLE,
     DOCUMENT,
-    LAYERS,
     PLAY,
+    SOCIAL_MEDIA,
     WRENCH,
 } from '@blueprintjs/icons/lib/esm/generated/iconNames';
 
@@ -49,7 +49,7 @@ const App = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) =>
             <Navbar>
                 <NavbarGroup align={Alignment.LEFT}>
                     <NavbarHeading>
-                        <Icon icon={LAYERS} iconSize={20} className="logo" />
+                        <Icon icon={SOCIAL_MEDIA} iconSize={20} className="logo" />
                         <span> {props.workspaceStore!.userConfig!.projectName}</span>
                     </NavbarHeading>
                     <NavButton
@@ -67,11 +67,12 @@ const App = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) =>
                         onPageSelected={onPageSelected}
                     />
                     <NavButton
-                        text="Packaging"
+                        text="Installer"
                         target={Page.PACKAGING}
                         icon={ARCHIVE}
                         selectedPage={props.appStore!.selectedPage}
                         onPageSelected={onPageSelected}
+                        disabled={true}
                     />
                 </NavbarGroup>
                 <NavbarGroup align={Alignment.RIGHT}>
@@ -98,7 +99,7 @@ const App = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) =>
             </Navbar>
             <main className="content custom-scrollbar">
                 <When condition={props.appStore!.selectedPage === Page.PROPERTIES}>
-                    <PropertiesPage />
+                    <ConfigurationPage />
                 </When>
                 <When condition={props.appStore!.selectedPage === Page.FILES}>
                     <FilesPage />

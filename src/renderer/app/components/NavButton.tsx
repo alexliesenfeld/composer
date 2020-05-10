@@ -8,6 +8,7 @@ export const NavButton = (props: {
     icon: IconName;
     selectedPage: Page;
     onPageSelected: (page: Page) => void;
+    disabled?: boolean;
 }) => {
     const onClick = () => {
         props.onPageSelected(props.target);
@@ -20,6 +21,7 @@ export const NavButton = (props: {
             className={Classes.MINIMAL}
             icon={props.icon}
             text={props.text}
+            disabled={props.disabled}
         />
     );
 };

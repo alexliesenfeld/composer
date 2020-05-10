@@ -22,8 +22,9 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
         <Card elevation={Elevation.TWO}>
             <H5>Audio Unit (AU)</H5>
             <Divider />
-            <div className="tab-page-card-content">
-                <FormGroup label="Bundle Name" labelFor="text-input" inline={true}>
+            <div className="card-content">
+                <FormGroup label="Bundle Name" labelFor="text-input" inline={true}
+                           helperText={'The bundle name that will be used for Xcode projects.'}>
                     <InputGroup
                         id="text-input"
                         placeholder="Please enter the manufacturer name"
@@ -33,7 +34,9 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
                         }
                     />
                 </FormGroup>
-                <FormGroup label="Bundle Manufacturer" labelFor="text-input" inline={true}>
+                <FormGroup label="Bundle Manufacturer" labelFor="text-input" inline={true}
+                           helperText={'The bundle manufacturer that will be used for Xcode projects.'}
+                >
                     <InputGroup
                         id="text-input"
                         placeholder="Please enter the manufacturer E-Mail address"
@@ -44,7 +47,7 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
                     />
                 </FormGroup>
 
-                <FormGroup label="Bundle Domain" labelFor="text-input" inline={true}>
+                <FormGroup label="Bundle Domain" labelFor="text-input" inline={true} helperText={'The bundle domain that will be used for Xcode projects.'}>
                     <InputGroup
                         id="text-input"
                         placeholder="Please enter the manufacturer E-Mail address"
@@ -54,7 +57,7 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
                         }
                     />
                 </FormGroup>
-                <FormGroup inline={true} label="AU Manufacturer ID" labelFor="text-input">
+                <FormGroup inline={true} label="AU Manufacturer ID" labelFor="text-input" helperText={'The AU manufacturer ID.'}>
                     <InputGroup
                         id="text-input"
                         placeholder="Please enter the manufacturer E-Mail address"
@@ -64,7 +67,7 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
                         }
                     />
                 </FormGroup>
-                <FormGroup label="Prototype" labelFor="prototype-input" inline={true}>
+                <FormGroup label="Plugin Type" labelFor="plugin-input" inline={true} helperText={'The AU plugin type.'}>
                     <SelectInput
                         items={enumValues(AudioUnitPluginType).map((e) => ({
                             key: e,

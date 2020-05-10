@@ -23,8 +23,7 @@ export function cheapUUID() {
     );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function arraysEqual(a: any[], b: any[]) {
+export function arraysEqual<T>(a: T[], b: T[]) {
     if (a == b) {
         return true;
     }

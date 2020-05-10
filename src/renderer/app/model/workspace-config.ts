@@ -1,3 +1,5 @@
+import {enumValues} from '@/renderer/app/util/type-utils';
+
 export enum Prototype {
     IPLIGEFFECT = 'IPlugEffect',
     IPLUGINSTRUMENT = 'IPlugInstrument',
@@ -87,4 +89,5 @@ export interface WorkspaceConfig {
     vst3Subcategory: Vst3Subcategory;
     vstUniqueId: string;
     iPlug2GitSha: string;
+    vst3SdkGitSha: string;
 }

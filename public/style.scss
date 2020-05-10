@@ -383,37 +383,36 @@ ImageViewer
 }
 
 /*****************************************************************
-PropertiesPage
+ConfigurationPage
 ******************************************************************/
-.PropertiesPage .tab-pages .bp3-tab-list {
+.ConfigurationPage .tab-pages .bp3-tab-list {
   width: 15em;
 }
 
-.PropertiesPage .bp3-tabs.bp3-vertical > .bp3-tab-panel {
+.ConfigurationPage .bp3-tabs.bp3-vertical > .bp3-tab-panel {
   width: 100%;
 }
 
-.PropertiesPage .bp3-tabs > .bp3-tab-panel .bp3-card {
+.ConfigurationPage .bp3-card {
   margin-bottom: 1em;
 }
 
-
-.PropertiesPage .bp3-form-group.bp3-inline {
+.ConfigurationPage .bp3-form-group.bp3-inline {
   width: 100%;
 }
 
-.PropertiesPage .bp3-form-group.bp3-inline label.bp3-label {
+.ConfigurationPage .bp3-form-group.bp3-inline label.bp3-label {
   min-width: 10em;
 }
 
-.PropertiesPage .bp3-form-group.bp3-inline .bp3-form-content {
+.ConfigurationPage .bp3-form-group.bp3-inline .bp3-form-content {
   width: 100%;
 }
 
-.PropertiesPage .bp3-form-group.bp3-inline .bp3-form-content .bp3-control.bp3-checkbox {
+.ConfigurationPage .bp3-form-group.bp3-inline .bp3-form-content .bp3-control.bp3-checkbox {
   width: auto;
 }
 
-.PropertiesPage .tab-pages .tab-page-card-content {
+.ConfigurationPage .card-content {
   margin-top: 1em;
 }
