@@ -20,7 +20,7 @@ const PropertiesPage = (props: { workspaceStore?: WorkspaceStore }) => {
             <Tabs
                 animate={false}
                 renderActiveTabPanelOnly={true}
-                vertical={true}
+                vertical={false}
                 className="tab-pages"
             >
                 <Tab

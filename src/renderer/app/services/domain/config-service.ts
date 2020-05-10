@@ -57,7 +57,7 @@ const createInitialConfig = (): WorkspaceConfig => {
         vst3Subcategory: Vst3Subcategory.FX,
         vstUniqueId: 'nprj',
         uiResizable: false,
-        iPlug2GitSha: '044fd947051f1ef267870a565890263ce2f8a53c',
+        iPlug2GitSha: 'd3bf848dbbc8c3fc818ce852cf529eb72cd334a5',
     };
 };
 

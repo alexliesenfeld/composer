@@ -1,11 +1,12 @@
-import { NavButton } from '@/renderer/app/components/NavButton';
-import { When } from '@/renderer/app/components/When';
-import { FilesPage } from '@/renderer/app/containers/pages/files/FilesPage';
-import { LogPage } from '@/renderer/app/containers/pages/log/LogPage';
-import PropertiesPage from '@/renderer/app/containers/pages/properties/PropertiesPage';
+import {NavButton} from '@/renderer/app/components/NavButton';
+import {When} from '@/renderer/app/components/When';
+import {FilesPage} from '@/renderer/app/containers/pages/files/FilesPage';
+import {LogPage} from '@/renderer/app/containers/pages/log/LogPage';
+import PropertiesPage
+    from '@/renderer/app/containers/pages/properties/PropertiesPage';
 import WelcomePage from '@/renderer/app/containers/pages/welcome/WelcomePage';
-import { AppStore, Page } from '@/renderer/app/stores/app-store';
-import { WorkspaceStore } from '@/renderer/app/stores/workspace-store';
+import {AppStore, Page} from '@/renderer/app/stores/app-store';
+import {WorkspaceStore} from '@/renderer/app/stores/workspace-store';
 import {
     Alignment,
     Button,
@@ -22,12 +23,12 @@ import {
     CONSOLE,
     DOCUMENT,
     LAYERS,
-    LIST,
     PLAY,
+    WRENCH,
 } from '@blueprintjs/icons/lib/esm/generated/iconNames';
 
 import '@public/style.scss';
-import { inject, observer } from 'mobx-react';
+import {inject, observer} from 'mobx-react';
 import * as React from 'react';
 
 FocusStyleManager.onlyShowFocusOnTabs();
@@ -61,7 +62,7 @@ const App = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) =>
                     <NavButton
                         text="Configuration"
                         target={Page.PROPERTIES}
-                        icon={LIST}
+                        icon={WRENCH}
                         selectedPage={props.appStore!.selectedPage}
                         onPageSelected={onPageSelected}
                     />

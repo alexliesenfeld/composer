@@ -93,7 +93,7 @@ export class WorkspacePaths extends ProjectPaths {
     }
 
     public getConfigHPath(): string {
-        return path.join(this.getSourcesDir(), CONFIG_HEADER_FILE_NAME);
+        return path.join(this.getProjectBuildDir(), CONFIG_HEADER_FILE_NAME);
     }
 
     public getMainPluginCppFile(): string {

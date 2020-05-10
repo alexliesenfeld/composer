@@ -27,7 +27,7 @@ export interface UserInterfacePanelProps {
 const UserInterfacePanel = (props: UserInterfacePanelProps) => {
     return (
         <Card elevation={Elevation.TWO}>
-            <H5>User Interface</H5>
+            <H5>Graphical User Interface</H5>
             <Divider />
             <div className="tab-page-card-content">
                 <FormGroup
@@ -73,7 +73,7 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                     />
                 </FormGroup>
                 <FormGroup
-                    label="Resizable GUI"
+                    label="Resizable"
                     labelFor="prototype-input"
                     inline={true}
                     disabled={!props.uiEnabled}
@@ -90,7 +90,7 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                         <Radio label="No" value="no" />
                     </RadioGroup>
                 </FormGroup>
-                <FormGroup label="GUI enabled" labelFor="prototype-input" inline={true}>
+                <FormGroup label="Enabled" labelFor="prototype-input" inline={true}>
                     <RadioGroup
                         inline={true}
                         onChange={(value) =>

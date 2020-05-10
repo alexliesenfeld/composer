@@ -9,7 +9,14 @@ import { FilesService } from '@/renderer/app/services/domain/files-service';
 import { logActivity } from '@/renderer/app/services/ui/logging-service';
 import { Cpx } from '@/renderer/app/util/cpx';
 import { assertReplaceContentInFile, deleteFileIfExists } from '@/renderer/app/util/file-utils';
-import { assertReplace, replace, replaceAll, times } from '@/renderer/app/util/string-utils';
+import {
+    assertReplace,
+    assertReplaceAll,
+    assertReplaceRegex,
+    multiline,
+    replace,
+    replaceAll,
+} from '@/renderer/app/util/string-utils';
 import * as path from 'path';
 import { EOL } from 'ts-loader/dist/constants';
 
@@ -39,22 +46,25 @@ export class VisualStudioIdeService implements IdeService {
     }
 
     @logActivity('Starting Visual Studio project')
-    public async startIDEProject(context: WorkspacePaths): Promise<void> {
-        const vsSolutionPath = context.getVisualStudioSolutionFilePath();
+    public async startIDEProject(paths: WorkspacePaths): Promise<void> {
+        const vsSolutionPath = paths.getVisualStudioSolutionFilePath();
         await Cpx.sudoExec(`start ${vsSolutionPath}`);
     }
 
     public async removeDefaultPrototypeSourceFilesFromIDEProject(
-        context: WorkspacePaths,
+        paths: WorkspacePaths,
         defaultPrototypeFiles: string[],
     ): Promise<void> {
-        const projectFiles = this.getAllVisualStudioProjectFiles(context);
+        const projectFiles = [
+            ...this.getAllVisualStudioProjectFiles(paths),
+            ...this.getAllVisualStudioProjectFilterFiles(paths),
+        ];
 
         for (const fileToRemove of defaultPrototypeFiles) {
             await Promise.all(
                 projectFiles.map((projectFile) =>
                     this.removeSourceFileFromVisualStudioProjectFile(
-                        context,
+                        paths,
                         projectFile,
                         fileToRemove,
                     ),
@@ -65,9 +75,9 @@ export class VisualStudioIdeService implements IdeService {
     }
 
     public async removeDefaultPrototypeFontFilesFromIDEProject(
-        context: WorkspacePaths,
+        paths: WorkspacePaths,
     ): Promise<void> {
-        const mainRcPath = context.getMainRcPath();
+        const mainRcPath = paths.getMainRcPath();
 
         await assertReplaceContentInFile(
             mainRcPath,
@@ -87,36 +97,39 @@ export class VisualStudioIdeService implements IdeService {
     }
 
     @logActivity('Adding source files to Visual Studio solution projects')
-    public async addUserSourceFilesToIDEProject(context: WorkspacePaths): Promise<void> {
-        const projectFiles = this.getAllVisualStudioProjectFiles(context);
-        const filePaths = await this.fileService.loadSourceFilesList(context);
+    public async addUserSourceFilesToIDEProject(paths: WorkspacePaths): Promise<void> {
+        const projectFiles = this.getAllVisualStudioProjectFiles(paths);
+        const projectFilterFiles = this.getAllVisualStudioProjectFilterFiles(paths);
+
+        const filePaths = await this.fileService.loadSourceFilesList(paths);
 
         for (const fileToAdd of filePaths) {
             await Promise.all(
                 projectFiles.map((projectFile) =>
-                    this.addSourceFileToVisualStudioProjectFile(context, projectFile, fileToAdd),
+                    this.addSourceFileToVisualStudioProjectFile(paths, projectFile, fileToAdd),
                 ),
             );
         }
 
-        await this.changeConfigHeaderPathInMainRc(context);
-        await this.addUserSourcesToIncludePath(context);
+        for (const fileToAdd of filePaths) {
+            await Promise.all(
+                projectFilterFiles.map((projectFile) =>
+                    this.addSourceFileToVisualStudioProjectFile(paths, projectFile, fileToAdd),
+                ),
+            );
+        }
+
+        await this.addUserSourcesToIncludePath(paths);
     }
 
     public async initializeFontFilesInIDEProject(
-        context: WorkspacePaths,
+        paths: WorkspacePaths,
         translateToVariable: VariableNameTranslator,
     ): Promise<void> {
-        await assertReplaceContentInFile(
-            context.getConfigHPath(),
-            `#define ROBOTO_FN "Roboto-Regular.ttf"`,
-            '',
-        );
-
         // As fonts have a naming scheme. We are therefore removing the default iPlug name for roboto and re-adding it
         // with the standard naming scheme.
         await assertReplaceContentInFile(
-            context.getMainPluginCppFile(),
+            paths.getMainPluginCppFile(),
             'ROBOTO_FN',
             translateToVariable(`Roboto-Regular.ttf`),
         );
@@ -170,12 +183,61 @@ export class VisualStudioIdeService implements IdeService {
         await writeFile(mainRcPath, mainRcContent);
     }
 
+    /**
+     * This method creates a new Filter for Visual Studio projects where generated files will be stored.
+     * @param paths: Paths for the current project
+     */
+    public async reconfigureFileFilters(paths: WorkspacePaths): Promise<void> {
+        const projectFiles = this.getAllVisualStudioProjectFilterFiles(paths);
+
+        for (const projectFile of projectFiles) {
+            let content = await readFile(projectFile);
+
+            // Create a new "Generated" filter
+            content = assertReplace(
+                content,
+                `</Project>`,
+                multiline(
+                    `<ItemGroup>`,
+                    `<Filter Include="Generated">`,
+                    `<UniqueIdentifier>{2fdc99c6-a22e-4fd5-a4e9-e68aedc36c66}</UniqueIdentifier>`,
+                    `</Filter>`,
+                    `</ItemGroup>`,
+                    `</Project>`,
+                ),
+            );
+
+            // Put all files other than user source files into the "Generated" filter
+            content = assertReplaceRegex(
+                content,
+                /(<Filter>)(.*)(<\/Filter>)/g,
+                '$1Generated\\$2$3',
+            );
+
+            content = assertReplaceRegex(
+                content,
+                /(<Filter Include=")(.*)(">)/g,
+                '$1Generated\\$2$3',
+            );
+
+            // Put config.h into the "Generated" filter as well
+            // The foloowing regex matches ../config.h and ..\config.h (slash/backslash)
+            content = assertReplaceRegex(
+                content,
+                /(<ClInclude Include="\.\.)([\/|\\])(config\.h"\s*)(\/>)/g,
+                multiline(`$1$2$3>`, `<Filter>Generated</Filter>`, `</ClInclude>`),
+            );
+
+            await writeFile(projectFile, content);
+        }
+    }
+
     private async addSourceFileToVisualStudioProjectFile(
-        context: WorkspacePaths,
+        paths: WorkspacePaths,
         vsProjectFile: string,
         fileToAdd: string,
     ): Promise<void> {
-        const projectDir = context.getVisualStudioIDEProjectsDir();
+        const projectDir = paths.getVisualStudioIDEProjectsDir();
         let fileContent = await readFile(vsProjectFile);
 
         if (!this.projectFileContainsSourceFile(fileContent, projectDir, fileToAdd)) {
@@ -189,12 +251,12 @@ export class VisualStudioIdeService implements IdeService {
      * Because composer manages its own sources directory, we need to include this directory in the visual studio
      * project files. The easiest way to do this, is to change the "AdditionalIncludeDirectories" definition by just
      * adding the sources directory to this list.
-     * @param context The current workspace context.
+     * @param paths The current workspace paths.
      */
-    private async addUserSourcesToIncludePath(context: WorkspacePaths): Promise<void> {
-        const winPropsPath = context.getVisualStudioProjectWinPropsPath();
-        const sourcesDir = context.getSourcesDir();
-        const solutionDir = context.getProjectBuildDir();
+    private async addUserSourcesToIncludePath(paths: WorkspacePaths): Promise<void> {
+        const winPropsPath = paths.getVisualStudioProjectWinPropsPath();
+        const sourcesDir = paths.getSourcesDir();
+        const solutionDir = paths.getProjectBuildDir();
 
         await assertReplaceContentInFile(
             winPropsPath,
@@ -206,39 +268,12 @@ export class VisualStudioIdeService implements IdeService {
         );
     }
 
-    /**
-     * Because composer manages its own sources directory, we need to change the inclusion path for config.h
-     * so that it points to the composer sources directory.
-     * @param context The current workspace context.
-     */
-    private async changeConfigHeaderPathInMainRc(context: WorkspacePaths): Promise<void> {
-        const mainRcPath = context.getMainRcPath();
-        const configHPath = context.getConfigHPath();
-        const projectDir = context.getProjectBuildDir();
-
-        await assertReplaceContentInFile(
-            mainRcPath,
-            `#include "..\\config.h"`,
-            `#include "${path.relative(projectDir, configHPath)}"`,
-        );
-
-        await assertReplaceContentInFile(
-            mainRcPath,
-            `"#include ""..\\\\config.h""\\r\\n"`,
-            `"#include ""${replaceAll(
-                path.relative(projectDir, configHPath),
-                path.sep,
-                times(path.sep, 2),
-            )}""\\r\\n"`,
-        );
-    }
-
     private async removeSourceFileFromVisualStudioProjectFile(
-        context: WorkspacePaths,
+        paths: WorkspacePaths,
         vsProjectFile: string,
         fileToRemove: string,
     ): Promise<void> {
-        const projectDir = context.getVisualStudioIDEProjectsDir();
+        const projectDir = paths.getVisualStudioIDEProjectsDir();
         let fileContent = await readFile(vsProjectFile);
 
         if (this.projectFileContainsSourceFile(fileContent, projectDir, fileToRemove)) {
@@ -325,16 +360,21 @@ export class VisualStudioIdeService implements IdeService {
         }
     }
 
-    private getAllVisualStudioProjectFiles(context: WorkspacePaths): string[] {
+    private getAllVisualStudioProjectFiles(paths: WorkspacePaths): string[] {
         return [
-            context.getVisualStudioAppIDEProjectFilePath(),
-            context.getVisualStudioVst2IDEProjectFilePath(),
-            context.getVisualStudioVst3IDEProjectFilePath(),
-            context.getVisualStudioAaxIDEProjectFilePath(),
-            context.getVisualStudioAppIDEProjectFiltersFilePath(),
-            context.getVisualStudioVst2IDEProjectFiltersFilePath(),
-            context.getVisualStudioVst3IDEProjectFiltersFilePath(),
-            context.getVisualStudioAaxIDEProjectFiltersFilePath(),
+            paths.getVisualStudioAppIDEProjectFilePath(),
+            paths.getVisualStudioVst2IDEProjectFilePath(),
+            paths.getVisualStudioVst3IDEProjectFilePath(),
+            paths.getVisualStudioAaxIDEProjectFilePath(),
+        ];
+    }
+
+    private getAllVisualStudioProjectFilterFiles(paths: WorkspacePaths): string[] {
+        return [
+            paths.getVisualStudioAppIDEProjectFiltersFilePath(),
+            paths.getVisualStudioVst2IDEProjectFiltersFilePath(),
+            paths.getVisualStudioVst3IDEProjectFiltersFilePath(),
+            paths.getVisualStudioAaxIDEProjectFiltersFilePath(),
         ];
     }
 }

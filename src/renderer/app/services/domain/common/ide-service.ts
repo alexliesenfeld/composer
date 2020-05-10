@@ -26,4 +26,6 @@ export interface IdeService {
     addFontFileToIdeProject(paths: WorkspacePaths, variableName: string): Promise<void>;
 
     addUserSourceFilesToIDEProject(context: WorkspacePaths): Promise<void>;
+
+    reconfigureFileFilters(context: WorkspacePaths): Promise<void>;
 }

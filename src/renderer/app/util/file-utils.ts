@@ -6,6 +6,7 @@ import * as AdmZip from 'adm-zip';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as request from 'request';
+import { EOL } from 'ts-loader/dist/constants';
 
 async function addFilePermissions(filePath: string, mode: number) {
     await Fsx.chmod(filePath, (await Fsx.stat(filePath)).mode | mode);
@@ -86,13 +87,13 @@ export const ensureDirExists = async (dirPath: string): Promise<string> => {
     return dirPath;
 };
 
-export const recreateDir = async (dependenciesDirectory: string): Promise<string> => {
-    if (await Fsx.exists(dependenciesDirectory)) {
-        await deleteDirectory(dependenciesDirectory);
+export const recreateDir = async (dirPath: string): Promise<string> => {
+    if (await Fsx.exists(dirPath)) {
+        await deleteDirectory(dirPath);
     }
-    await Fsx.mkdir(dependenciesDirectory);
+    await Fsx.mkdir(dirPath);
 
-    return dependenciesDirectory;
+    return dirPath;
 };
 
 export const directoryIsEmpty = async (
@@ -150,4 +151,10 @@ export const assertReplaceContentInFile = async (filePath: string, from: string,
     const replacedFileContent = assertReplace(fileContent, from, to);
 
     await writeFile(filePath, replacedFileContent);
+};
+
+export const addLineToFile = async (path: string, line: string): Promise<void> => {
+    let content = await readFile(path);
+    content += `${line}${EOL}`;
+    await writeFile(path, content);
 };
