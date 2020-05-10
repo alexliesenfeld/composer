@@ -15,7 +15,7 @@ export enum PluginFormat {
     WEB = 'Web',
 }
 
-export enum AudioUnitPluginType {
+export enum IPlugPluginType {
     EFFECT_OR_MUSIC_EFFECT = 'Effect/Music Effect',
     MUSIC_DEVICE = 'Music Device',
     MIDI_PROCESSOR = 'MIDI Processor',
@@ -59,6 +59,7 @@ export enum Vst3Subcategory {
     MONO = 'Mono',
     STEREO = 'Stereo',
     SURROUND = 'Surround',
+    OTHER = 'Other',
 }
 
 export interface WorkspaceConfig {
@@ -78,14 +79,14 @@ export interface WorkspaceConfig {
     mpe: boolean;
     stateChunks: boolean;
     manufacturerName: string;
+    manufacturerId: string;
     manufacturerEmail: string;
     manufacturerWebsite: string;
     manufacturerCopyrightNotice: string;
     audioUnitBundleName: string;
     audioUnitBundleManufacturer: string;
     audioUnitBundleDomain: string;
-    audioUnitManufacturerId: string;
-    audioUnitPluginType: AudioUnitPluginType;
+    pluginType: IPlugPluginType;
     vst3Subcategory: Vst3Subcategory;
     vstUniqueId: string;
     iPlug2GitSha: string;

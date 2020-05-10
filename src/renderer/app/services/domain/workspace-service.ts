@@ -1,4 +1,4 @@
-import { AudioUnitPluginType, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
+import { IPlugPluginType, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
 import { IdeService } from '@/renderer/app/services/domain/common/ide-service';
 import {
     DEFAULT_FONT_FILE_NAME,
@@ -281,7 +281,7 @@ export class WorkspaceService {
                 `#define PLUG_VERSION_HEX 0x00010000`,
                 `#define PLUG_VERSION_STR "${config.pluginVersion}"`,
                 `#define PLUG_UNIQUE_ID '${config.vstUniqueId}'`,
-                `#define PLUG_MFR_ID '${config.audioUnitManufacturerId}'`,
+                `#define PLUG_MFR_ID '${config.manufacturerId}'`,
                 `#define PLUG_URL_STR "${config.manufacturerWebsite}"`,
                 `#define PLUG_EMAIL_STR "${config.manufacturerEmail}"`,
                 `#define PLUG_COPYRIGHT_STR "${config.manufacturerCopyrightNotice}"`,
@@ -295,7 +295,7 @@ export class WorkspaceService {
                 ``,
                 `#define PLUG_CHANNEL_IO "${config.inputChannels}-${config.outputChannels}"`,
                 `#define PLUG_LATENCY ${config.pluginLatency}`,
-                `#define PLUG_TYPE ${this.mapAudioUnitTypeForConfig(config.audioUnitPluginType)}`,
+                `#define PLUG_TYPE ${this.mapAudioUnitTypeForConfig(config.pluginType)}`,
                 `#define PLUG_DOES_MIDI_IN ${this.mapBooleanForConfig(config.midiIn)}`,
                 `#define PLUG_DOES_MIDI_OUT ${this.mapBooleanForConfig(config.midiOut)}`,
                 `#define PLUG_DOES_MPE ${this.mapBooleanForConfig(config.mpe)}`,
@@ -347,8 +347,8 @@ export class WorkspaceService {
         );
     }
 
-    private mapAudioUnitTypeForConfig(value: AudioUnitPluginType) {
-        return enumValues(AudioUnitPluginType).indexOf(value);
+    private mapAudioUnitTypeForConfig(value: IPlugPluginType) {
+        return enumValues(IPlugPluginType).indexOf(value);
     }
 
     private mapBooleanForConfig(value: boolean) {

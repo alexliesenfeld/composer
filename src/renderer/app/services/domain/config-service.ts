@@ -1,6 +1,6 @@
 import { DirectoryNotEmptyError } from '@/renderer/app/model/errors';
 import {
-    AudioUnitPluginType,
+    IPlugPluginType,
     PluginFormat,
     Prototype,
     Vst3Subcategory,
@@ -49,11 +49,11 @@ const createInitialConfig = (): WorkspaceConfig => {
         manufacturerCopyrightNotice: '© www.my-plugin-company.com',
         manufacturerEmail: 'mail@my-plugin-company.com',
         manufacturerName: 'MyPlugInCompany',
+        manufacturerId: 'MPUC',
         audioUnitBundleManufacturer: 'MyPlugInCompany',
         audioUnitBundleDomain: 'com',
-        audioUnitManufacturerId: 'MPIC',
         audioUnitBundleName: 'NewProject',
-        audioUnitPluginType: AudioUnitPluginType.EFFECT_OR_MUSIC_EFFECT,
+        pluginType: IPlugPluginType.EFFECT_OR_MUSIC_EFFECT,
         vst3Subcategory: Vst3Subcategory.FX,
         vstUniqueId: 'nprj',
         uiResizable: true,

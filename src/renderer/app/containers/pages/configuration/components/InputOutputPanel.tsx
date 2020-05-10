@@ -40,7 +40,9 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     label="Input-Channels"
                     labelFor="prototype-input"
                     inline={true}
-                    helperText={'The number of input channels.'}
+                    helperText={
+                        'The number of input channels. This value partially represents the iPlug configuration constant PLUG_CHANNEL_IO.'
+                    }
                 >
                     <NumericInput
                         fill={true}
@@ -52,7 +54,9 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     label="Output-Channels"
                     labelFor="prototype-input"
                     inline={true}
-                    helperText={'The number of output channels.'}
+                    helperText={
+                        'The number of output channels. This value partially represents the iPlug configuration constant PLUG_CHANNEL_IO.'
+                    }
                 >
                     <NumericInput
                         fill={true}
@@ -64,7 +68,9 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     label="Plug-In Latency"
                     labelFor="prototype-input"
                     inline={true}
-                    helperText={'The plugin latency announced to hosts.'}
+                    helperText={
+                        'The plugin latency announced to hosts. This value represents the iPlug configuration constant PLUG_LATENCY.'
+                    }
                 >
                     <NumericInput
                         fill={true}
@@ -77,7 +83,9 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     label="MIDI-In"
                     labelFor="midi-in"
                     inline={true}
-                    helperText={'If the plugin needs to receive MIDI.'}
+                    helperText={
+                        'If the plugin needs to receive MIDI. This value represents the iPlug configuration constant PLUG_DOES_MIDI_IN.'
+                    }
                 >
                     <RadioGroup
                         inline={true}
@@ -93,7 +101,9 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     label="MIDI-Out"
                     labelFor="midi-out"
                     inline={true}
-                    helperText={'If the plugin needs to send MIDI.'}
+                    helperText={
+                        'If the plugin needs to send MIDI. This value represents the iPlug configuration constant PLUG_DOES_MIDI_OUT.'
+                    }
                 >
                     <RadioGroup
                         inline={true}
@@ -109,7 +119,9 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     label="MPE"
                     labelFor="mpe"
                     inline={true}
-                    helperText={'If the plugin uses MPE (MIDI Polyphonic Expression).'}
+                    helperText={
+                        'If the plugin uses MPE (MIDI Polyphonic Expression). This value represents the iPlug configuration constant PLUG_DOES_MPE.'
+                    }
                 >
                     <RadioGroup
                         inline={true}
@@ -125,7 +137,9 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     label="State Chunks"
                     labelFor="state-chunks"
                     inline={true}
-                    helperText={'If the plugin needs to receive state as chunks of memory.'}
+                    helperText={
+                        'If the plugin needs to receive state as chunks of memory. This value represents the iPlug configuration constant PLUG_DOES_STATE_CHUNKS.'
+                    }
                 >
                     <RadioGroup
                         inline={true}

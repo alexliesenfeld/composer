@@ -35,7 +35,7 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                     labelFor="prototype-input"
                     disabled={!props.uiEnabled}
                     inline={true}
-                    helperText={`The width of the plugin window in pixels.`}
+                    helperText={`The width of the plugin window in pixels. This value represents the iPlug configuration constant PLUG_WIDTH.`}
                 >
                     <NumericInput
                         fill={true}
@@ -49,7 +49,7 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                     labelFor="prototype-input"
                     disabled={!props.uiEnabled}
                     inline={true}
-                    helperText={`The height of the plugin window in pixels.`}
+                    helperText={`The height of the plugin window in pixels. This value represents the iPlug configuration constant PLUG_HEIGHT.`}
                 >
                     <NumericInput
                         fill={true}
@@ -63,7 +63,7 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                     labelFor="prototype-input"
                     disabled={!props.uiEnabled}
                     inline={true}
-                    helperText={`The target frames per second that the window will be rendering at.`}
+                    helperText={`The target frames per second that the window will be rendering at. This value represents the iPlug configuration constant PLUG_FPS.`}
                 >
                     <NumericInput
                         fill={true}
@@ -76,7 +76,7 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                     label="Enabled"
                     labelFor="prototype-input"
                     inline={true}
-                    helperText={`If the plugin has a GUI.`}
+                    helperText={`If the plugin has a GUI. This value represents the iPlug configuration constant PLUG_HAS_UI.`}
                 >
                     <RadioGroup
                         inline={true}

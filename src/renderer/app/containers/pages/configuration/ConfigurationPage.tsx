@@ -1,3 +1,4 @@
+import AppPanel from '@/renderer/app/containers/pages/configuration/components/AppPanel';
 import AudioUnitPanel from '@/renderer/app/containers/pages/configuration/components/AudioUnitPanel';
 import GeneralPanel from '@/renderer/app/containers/pages/configuration/components/GeneralPanel';
 import InputOutputPanel from '@/renderer/app/containers/pages/configuration/components/InputOutputPanel';
@@ -31,6 +32,13 @@ const ConfigurationPage = (props: { workspaceStore?: WorkspaceStore }) => {
                         prototype: value,
                     })
                 }
+                pluginType={userConfig!.pluginType}
+                setPluginType={(value) =>
+                    setUserConfig({
+                        ...userConfig!,
+                        pluginType: value,
+                    })
+                }
                 version={userConfig!.pluginVersion}
                 setVersion={(value) =>
                     matchesVersion(value)
@@ -39,6 +47,13 @@ const ConfigurationPage = (props: { workspaceStore?: WorkspaceStore }) => {
                               pluginVersion: value,
                           })
                         : false
+                }
+                vst3UniqueId={userConfig!.vstUniqueId}
+                setVst3UniqueId={(value) =>
+                    setUserConfig({
+                        ...userConfig!,
+                        vstUniqueId: value,
+                    })
                 }
                 iPlugSha1={userConfig!.iPlug2GitSha}
                 setIPlugSha1={(value) =>
@@ -54,6 +69,13 @@ const ConfigurationPage = (props: { workspaceStore?: WorkspaceStore }) => {
                     setUserConfig({
                         ...userConfig!,
                         manufacturerName: removeSpaces(value),
+                    })
+                }
+                manufacturerId={userConfig!.manufacturerId}
+                setManufacturerId={(value) =>
+                    setUserConfig({
+                        ...userConfig!,
+                        manufacturerId: removeSpaces(value),
                     })
                 }
                 manufacturerEmail={userConfig!.manufacturerEmail}
@@ -166,6 +188,7 @@ const ConfigurationPage = (props: { workspaceStore?: WorkspaceStore }) => {
                     })
                 }
             />
+
             <AudioUnitPanel
                 bundleName={userConfig!.audioUnitBundleName}
                 setBundleName={(value) =>
@@ -188,20 +211,6 @@ const ConfigurationPage = (props: { workspaceStore?: WorkspaceStore }) => {
                         audioUnitBundleDomain: value,
                     })
                 }
-                manufacturerId={userConfig!.audioUnitManufacturerId}
-                setManufacturerId={(value) =>
-                    setUserConfig({
-                        ...userConfig!,
-                        audioUnitManufacturerId: value,
-                    })
-                }
-                audioUnitPluginType={userConfig!.audioUnitPluginType}
-                setAudioUnitPluginType={(value) =>
-                    setUserConfig({
-                        ...userConfig!,
-                        audioUnitPluginType: value,
-                    })
-                }
             />
             <VstPanel
                 vst3Subcategory={userConfig!.vst3Subcategory}
@@ -209,13 +218,6 @@ const ConfigurationPage = (props: { workspaceStore?: WorkspaceStore }) => {
                     setUserConfig({
                         ...userConfig!,
                         vst3Subcategory: value,
-                    })
-                }
-                vst3UniqueId={userConfig!.vstUniqueId}
-                setVst3UniqueId={(value) =>
-                    setUserConfig({
-                        ...userConfig!,
-                        vstUniqueId: value,
                     })
                 }
                 vst3SdkGitSha={userConfig!.vst3SdkGitSha}
@@ -226,6 +228,7 @@ const ConfigurationPage = (props: { workspaceStore?: WorkspaceStore }) => {
                     })
                 }
             />
+            <AppPanel appChannels={5} setAppChannels={() => {}} />
         </div>
     );
 };
