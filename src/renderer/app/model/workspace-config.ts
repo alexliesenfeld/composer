@@ -91,4 +91,9 @@ export interface WorkspaceConfig {
     vstUniqueId: string;
     iPlug2GitSha: string;
     vst3SdkGitSha: string;
+    appInputChannels: number;
+    appVectorWaitMultiplier: number;
+    appOutputMultiplier: number;
+    appSignalVectorSize: number;
+    appResizable: boolean;
 }

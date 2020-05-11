@@ -14,11 +14,35 @@ import * as React from 'react';
 export interface AppPanelProps {
     appChannels: number;
     setAppChannels: (value: number) => void;
+    waitMultiplier: number;
+    setWaitMultiplier: (value: number) => void;
+    outputMultiplier: number;
+    setOutputMultiplier: (value: number) => void;
+    signalVectorSize: number;
+    setSignalVectorSize: (value: number) => void;
+    resizable: boolean;
+    setResizable: (value: boolean) => void;
 }
 
 const AppPanel = (props: AppPanelProps) => {
     const setAppChannels = (value: number) => {
         props.setAppChannels(value);
+    };
+
+    const setWaitMultiplier = (value: number) => {
+        props.setWaitMultiplier(value);
+    };
+
+    const setOutputMultiplier = (value: number) => {
+        props.setOutputMultiplier(value);
+    };
+
+    const setSignalVectorSize = (value: number) => {
+        props.setSignalVectorSize(value);
+    };
+
+    const setResizable = (value: React.FormEvent<HTMLInputElement>) => {
+        props.setResizable(value.currentTarget.value === 'yes');
     };
 
     return (
@@ -52,9 +76,8 @@ const AppPanel = (props: AppPanelProps) => {
                     <NumericInput
                         id="vector-wait"
                         fill={true}
-                        input-channels
-                        value={props.appChannels}
-                        onValueChange={setAppChannels}
+                        value={props.waitMultiplier}
+                        onValueChange={setWaitMultiplier}
                     />
                 </FormGroup>
                 <FormGroup
@@ -67,8 +90,8 @@ const AppPanel = (props: AppPanelProps) => {
                 >
                     <NumericInput
                         fill={true}
-                        value={props.appChannels}
-                        onValueChange={setAppChannels}
+                        value={props.outputMultiplier}
+                        onValueChange={setOutputMultiplier}
                     />
                 </FormGroup>
                 <FormGroup
@@ -81,8 +104,8 @@ const AppPanel = (props: AppPanelProps) => {
                 >
                     <NumericInput
                         fill={true}
-                        value={props.appChannels}
-                        onValueChange={setAppChannels}
+                        value={props.signalVectorSize}
+                        onValueChange={setSignalVectorSize}
                     />
                 </FormGroup>
                 <FormGroup
@@ -93,27 +116,8 @@ const AppPanel = (props: AppPanelProps) => {
                 >
                     <RadioGroup
                         inline={true}
-                        onChange={(value) => {
-                            //props.setUiEnabled(value.currentTarget.value === 'yes')
-                        }}
-                        selectedValue={0}
-                    >
-                        <Radio label="Yes" value="yes" />
-                        <Radio label="No" value="no" />
-                    </RadioGroup>
-                </FormGroup>
-                <FormGroup
-                    label="Copy AUV3"
-                    labelFor="prototype-input"
-                    inline={true}
-                    helperText={`???. This value represents the iPlug configuration constant APP_COPY_AUV3.`}
-                >
-                    <RadioGroup
-                        inline={true}
-                        onChange={(value) => {
-                            //props.setUiEnabled(value.currentTarget.value === 'yes')
-                        }}
-                        selectedValue={0}
+                        onChange={setResizable}
+                        selectedValue={props.resizable ? 'yes' : 'no'}
                     >
                         <Radio label="Yes" value="yes" />
                         <Radio label="No" value="no" />

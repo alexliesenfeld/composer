@@ -228,7 +228,43 @@ const ConfigurationPage = (props: { workspaceStore?: WorkspaceStore }) => {
                     })
                 }
             />
-            <AppPanel appChannels={5} setAppChannels={() => {}} />
+            <AppPanel
+                appChannels={userConfig!.appInputChannels}
+                setAppChannels={(value) =>
+                    setUserConfig({
+                        ...userConfig!,
+                        appInputChannels: value,
+                    })
+                }
+                waitMultiplier={userConfig!.appVectorWaitMultiplier}
+                setWaitMultiplier={(value) =>
+                    setUserConfig({
+                        ...userConfig!,
+                        appVectorWaitMultiplier: value,
+                    })
+                }
+                outputMultiplier={userConfig!.appOutputMultiplier}
+                setOutputMultiplier={(value) =>
+                    setUserConfig({
+                        ...userConfig!,
+                        appOutputMultiplier: value,
+                    })
+                }
+                signalVectorSize={userConfig!.appSignalVectorSize}
+                setSignalVectorSize={(value) =>
+                    setUserConfig({
+                        ...userConfig!,
+                        appSignalVectorSize: value,
+                    })
+                }
+                resizable={userConfig!.appResizable}
+                setResizable={(value) =>
+                    setUserConfig({
+                        ...userConfig!,
+                        appResizable: value,
+                    })
+                }
+            />
         </div>
     );
 };

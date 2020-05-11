@@ -54,11 +54,16 @@ const createInitialConfig = (): WorkspaceConfig => {
         audioUnitBundleDomain: 'com',
         audioUnitBundleName: 'NewProject',
         pluginType: IPlugPluginType.EFFECT_OR_MUSIC_EFFECT,
-        vst3Subcategory: Vst3Subcategory.FX,
+        vst3Subcategory: Vst3Subcategory.OTHER,
         vstUniqueId: 'nprj',
         uiResizable: true,
         iPlug2GitSha: 'd3bf848dbbc8c3fc818ce852cf529eb72cd334a5',
         vst3SdkGitSha: '0908f475f52af56682321192d800ef25d1823dd2',
+        appInputChannels: 2,
+        appOutputMultiplier: 1,
+        appResizable: false,
+        appSignalVectorSize: 64,
+        appVectorWaitMultiplier: 0,
     };
 };
 

@@ -1,3 +1,4 @@
+import { OperationFailedError } from '@/renderer/app/model/errors';
 import { IPlugPluginType, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
 import { IdeService } from '@/renderer/app/services/domain/common/ide-service';
 import {
@@ -24,7 +25,7 @@ import {
 } from '@/renderer/app/util/file-utils';
 import { Fsx } from '@/renderer/app/util/fsx';
 import * as git from '@/renderer/app/util/git-utils';
-import { multiline } from '@/renderer/app/util/string-utils';
+import { multiline, prependFill } from '@/renderer/app/util/string-utils';
 import { enumValues } from '@/renderer/app/util/type-utils';
 import * as path from 'path';
 
@@ -278,7 +279,7 @@ export class WorkspaceService {
                 `// ********************************************************************`,
                 `#define PLUG_NAME "${config.projectName}"`,
                 `#define PLUG_MFR "${config.manufacturerName}"`,
-                `#define PLUG_VERSION_HEX 0x00010000`,
+                `#define PLUG_VERSION_HEX 0x${this.mapVersionToHex(config.pluginVersion)}`,
                 `#define PLUG_VERSION_STR "${config.pluginVersion}"`,
                 `#define PLUG_UNIQUE_ID '${config.vstUniqueId}'`,
                 `#define PLUG_MFR_ID '${config.manufacturerId}'`,
@@ -286,12 +287,6 @@ export class WorkspaceService {
                 `#define PLUG_EMAIL_STR "${config.manufacturerEmail}"`,
                 `#define PLUG_COPYRIGHT_STR "${config.manufacturerCopyrightNotice}"`,
                 `#define PLUG_CLASS_NAME ${config.projectName}`,
-                ``,
-                `#define BUNDLE_NAME "${config.audioUnitBundleName}"`,
-                `#define BUNDLE_MFR "${config.audioUnitBundleManufacturer}"`,
-                `#define BUNDLE_DOMAIN "${config.audioUnitBundleDomain}"`,
-                ``,
-                `#define SHARED_RESOURCES_SUBPATH "${config.projectName}"`,
                 ``,
                 `#define PLUG_CHANNEL_IO "${config.inputChannels}-${config.outputChannels}"`,
                 `#define PLUG_LATENCY ${config.pluginLatency}`,
@@ -306,6 +301,12 @@ export class WorkspaceService {
                 `#define PLUG_FPS ${config.fps}`,
                 `#define PLUG_SHARED_RESOURCES 0`,
                 ``,
+                ``,
+                `#define BUNDLE_NAME "${config.audioUnitBundleName}"`,
+                `#define BUNDLE_MFR "${config.audioUnitBundleManufacturer}"`,
+                `#define BUNDLE_DOMAIN "${config.audioUnitBundleDomain}"`,
+                ``,
+                `#define SHARED_RESOURCES_SUBPATH "${config.projectName}"`,
                 `#define AUV2_ENTRY ${config.projectName}_Entry`,
                 `#define AUV2_ENTRY_STR "${config.projectName}_Entry"`,
                 `#define AUV2_FACTORY ${config.projectName}_Factory`,
@@ -315,18 +316,18 @@ export class WorkspaceService {
                 `#define AAX_TYPE_IDS 'EFN1', 'EFN2'`,
                 `#define AAX_TYPE_IDS_AUDIOSUITE 'EFA1', 'EFA2'`,
                 `#define AAX_PLUG_MFR_STR "Acme"`,
-                `#define AAX_PLUG_NAME_STR "NewProject\\nIPEF"`,
+                `#define AAX_PLUG_NAME_STR "${config.projectName}\\nIPEF"`,
                 `#define AAX_PLUG_CATEGORY_STR "Effect"`,
                 `#define AAX_DOES_AUDIOSUITE 1`,
                 ``,
                 `#define VST3_SUBCATEGORY "${config.vst3Subcategory}"`,
                 ``,
-                `#define APP_NUM_CHANNELS ${config.inputChannels}`,
-                `#define APP_N_VECTOR_WAIT 0`,
-                `#define APP_MULT 1`,
+                `#define APP_NUM_CHANNELS ${config.appInputChannels}`,
+                `#define APP_N_VECTOR_WAIT ${config.appVectorWaitMultiplier}`,
+                `#define APP_MULT ${config.appOutputMultiplier}`,
+                `#define APP_RESIZABLE ${this.mapBooleanForConfig(config.appResizable)}`,
+                `#define APP_SIGNAL_VECTOR_SIZE ${config.appSignalVectorSize}`,
                 `#define APP_COPY_AUV3 0`,
-                `#define APP_RESIZABLE 0`,
-                `#define APP_SIGNAL_VECTOR_SIZE 64`,
                 ``,
                 ``,
             ),
@@ -349,6 +350,21 @@ export class WorkspaceService {
 
     private mapAudioUnitTypeForConfig(value: IPlugPluginType) {
         return enumValues(IPlugPluginType).indexOf(value);
+    }
+
+    private mapVersionToHex(value: string) {
+        const parts: string[] = value.split('.');
+        const major = prependFill(parseInt(parts[0]).toString(16), 4, '0');
+        const minor = prependFill(parseInt(parts[1]).toString(16), 2, '0');
+        const patch = prependFill(parseInt(parts[2]).toString(16), 2, '0');
+
+        if (major.length > 4 || minor.length > 2 || patch.length > 2) {
+            throw new OperationFailedError(
+                'Version number too long. Maximum version values are "65535.255.255".',
+            );
+        }
+
+        return major + minor + patch;
     }
 
     private mapBooleanForConfig(value: boolean) {
