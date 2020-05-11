@@ -32,7 +32,6 @@ export const readFile = async (path: string): Promise<string> => {
 const createInitialConfig = (): WorkspaceConfig => {
     return {
         projectName: 'NewProject',
-        prototype: Prototype.IPLIGEFFECT,
         uiEnabled: true,
         fps: 60,
         uiHeight: 600,
@@ -53,15 +52,13 @@ const createInitialConfig = (): WorkspaceConfig => {
         audioUnitBundleManufacturer: 'MyPlugInCompany',
         audioUnitBundleDomain: 'com',
         audioUnitBundleName: 'NewProject',
-        pluginType: IPlugPluginType.EFFECT_OR_MUSIC_EFFECT,
+        pluginType: IPlugPluginType.EFFECT,
         vst3Subcategory: Vst3Subcategory.OTHER,
         vstUniqueId: 'nprj',
         uiResizable: true,
-        iPlug2GitSha: 'd3bf848dbbc8c3fc818ce852cf529eb72cd334a5',
+        iPlug2GitSha: '33700e4a498c8e9440b7281008d32d4b2a24a12f',
         vst3SdkGitSha: '0908f475f52af56682321192d800ef25d1823dd2',
-        appInputChannels: 2,
         appOutputMultiplier: 1,
-        appResizable: false,
         appSignalVectorSize: 64,
         appVectorWaitMultiplier: 0,
     };

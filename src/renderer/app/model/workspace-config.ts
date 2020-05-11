@@ -1,5 +1,3 @@
-import {enumValues} from '@/renderer/app/util/type-utils';
-
 export enum Prototype {
     IPLIGEFFECT = 'IPlugEffect',
     IPLUGINSTRUMENT = 'IPlugInstrument',
@@ -16,9 +14,9 @@ export enum PluginFormat {
 }
 
 export enum IPlugPluginType {
-    EFFECT_OR_MUSIC_EFFECT = 'Effect/Music Effect',
-    MUSIC_DEVICE = 'Music Device',
-    MIDI_PROCESSOR = 'MIDI Processor',
+    EFFECT = 'Effect',
+    INSTRUMENT = 'Instrument',
+    MIDI_EFFECT = 'MIDI Effect',
 }
 
 export enum Vst3Subcategory {
@@ -64,7 +62,7 @@ export enum Vst3Subcategory {
 
 export interface WorkspaceConfig {
     projectName: string;
-    prototype: Prototype;
+    pluginType: IPlugPluginType;
     pluginVersion: string;
     uiWidth: number;
     uiHeight: number;
@@ -86,14 +84,11 @@ export interface WorkspaceConfig {
     audioUnitBundleName: string;
     audioUnitBundleManufacturer: string;
     audioUnitBundleDomain: string;
-    pluginType: IPlugPluginType;
     vst3Subcategory: Vst3Subcategory;
     vstUniqueId: string;
     iPlug2GitSha: string;
     vst3SdkGitSha: string;
-    appInputChannels: number;
     appVectorWaitMultiplier: number;
     appOutputMultiplier: number;
     appSignalVectorSize: number;
-    appResizable: boolean;
 }

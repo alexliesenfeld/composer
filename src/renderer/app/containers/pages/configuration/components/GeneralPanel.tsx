@@ -18,8 +18,6 @@ import * as React from 'react';
 export interface GeneralPanelProps {
     projectName: string;
     setProjectName: (value: string) => void;
-    prototype: Prototype;
-    setPrototype: (value: Prototype) => void;
     version: string;
     setVersion: (value: string) => void;
     iPlugSha1: string;
@@ -33,10 +31,6 @@ export interface GeneralPanelProps {
 const GeneralPanel = (props: GeneralPanelProps) => {
     const setProjectName = (e: React.ChangeEvent<HTMLInputElement>) => {
         props.setProjectName(e.target.value);
-    };
-
-    const setPrototype = (item: SelectInputItem<Prototype>) => {
-        props.setPrototype(item.key);
     };
 
     const setVersion = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -75,23 +69,6 @@ const GeneralPanel = (props: GeneralPanelProps) => {
                     />
                 </FormGroup>
                 <FormGroup
-                    label="Prototype"
-                    labelFor="prototype-input"
-                    inline={true}
-                    helperText={
-                        'This value represents the base project from the iPlug examples directory that will be used to generate the foundation for IDE projects.'
-                    }
-                >
-                    <SelectInput
-                        items={enumValues(Prototype).map((e) => ({
-                            key: e,
-                            text: e,
-                        }))}
-                        selectedItemKey={props.prototype}
-                        onClick={setPrototype}
-                    />
-                </FormGroup>
-                <FormGroup
                     label="Plugin Type"
                     labelFor="plugin-input"
                     inline={true}
@@ -121,7 +98,7 @@ const GeneralPanel = (props: GeneralPanelProps) => {
                     />
                 </FormGroup>
                 <FormGroup
-                    label="Unique Product ID"
+                    label="Unique ID"
                     labelFor="text-input"
                     inline={true}
                     helperText={`Your unique plugin ID. This value needs to consist of four characters. Example: IPeF. This value represents the iPlug configuration constant PLUG_UNIQUE_ID.`}

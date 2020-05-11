@@ -25,13 +25,6 @@ const ConfigurationPage = (props: { workspaceStore?: WorkspaceStore }) => {
                         projectName: value,
                     })
                 }
-                prototype={userConfig!.prototype}
-                setPrototype={(value) =>
-                    setUserConfig({
-                        ...userConfig!,
-                        prototype: value,
-                    })
-                }
                 pluginType={userConfig!.pluginType}
                 setPluginType={(value) =>
                     setUserConfig({
@@ -229,13 +222,6 @@ const ConfigurationPage = (props: { workspaceStore?: WorkspaceStore }) => {
                 }
             />
             <AppPanel
-                appChannels={userConfig!.appInputChannels}
-                setAppChannels={(value) =>
-                    setUserConfig({
-                        ...userConfig!,
-                        appInputChannels: value,
-                    })
-                }
                 waitMultiplier={userConfig!.appVectorWaitMultiplier}
                 setWaitMultiplier={(value) =>
                     setUserConfig({
@@ -255,13 +241,6 @@ const ConfigurationPage = (props: { workspaceStore?: WorkspaceStore }) => {
                     setUserConfig({
                         ...userConfig!,
                         appSignalVectorSize: value,
-                    })
-                }
-                resizable={userConfig!.appResizable}
-                setResizable={(value) =>
-                    setUserConfig({
-                        ...userConfig!,
-                        appResizable: value,
                     })
                 }
             />

@@ -22,15 +22,6 @@ import { inject, observer } from 'mobx-react';
 import * as React from 'react';
 
 const WelcomePage = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) => {
-    const addRecentlyOpenedProject = () => {
-        if (props.workspaceStore!.configPath) {
-            props.appStore!.addRecentlyOpenedProject(
-                props.workspaceStore!.userConfig!.projectName,
-                props.workspaceStore!.configPath,
-            );
-        }
-    };
-
     return (
         <div className="WelcomePage">
             <Card>
@@ -40,11 +31,7 @@ const WelcomePage = (props: { appStore?: AppStore; workspaceStore?: WorkspaceSto
                     <Button
                         icon={NEW_OBJECT}
                         fill={true}
-                        onClick={() => {
-                            props
-                                .workspaceStore!.createNewUserConfig()
-                                .then(addRecentlyOpenedProject);
-                        }}
+                        onClick={props.workspaceStore!.createNewUserConfig}
                         intent={'primary'}
                     >
                         New Project
@@ -52,50 +39,48 @@ const WelcomePage = (props: { appStore?: AppStore; workspaceStore?: WorkspaceSto
                     <Button
                         icon={DOCUMENT_OPEN}
                         fill={true}
-                        onClick={() => {
-                            props
-                                .workspaceStore!.openConfigFromDialog()
-                                .then(addRecentlyOpenedProject);
-                        }}
+                        onClick={props.workspaceStore!.openConfigFromDialog}
                         intent={'warning'}
                     >
                         Open Project
                     </Button>
                 </div>
-                <When condition={props.appStore!.recentlyOpenedProjects.length > 0}>
+                <When condition={props.workspaceStore!.recentlyOpenedWorkspaces.length > 0}>
                     <Divider />
                     <div className="recent-files-section">
                         <H6>Recent Projects</H6>
                         <Tree
-                            contents={props.appStore!.recentlyOpenedProjects.map((metadata) => {
-                                return {
-                                    id: metadata.filePath,
-                                    hasCaret: false,
-                                    icon: DOCUMENT_OPEN,
-                                    label: (
-                                        <Popover position={'top'}>
-                                            <Tooltip content={metadata.filePath}>
-                                                {metadata.projectName}
-                                            </Tooltip>
-                                        </Popover>
-                                    ),
-                                    secondaryLabel: (
-                                        <div>
-                                            <Button
-                                                small={true}
-                                                minimal={true}
-                                                icon={TRASH}
-                                                onClick={(e: React.MouseEvent<HTMLElement>) => {
-                                                    props.appStore!.removeRecentlyOpenedProject(
-                                                        metadata.filePath,
-                                                    );
-                                                    e.stopPropagation();
-                                                }}
-                                            />
-                                        </div>
-                                    ),
-                                } as ITreeNode;
-                            })}
+                            contents={props.workspaceStore!.recentlyOpenedWorkspaces.map(
+                                (metadata) => {
+                                    return {
+                                        id: metadata.filePath,
+                                        hasCaret: false,
+                                        icon: DOCUMENT_OPEN,
+                                        label: (
+                                            <Popover position={'top'}>
+                                                <Tooltip content={metadata.filePath}>
+                                                    {metadata.projectName}
+                                                </Tooltip>
+                                            </Popover>
+                                        ),
+                                        secondaryLabel: (
+                                            <div>
+                                                <Button
+                                                    small={true}
+                                                    minimal={true}
+                                                    icon={TRASH}
+                                                    onClick={(e: React.MouseEvent<HTMLElement>) => {
+                                                        props.workspaceStore!.deregisterRecentlyOpenedWorkspace(
+                                                            metadata.filePath,
+                                                        );
+                                                        e.stopPropagation();
+                                                    }}
+                                                />
+                                            </div>
+                                        ),
+                                    } as ITreeNode;
+                                },
+                            )}
                             onNodeClick={(node) => {
                                 props.workspaceStore!.loadConfigFromPathUi(node.id as string);
                             }}

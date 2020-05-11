@@ -19,6 +19,12 @@ export class DirectoryNotEmptyError extends CustomError {
     }
 }
 
+export class SavingError extends CustomError {
+    constructor(public customMessage?: string) {
+        super(SavingError, customMessage ? customMessage : `Could not save.`);
+    }
+}
+
 export class FileNotFoundError extends CustomError {
     constructor(public filePath?: string) {
         super(FileNotFoundError, 'File was not found' + (filePath ? ': ' + filePath : '') + '.');

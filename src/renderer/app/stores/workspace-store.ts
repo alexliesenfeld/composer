@@ -1,22 +1,29 @@
 import { ElectronContext } from '@/renderer/app/model/electron-context';
+import { SavingError } from '@/renderer/app/model/errors';
 import { WorkspaceConfig } from '@/renderer/app/model/workspace-config';
 import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 import * as configService from '@/renderer/app/services/domain/config-service';
 import { WorkspaceService } from '@/renderer/app/services/domain/workspace-service';
 import { withLoadingScreen } from '@/renderer/app/services/ui/loading-screen-service';
+import { LocalStorageAdapter } from '@/renderer/app/services/ui/local-storagea-dapter';
 import {
     showSuccessNotification,
     withNotification,
 } from '@/renderer/app/services/ui/notification-service';
+import { WorkspaceMetadata } from '@/renderer/app/stores/app-store';
 import { action, observable, runInAction } from 'mobx';
+import * as path from 'path';
 
 export class WorkspaceStore {
     @observable public userConfig: WorkspaceConfig | undefined = undefined;
     @observable public configPath: string | undefined = undefined;
     @observable public sourceFilesList: string[] = [];
     @observable public workspacePaths: WorkspacePaths | undefined = undefined;
+    @observable public recentlyOpenedWorkspaces: WorkspaceMetadata[];
 
-    constructor(private readonly workspaceService: WorkspaceService) {}
+    constructor(private workspaceService: WorkspaceService) {
+        this.recentlyOpenedWorkspaces = LocalStorageAdapter.readRecentlyOpenedWorkspaces();
+    }
 
     @action.bound
     @withNotification({ onError: 'Failed creating a new project' })
@@ -56,9 +63,25 @@ export class WorkspaceStore {
     }
 
     @action.bound
+    @withNotification({ onError: 'Failed to open project directory' })
+    public openProjectDirectoryInFileExplorer() {
+        ElectronContext.shell.openItem(path.dirname(this.configPath!));
+    }
+
+    @action.bound
     @withNotification({ onError: 'Failed saving project', onSuccess: 'Saved' })
     public async save(): Promise<void> {
+        if (!this.configPath) {
+            // Happens when no project has been loaded but the user already pressed
+            // a global keyboard shortcut to save the project.
+            throw new SavingError('No project loaded.');
+        }
+
         await configService.writeConfigToPath(this.configPath!, this.userConfig!);
+
+        runInAction(() => {
+            this.registerRecentlyOpenedWorkspace(this.userConfig!.projectName, this.configPath!);
+        });
     }
 
     @action.bound
@@ -82,6 +105,13 @@ export class WorkspaceStore {
         return this.workspaceService.getVariableNameForFile(filePath);
     }
 
+    @action.bound
+    public deregisterRecentlyOpenedWorkspace(filePath: string): void {
+        this.recentlyOpenedWorkspaces = LocalStorageAdapter.deregisterRecentlyOpenedWorkspace(
+            filePath,
+        );
+    }
+
     private async loadConfigFromPath(path: string): Promise<void> {
         const userConfig = await configService.loadConfigFromPath(path);
         this.setNewConfig(path, userConfig);
@@ -92,6 +122,14 @@ export class WorkspaceStore {
             this.userConfig = userConfig;
             this.configPath = configPath;
             this.workspacePaths = new WorkspacePaths(configPath, userConfig);
+            this.registerRecentlyOpenedWorkspace(userConfig.projectName, configPath);
         });
+    }
+
+    private registerRecentlyOpenedWorkspace(projectName: string, filePath: string): void {
+        this.recentlyOpenedWorkspaces = LocalStorageAdapter.registerRecentlyOpenedWorkspace(
+            projectName,
+            filePath,
+        );
     }
 }

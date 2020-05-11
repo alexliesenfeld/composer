@@ -5,6 +5,7 @@ import { ipcRenderer, remote } from 'electron';
 
 export abstract class ElectronContext {
     public static readonly dialog = remote.dialog;
+    public static readonly shell = remote.shell;
 
     public static registerSaveProjectEventListener(listener: () => void) {
         ipcRenderer.on(IPCMainEvents.INIT_SAVE_PROJECT, listener);

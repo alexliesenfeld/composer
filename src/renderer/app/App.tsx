@@ -1,34 +1,40 @@
-import {NavButton} from '@/renderer/app/components/NavButton';
-import {When} from '@/renderer/app/components/When';
-import {FilesPage} from '@/renderer/app/containers/pages/files/FilesPage';
-import {LogPage} from '@/renderer/app/containers/pages/log/LogPage';
-import ConfigurationPage
-    from '@/renderer/app/containers/pages/configuration/ConfigurationPage';
+import { NavButton } from '@/renderer/app/components/NavButton';
+import { When } from '@/renderer/app/components/When';
+import ConfigurationPage from '@/renderer/app/containers/pages/configuration/ConfigurationPage';
+import { FilesPage } from '@/renderer/app/containers/pages/files/FilesPage';
+import { LogPage } from '@/renderer/app/containers/pages/log/LogPage';
+import SettingsPage from '@/renderer/app/containers/pages/settings/SettingsPage';
 import WelcomePage from '@/renderer/app/containers/pages/welcome/WelcomePage';
-import {AppStore, Page} from '@/renderer/app/stores/app-store';
-import {WorkspaceStore} from '@/renderer/app/stores/workspace-store';
+import { AppStore, Page } from '@/renderer/app/stores/app-store';
+import { WorkspaceStore } from '@/renderer/app/stores/workspace-store';
 import {
     Alignment,
     Button,
+    Classes,
     FocusStyleManager,
     Icon,
     Navbar,
     NavbarDivider,
     NavbarGroup,
     NavbarHeading,
+    Popover,
+    Position,
+    Tooltip,
 } from '@blueprintjs/core';
 import {
     ARCHIVE,
     COG,
     CONSOLE,
     DOCUMENT,
+    FLOPPY_DISK,
+    FOLDER_SHARED_OPEN,
     PLAY,
     SOCIAL_MEDIA,
     WRENCH,
 } from '@blueprintjs/icons/lib/esm/generated/iconNames';
 
 import '@public/style.scss';
-import {inject, observer} from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 import * as React from 'react';
 
 FocusStyleManager.onlyShowFocusOnTabs();
@@ -76,18 +82,38 @@ const App = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) =>
                     />
                 </NavbarGroup>
                 <NavbarGroup align={Alignment.RIGHT}>
-                    <NavButton
-                        target={Page.SETTINGS}
-                        icon={COG}
-                        selectedPage={props.appStore!.selectedPage}
-                        onPageSelected={onPageSelected}
-                    />
-                    <NavButton
-                        target={Page.LOG}
-                        icon={CONSOLE}
-                        selectedPage={props.appStore!.selectedPage}
-                        onPageSelected={onPageSelected}
-                    />
+                    <Tooltip content="Save" position={Position.BOTTOM}>
+                        <Button
+                            onClick={props.workspaceStore!.save}
+                            className={Classes.MINIMAL}
+                            icon={FLOPPY_DISK}
+                        />
+                    </Tooltip>
+                    <Tooltip content="Open project directory" position={Position.BOTTOM}>
+                        <Button
+                            onClick={props.workspaceStore!.openProjectDirectoryInFileExplorer}
+                            className={Classes.MINIMAL}
+                            icon={FOLDER_SHARED_OPEN}
+                        />
+                    </Tooltip>
+                    <NavbarDivider />
+                    <Tooltip content="Settings" position={Position.BOTTOM}>
+                        <NavButton
+                            target={Page.SETTINGS}
+                            icon={COG}
+                            selectedPage={props.appStore!.selectedPage}
+                            onPageSelected={onPageSelected}
+                        />
+                    </Tooltip>
+                    <NavbarDivider />
+                    <Tooltip content="Log Viewer" position={Position.BOTTOM}>
+                        <NavButton
+                            target={Page.LOG}
+                            icon={CONSOLE}
+                            selectedPage={props.appStore!.selectedPage}
+                            onPageSelected={onPageSelected}
+                        />
+                    </Tooltip>
                     <NavbarDivider />
                     <Button
                         icon={PLAY}
@@ -106,6 +132,9 @@ const App = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) =>
                 </When>
                 <When condition={props.appStore!.selectedPage === Page.LOG}>
                     <LogPage />
+                </When>
+                <When condition={props.appStore!.selectedPage === Page.SETTINGS}>
+                    <SettingsPage />
                 </When>
             </main>
         </div>

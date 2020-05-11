@@ -1,5 +1,5 @@
 import { OperationFailedError } from '@/renderer/app/model/errors';
-import { IPlugPluginType, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
+import { IPlugPluginType, Prototype, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
 import { IdeService } from '@/renderer/app/services/domain/common/ide-service';
 import {
     DEFAULT_FONT_FILE_NAME,
@@ -176,10 +176,11 @@ export class WorkspaceService {
     ): Promise<void> {
         const buildsDir = paths.getBuildsDir();
         const examplesPath = path.join(paths.getIPlug2BaseDirPath(), 'Examples');
+        const prototype = this.mapPluginTypeToPrototype(config.pluginType);
 
         await recreateDir(buildsDir);
         await Cpx.spawn(
-            `python duplicate.py ${config.prototype} ${config.projectName} ${config.manufacturerName} ${buildsDir}`,
+            `python duplicate.py ${prototype} ${config.projectName} ${config.manufacturerName} ${buildsDir}`,
             examplesPath,
         );
 
@@ -241,9 +242,11 @@ export class WorkspaceService {
         config: WorkspaceConfig,
     ): string[] {
         const projectBuildDir = paths.getProjectBuildDir();
-        return [`${config.projectName}.h`, `${config.projectName}.cpp`].map((file) =>
-            path.join(projectBuildDir, file),
-        );
+        const filesNames = [`${config.projectName}.h`, `${config.projectName}.cpp`];
+        if (this.mapPluginTypeToPrototype(config.pluginType) === Prototype.IPLUGINSTRUMENT) {
+            filesNames.push(`${config.projectName}_DSP.h`);
+        }
+        return filesNames.map((file) => path.join(projectBuildDir, file));
     }
 
     public async removeDefaultPrototypeFontFiles(
@@ -322,11 +325,12 @@ export class WorkspaceService {
                 ``,
                 `#define VST3_SUBCATEGORY "${config.vst3Subcategory}"`,
                 ``,
-                `#define APP_NUM_CHANNELS ${config.appInputChannels}`,
                 `#define APP_N_VECTOR_WAIT ${config.appVectorWaitMultiplier}`,
                 `#define APP_MULT ${config.appOutputMultiplier}`,
-                `#define APP_RESIZABLE ${this.mapBooleanForConfig(config.appResizable)}`,
                 `#define APP_SIGNAL_VECTOR_SIZE ${config.appSignalVectorSize}`,
+                // TODO: How useful are the following constants?
+                `#define APP_NUM_CHANNELS 2`,
+                `#define APP_RESIZABLE 0`,
                 `#define APP_COPY_AUV3 0`,
                 ``,
                 ``,
@@ -369,5 +373,11 @@ export class WorkspaceService {
 
     private mapBooleanForConfig(value: boolean) {
         return value ? '1' : '0';
+    }
+
+    private mapPluginTypeToPrototype(pluginType: IPlugPluginType): Prototype {
+        return pluginType === IPlugPluginType.INSTRUMENT
+            ? Prototype.IPLUGINSTRUMENT
+            : Prototype.IPLIGEFFECT;
     }
 }

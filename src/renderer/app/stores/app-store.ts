@@ -18,7 +18,7 @@ export enum Page {
     LOG,
 }
 
-export interface ProjectMetadata {
+export interface WorkspaceMetadata {
     projectName: string;
     filePath: string;
 }
@@ -31,47 +31,8 @@ export class AppStore
     @observable public loadingScreenText: string | undefined;
     @observable public loadingActivities: string[] = [];
     @observable public selectedPage: Page = Page.FILES;
-    @observable public recentlyOpenedProjects: ProjectMetadata[] = [];
 
-    constructor(public readonly ideName: string) {
-        const lastOpenedProjectsJson = localStorage.getItem('recentlyOpenedProjects');
-        if (lastOpenedProjectsJson) {
-            this.recentlyOpenedProjects = JSON.parse(lastOpenedProjectsJson);
-            this.recentlyOpenedProjects = this.recentlyOpenedProjects.filter((f) =>
-                fileExistsSync(f.filePath),
-            );
-        }
-    }
-
-    @action.bound
-    public addRecentlyOpenedProject(projectName: string, filePath: string): void {
-        this.removeRecentlyOpenedProject(projectName);
-        this.recentlyOpenedProjects = [
-            {
-                projectName,
-                filePath,
-            },
-            ...this.recentlyOpenedProjects,
-        ];
-        if (this.recentlyOpenedProjects.length > 5) {
-            this.recentlyOpenedProjects.pop();
-        }
-        localStorage.setItem('recentlyOpenedProjects', JSON.stringify(this.recentlyOpenedProjects));
-    }
-
-    @action.bound
-    public removeRecentlyOpenedProject(filePath: string): void {
-        const recentProjectIdx = this.recentlyOpenedProjects.findIndex(
-            (e) => e.filePath === filePath,
-        );
-        if (recentProjectIdx > -1) {
-            this.recentlyOpenedProjects.splice(recentProjectIdx, 1);
-            localStorage.setItem(
-                'recentlyOpenedProjects',
-                JSON.stringify(this.recentlyOpenedProjects),
-            );
-        }
-    }
+    constructor(public readonly ideName: string) {}
 
     @action.bound
     public showLoadingScreen(loadingText?: string): void {
