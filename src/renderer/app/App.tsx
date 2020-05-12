@@ -17,7 +17,6 @@ import {
     NavbarDivider,
     NavbarGroup,
     NavbarHeading,
-    Popover,
     Position,
     Tooltip,
 } from '@blueprintjs/core';
@@ -28,8 +27,8 @@ import {
     DOCUMENT,
     FLOPPY_DISK,
     FOLDER_SHARED_OPEN,
+    LAYERS,
     PLAY,
-    SOCIAL_MEDIA,
     WRENCH,
 } from '@blueprintjs/icons/lib/esm/generated/iconNames';
 
@@ -55,7 +54,7 @@ const App = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) =>
             <Navbar>
                 <NavbarGroup align={Alignment.LEFT}>
                     <NavbarHeading>
-                        <Icon icon={SOCIAL_MEDIA} iconSize={20} className="logo" />
+                        <Icon icon={LAYERS} iconSize={20} className="logo" />
                         <span> {props.workspaceStore!.userConfig!.projectName}</span>
                     </NavbarHeading>
                     <NavButton

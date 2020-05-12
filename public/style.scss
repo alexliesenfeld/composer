@@ -239,6 +239,10 @@ WelcomePage
   height: 40px;
 }
 
+.WelcomePage .recent-files-section .bp3-tree-node {
+  background-color: $dark-gray5;
+}
+
 .page {
   position: absolute;
   top: calc(#{$pt-navbar-height} + 1em);
