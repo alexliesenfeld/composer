@@ -86,7 +86,7 @@ export class WorkspaceStore {
 
     @action.bound
     @withLoadingScreen('Starting IDE')
-    @withNotification({ onError: 'Failed to start IDE', showLogButton: true })
+    @withNotification({ onError: 'Failed to start IDE' })
     public async startIDE() {
         await this.workspaceService.startIDE(this.userConfig!, this.workspacePaths!);
     }
@@ -95,7 +95,6 @@ export class WorkspaceStore {
     @withLoadingScreen('Loading recent project')
     @withNotification({
         onError: 'Failed load recently used project',
-        showLogButton: true,
     })
     public async loadConfigFromPathUi(path: string): Promise<void> {
         await this.loadConfigFromPath(path);

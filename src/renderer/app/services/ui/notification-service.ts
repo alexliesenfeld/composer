@@ -27,7 +27,7 @@ export function showErrorNotification(message: string, error: Error, withLogOnEr
                   text: 'Show Log',
               }
             : undefined,
-        timeout: 60000,
+        timeout: 10000,
     });
 }
 
@@ -36,7 +36,7 @@ export function showSuccessNotification(message: string) {
         message: `${message}${message.endsWith('.') ? '' : '.'}`,
         icon: 'tick-circle',
         intent: Intent.SUCCESS,
-        timeout: 2000,
+        timeout: 1000,
     });
 }
 

@@ -1,5 +1,6 @@
 import { OperationFailedError } from '@/renderer/app/model/errors';
 import { readFile, writeFile } from '@/renderer/app/services/domain/config-service';
+import { withRetry } from '@/renderer/app/util/common-utils';
 import { Fsx } from '@/renderer/app/util/fsx';
 import { assertReplace } from '@/renderer/app/util/string-utils';
 import * as AdmZip from 'adm-zip';
@@ -91,8 +92,13 @@ export const recreateDir = async (dirPath: string): Promise<string> => {
     if (await Fsx.exists(dirPath)) {
         await deleteDirectory(dirPath);
     }
-    await Fsx.mkdir(dirPath);
 
+    // When deleting large directories, the node API occasionally already
+    // returns before the contents on the disk are actually deleted, despite
+    // "await"ing a promise from a deleting operation. Recreating a file on
+    // the same path will therefore fail with an error. The following call
+    // will give it time to delete the contents.
+    await withRetry(() => Fsx.mkdir(dirPath), 250, 100);
     return dirPath;
 };
 

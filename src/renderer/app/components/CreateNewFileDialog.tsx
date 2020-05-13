@@ -1,4 +1,4 @@
-import { Button, Classes, Dialog, FormGroup, InputGroup, Intent } from '@blueprintjs/core';
+import { Button, Classes, Dialog, FormGroup, Icon, InputGroup, Intent } from '@blueprintjs/core';
 import { ADD } from '@blueprintjs/icons/lib/esm/generated/iconNames';
 import * as path from 'path';
 import * as React from 'react';
@@ -45,24 +45,36 @@ function CreateFileDialog(props: CreateNewFileDialogProps) {
         setValue(v.target.value);
     };
 
+    const reset = () => {
+        setTouched(false);
+        setValue('');
+    };
+
     const onAccept = () => {
         props.onAccept(value);
+        reset();
+    };
+
+    const onCancel = () => {
+        props.onCancel();
+        reset();
     };
 
     return (
         <Dialog
             isOpen={props.isOpen}
-            icon={ADD}
             onClose={props.onCancel}
-            title={props.title}
             usePortal={false}
+            title={props.title}
         >
-            <div className={Classes.DIALOG_BODY}>
+            <div className={`${Classes.DIALOG_BODY} ${Classes.ALERT_BODY}`}>
+                <Icon icon={ADD} intent={Intent.SUCCESS} iconSize={50} />
                 <FormGroup
                     label="File name"
                     labelFor="text-input"
                     helperText={errorText}
                     intent={errorText ? Intent.WARNING : Intent.NONE}
+                    style={{ width: '100%' }}
                 >
                     <InputGroup
                         id="text-input"
@@ -75,11 +87,11 @@ function CreateFileDialog(props: CreateNewFileDialogProps) {
             </div>
             <div className={Classes.DIALOG_FOOTER}>
                 <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-                    <Button onClick={props.onCancel}>Cancel</Button>
+                    <Button onClick={onCancel}>Cancel</Button>
                     <Button
                         onClick={onAccept}
-                        intent={Intent.PRIMARY}
-                        disabled={!!getErrorText(touched, value, props)}
+                        intent={Intent.SUCCESS}
+                        disabled={!touched || !!getErrorText(touched, value, props)}
                     >
                         Create
                     </Button>

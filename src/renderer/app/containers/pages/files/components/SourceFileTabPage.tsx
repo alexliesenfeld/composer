@@ -31,7 +31,7 @@ export const SourceFileTabPage = (props: SourceFileTabPageProps) => {
         <div className="SourceFileTabPage">
             <CreateFileDialog
                 isOpen={props.isCreateFileDialogOpen}
-                title={'Create new source file'}
+                title={'Create file'}
                 onAccept={props.onAcceptCreateSourceFileDialog}
                 onCancel={props.onCancelCreateSourceFileDialog}
                 fileExists={props.checkFileExists}
