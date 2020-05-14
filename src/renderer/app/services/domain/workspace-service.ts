@@ -1,5 +1,10 @@
 import { OperationFailedError } from '@/renderer/app/model/errors';
-import { IPlugPluginType, Prototype, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
+import {
+    IPlugPluginType,
+    PluginFormat,
+    Prototype,
+    WorkspaceConfig,
+} from '@/renderer/app/model/workspace-config';
 import { IdeService } from '@/renderer/app/services/domain/common/ide-service';
 import {
     DEFAULT_FONT_FILE_NAME,
@@ -26,7 +31,7 @@ import {
 import { Fsx } from '@/renderer/app/util/fsx';
 import * as git from '@/renderer/app/util/git-utils';
 import { multiline, prependFill } from '@/renderer/app/util/string-utils';
-import { enumValues } from '@/renderer/app/util/type-utils';
+import { enumEntries, enumKeys, enumValues } from '@/renderer/app/util/type-utils';
 import * as path from 'path';
 
 export class WorkspaceService {
@@ -71,7 +76,23 @@ export class WorkspaceService {
         await this.addUserImageFiles(paths);
 
         await this.ideService.reconfigureFileFilters(paths);
+
+        await this.excludeUnselectedPluginFormats(paths, config);
+
         await this.ideService.startIDEProject(paths);
+    }
+
+    private async excludeUnselectedPluginFormats(
+        paths: WorkspacePaths,
+        config: WorkspaceConfig,
+    ): Promise<void> {
+        const formatsToExclude = enumValues(PluginFormat).filter(
+            (format) => !config.formats.includes(format),
+        );
+
+        for (const format of formatsToExclude) {
+            await this.ideService.removeFormatFromIdeProject(paths, format, config);
+        }
     }
 
     @logActivity('Adding user font files to IDE project')

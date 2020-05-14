@@ -55,6 +55,8 @@ const ConfigurationPage = (props: { workspaceStore?: WorkspaceStore }) => {
                         iPlug2GitSha: value,
                     })
                 }
+                formats={userConfig!.formats}
+                setFormats={(value) => setUserConfig({ ...userConfig!, formats: value })}
             />
             <ManufacturerPanel
                 manufacturerName={userConfig!.manufacturerName}

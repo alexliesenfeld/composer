@@ -1,12 +1,11 @@
-import { DirectoryNotEmptyError } from '@/renderer/app/model/errors';
+import {DirectoryNotEmptyError} from '@/renderer/app/model/errors';
 import {
     IPlugPluginType,
     PluginFormat,
-    Prototype,
     Vst3Subcategory,
     WorkspaceConfig,
 } from '@/renderer/app/model/workspace-config';
-import { Fsx } from '@/renderer/app/util/fsx';
+import {Fsx} from '@/renderer/app/util/fsx';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -37,6 +36,7 @@ const createInitialConfig = (): WorkspaceConfig => {
         uiHeight: 600,
         uiWidth: 600,
         pluginVersion: '0.0.0',
+        formats: [PluginFormat.AU2, PluginFormat.VST3, PluginFormat.APP],
         mpe: false,
         midiOut: false,
         midiIn: false,

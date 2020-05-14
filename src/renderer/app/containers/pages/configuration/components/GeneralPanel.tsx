@@ -1,17 +1,7 @@
 import { SelectInput, SelectInputItem } from '@/renderer/app/components/SelectInput';
-import { IPlugPluginType, Prototype } from '@/renderer/app/model/workspace-config';
-import { enumValues } from '@/renderer/app/util/type-utils';
-import {
-    Card,
-    Divider,
-    Elevation,
-    FormGroup,
-    H5,
-    Icon,
-    InputGroup,
-    Popover,
-    Text,
-} from '@blueprintjs/core';
+import { IPlugPluginType, PluginFormat } from '@/renderer/app/model/workspace-config';
+import { enumEntries, enumValues } from '@/renderer/app/util/type-utils';
+import { Card, Checkbox, Divider, Elevation, FormGroup, H5, InputGroup } from '@blueprintjs/core';
 
 import * as React from 'react';
 
@@ -26,9 +16,17 @@ export interface GeneralPanelProps {
     setVst3UniqueId: (value: string) => void;
     pluginType: IPlugPluginType;
     setPluginType: (value: IPlugPluginType) => void;
+    formats: PluginFormat[];
+    setFormats: (value: PluginFormat[]) => void;
 }
 
 const GeneralPanel = (props: GeneralPanelProps) => {
+    const availablePluginFormats: PluginFormat[] = [
+        PluginFormat.VST3,
+        PluginFormat.APP,
+        PluginFormat.AU2,
+    ];
+
     const setProjectName = (e: React.ChangeEvent<HTMLInputElement>) => {
         props.setProjectName(e.target.value);
     };
@@ -104,6 +102,29 @@ const GeneralPanel = (props: GeneralPanelProps) => {
                     helperText={`Your unique plugin ID. This value needs to consist of four characters. Example: IPeF. This value represents the iPlug configuration constant PLUG_UNIQUE_ID.`}
                 >
                     <InputGroup value={props.vst3UniqueId} onChange={setVst3UniqueId} />
+                </FormGroup>
+                <FormGroup
+                    label="Formats"
+                    labelFor="text-input"
+                    inline={true}
+                    helperText={'The plugin formats that will be available.'}
+                >
+                    {availablePluginFormats.map((format) => {
+                        const onSelectFormat = () => {
+                            props.formats.includes(format)
+                                ? props.setFormats(props.formats.filter((e) => e != format))
+                                : props.setFormats([...props.formats, format]);
+                        };
+                        return (
+                            <Checkbox
+                                label={format.toString()}
+                                inline={true}
+                                key={format}
+                                checked={props.formats.includes(format)}
+                                onChange={onSelectFormat}
+                            />
+                        );
+                    })}
                 </FormGroup>
                 <FormGroup
                     label="iPlug2 Github Hash"

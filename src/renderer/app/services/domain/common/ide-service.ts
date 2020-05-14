@@ -1,3 +1,7 @@
+import {
+    PluginFormat,
+    WorkspaceConfig
+} from '@/renderer/app/model/workspace-config';
 import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 
 export type VariableNameTranslator = (filePath: string) => string;
@@ -25,7 +29,9 @@ export interface IdeService {
 
     addFontFileToIdeProject(paths: WorkspacePaths, variableName: string): Promise<void>;
 
-    addUserSourceFilesToIDEProject(context: WorkspacePaths): Promise<void>;
+    addUserSourceFilesToIDEProject(paths: WorkspacePaths): Promise<void>;
 
-    reconfigureFileFilters(context: WorkspacePaths): Promise<void>;
+    reconfigureFileFilters(paths: WorkspacePaths): Promise<void>;
+
+    removeFormatFromIdeProject(paths: WorkspacePaths, format: PluginFormat, config: WorkspaceConfig): Promise<void>;
 }

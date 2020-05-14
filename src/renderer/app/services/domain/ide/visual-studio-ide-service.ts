@@ -1,4 +1,5 @@
-import { AssertionError } from '@/renderer/app/model/errors';
+import { AssertionError, OperationFailedError } from '@/renderer/app/model/errors';
+import { PluginFormat, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
 import {
     IdeService,
     VariableNameTranslator,
@@ -7,11 +8,11 @@ import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 import { readFile, writeFile } from '@/renderer/app/services/domain/config-service';
 import { FilesService } from '@/renderer/app/services/domain/files-service';
 import { logActivity } from '@/renderer/app/services/ui/logging-service';
+import { assertArraySize, assertDefined } from '@/renderer/app/util/assertions';
 import { Cpx } from '@/renderer/app/util/cpx';
 import { assertReplaceContentInFile, deleteFileIfExists } from '@/renderer/app/util/file-utils';
 import {
     assertReplace,
-    assertReplaceAll,
     assertReplaceRegex,
     multiline,
     replace,
@@ -230,6 +231,55 @@ export class VisualStudioIdeService implements IdeService {
 
             await writeFile(projectFile, content);
         }
+    }
+
+    public async removeFormatFromIdeProject(
+        paths: WorkspacePaths,
+        format: PluginFormat,
+        config: WorkspaceConfig,
+    ): Promise<void> {
+        switch (format) {
+            case PluginFormat.AAX:
+                return this.removeFormatFromSolution(paths, `${config.projectName}-aax`);
+            case PluginFormat.APP:
+                return this.removeFormatFromSolution(paths, `${config.projectName}-app`);
+            case PluginFormat.VST2:
+                return this.removeFormatFromSolution(paths, `${config.projectName}-vst2`);
+            case PluginFormat.VST3:
+                return this.removeFormatFromSolution(paths, `${config.projectName}-vst3`);
+            case PluginFormat.AU2:
+            case PluginFormat.IOS:
+            case PluginFormat.WEB:
+                // Do nothing for AU, iOS, and Web
+                break;
+            default:
+        }
+    }
+
+    private async removeFormatFromSolution(
+        paths: WorkspacePaths,
+        formatKey: string,
+    ): Promise<void> {
+        const solutionPath = paths.getVisualStudioSolutionFilePath();
+
+        const regexLinebreak = '\\n|\\s{2,}';
+        const pattern = `^(.*)${formatKey}(.*){(.*)}(.*)(${regexLinebreak})EndProject`;
+        const regex = new RegExp(pattern, 'm'); // m = multiline mode
+
+        let content = await readFile(solutionPath);
+        const groups = content.match(regex);
+
+        assertArraySize('Solution format groups', groups, 6);
+
+        const formatBuildUuid = groups![3];
+
+        // Remove the actual entry for the format project
+        content = assertReplaceRegex(content, regex, '');
+
+        // Remove all builds (Debug, etc.) from the solution.
+        content = assertReplaceRegex(content, new RegExp(formatBuildUuid, 'g'), '');
+
+        return writeFile(solutionPath, content);
     }
 
     private async addSourceFileToVisualStudioProjectFile(

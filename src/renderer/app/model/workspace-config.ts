@@ -64,6 +64,7 @@ export interface WorkspaceConfig {
     projectName: string;
     pluginType: IPlugPluginType;
     pluginVersion: string;
+    formats: PluginFormat[];
     uiWidth: number;
     uiHeight: number;
     fps: number;
