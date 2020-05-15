@@ -7,8 +7,8 @@ import * as React from 'react';
 export interface VstPanelProps {
     vst3Subcategory: Vst3Subcategory;
     setVst3Subcategory: (value: Vst3Subcategory) => void;
-    vst3SdkGitSha: string;
-    setVst3SdkGitSha: (value: string) => void;
+    vst3SdkGitHash: string;
+    setVst3SdkGitHash: (value: string) => void;
 }
 
 const VstPanel = (props: VstPanelProps) => {
@@ -17,7 +17,7 @@ const VstPanel = (props: VstPanelProps) => {
     };
 
     const setVst3SdkGitSha = (e: React.ChangeEvent<HTMLInputElement>) => {
-        props.setVst3SdkGitSha(e.target.value);
+        props.setVst3SdkGitHash(e.target.value);
     };
 
     return (
@@ -50,7 +50,7 @@ const VstPanel = (props: VstPanelProps) => {
                         'The SHA1 Git hash that will be cloned from Github to retrieve the VST3 SDK. You need to provide the full hash with 40 characters.'
                     }
                 >
-                    <InputGroup value={props.vst3SdkGitSha} onChange={setVst3SdkGitSha} />
+                    <InputGroup value={props.vst3SdkGitHash} onChange={setVst3SdkGitSha} />
                 </FormGroup>
             </div>
         </Card>

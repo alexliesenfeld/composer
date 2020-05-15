@@ -1,6 +1,6 @@
 import { NavButton } from '@/renderer/app/components/NavButton';
 import { When } from '@/renderer/app/components/When';
-import ConfigurationPage from '@/renderer/app/containers/pages/configuration/ConfigurationPage';
+import {ConfigurationPage} from '@/renderer/app/containers/pages/configuration/ConfigurationPage';
 import { FilesPage } from '@/renderer/app/containers/pages/files/FilesPage';
 import { LogPage } from '@/renderer/app/containers/pages/log/LogPage';
 import SettingsPage from '@/renderer/app/containers/pages/settings/SettingsPage';
@@ -39,9 +39,9 @@ import * as React from 'react';
 FocusStyleManager.onlyShowFocusOnTabs();
 
 const App = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) => {
-    const { userConfig } = props.workspaceStore!;
+    const { workspaceConfig } = props.workspaceStore!;
 
-    if (!userConfig) {
+    if (!workspaceConfig) {
         return <WelcomePage />;
     }
 
@@ -55,7 +55,7 @@ const App = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) =>
                 <NavbarGroup align={Alignment.LEFT}>
                     <NavbarHeading>
                         <Icon icon={LAYERS} iconSize={20} className="logo" />
-                        <span> {props.workspaceStore!.userConfig!.projectName}</span>
+                        <span> {props.workspaceStore!.workspaceConfig!.projectName}</span>
                     </NavbarHeading>
                     <NavButton
                         text="Files"

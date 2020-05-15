@@ -46,7 +46,7 @@ export class WorkspaceService {
         await createDirIfNotExists(paths.getDependenciesDirPath());
 
         if (await this.shouldSetupIPlug2(paths)) {
-            await this.downloadIPlug2FromGithub(paths, config.iPlug2GitSha);
+            await this.downloadIPlug2FromGithub(paths, config.iPlug2GitHash);
         }
 
         if (await this.shouldSetupIPlug2Dependencies(paths)) {
@@ -181,7 +181,7 @@ export class WorkspaceService {
 
         await git.cloneRepo(
             'git clone https://github.com/steinbergmedia/vst3sdk.git',
-            config.vst3SdkGitSha,
+            config.vst3SdkGitHash,
             targetDir,
         );
         await git.initSubmodule('pluginterfaces', targetDir);

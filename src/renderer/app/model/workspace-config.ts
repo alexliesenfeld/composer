@@ -87,8 +87,8 @@ export interface WorkspaceConfig {
     audioUnitBundleDomain: string;
     vst3Subcategory: Vst3Subcategory;
     vstUniqueId: string;
-    iPlug2GitSha: string;
-    vst3SdkGitSha: string;
+    iPlug2GitHash: string;
+    vst3SdkGitHash: string;
     appVectorWaitMultiplier: number;
     appOutputMultiplier: number;
     appSignalVectorSize: number;

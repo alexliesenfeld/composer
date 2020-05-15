@@ -15,7 +15,7 @@ import { action, observable, runInAction } from 'mobx';
 import * as path from 'path';
 
 export class WorkspaceStore {
-    @observable public userConfig: WorkspaceConfig | undefined = undefined;
+    @observable public workspaceConfig: WorkspaceConfig | undefined = undefined;
     @observable public configPath: string | undefined = undefined;
     @observable public sourceFilesList: string[] = [];
     @observable public workspacePaths: WorkspacePaths | undefined = undefined;
@@ -77,10 +77,10 @@ export class WorkspaceStore {
             throw new SavingError('No project loaded.');
         }
 
-        await configService.writeConfigToPath(this.configPath!, this.userConfig!);
+        await configService.writeConfigToPath(this.configPath!, this.workspaceConfig!);
 
         runInAction(() => {
-            this.registerRecentlyOpenedWorkspace(this.userConfig!.projectName, this.configPath!);
+            this.registerRecentlyOpenedWorkspace(this.workspaceConfig!.projectName, this.configPath!);
         });
     }
 
@@ -88,7 +88,7 @@ export class WorkspaceStore {
     @withLoadingScreen('Starting IDE')
     @withNotification({ onError: 'Failed to start IDE' })
     public async startIDE() {
-        await this.workspaceService.startIDE(this.userConfig!, this.workspacePaths!);
+        await this.workspaceService.startIDE(this.workspaceConfig!, this.workspacePaths!);
     }
 
     @action.bound
@@ -111,17 +111,17 @@ export class WorkspaceStore {
         );
     }
 
-    private async loadConfigFromPath(path: string): Promise<void> {
-        const userConfig = await configService.loadConfigFromPath(path);
-        this.setNewConfig(path, userConfig);
+    private async loadConfigFromPath(configPath: string): Promise<void> {
+        const userConfig = await configService.loadConfigFromPath(configPath);
+        this.setNewConfig(configPath, userConfig);
+        this.registerRecentlyOpenedWorkspace(userConfig.projectName, configPath);
     }
 
     private setNewConfig(configPath: string, userConfig: WorkspaceConfig) {
         runInAction(() => {
-            this.userConfig = userConfig;
+            this.workspaceConfig = userConfig;
             this.configPath = configPath;
             this.workspacePaths = new WorkspacePaths(configPath, userConfig);
-            this.registerRecentlyOpenedWorkspace(userConfig.projectName, configPath);
         });
     }
 
