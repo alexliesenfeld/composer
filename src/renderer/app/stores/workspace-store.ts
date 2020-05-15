@@ -11,18 +11,20 @@ import {
     withNotification,
 } from '@/renderer/app/services/ui/notification-service';
 import { WorkspaceMetadata } from '@/renderer/app/stores/app-store';
-import { action, observable, runInAction } from 'mobx';
+import { action, computed, observable, runInAction } from 'mobx';
 import * as path from 'path';
 
 export class WorkspaceStore {
     @observable public workspaceConfig: WorkspaceConfig | undefined = undefined;
     @observable public configPath: string | undefined = undefined;
-    @observable public sourceFilesList: string[] = [];
-    @observable public workspacePaths: WorkspacePaths | undefined = undefined;
     @observable public recentlyOpenedWorkspaces: WorkspaceMetadata[];
 
     constructor(private workspaceService: WorkspaceService) {
         this.recentlyOpenedWorkspaces = LocalStorageAdapter.readRecentlyOpenedWorkspaces();
+    }
+
+    @computed({ keepAlive: true }) get workspacePaths() {
+        return new WorkspacePaths(this.configPath!, this.workspaceConfig!);
     }
 
     @action.bound
@@ -91,7 +93,7 @@ export class WorkspaceStore {
     @withLoadingScreen('Starting IDE')
     @withNotification({ onError: 'Failed to start IDE' })
     public async startIDE() {
-        await this.workspaceService.startIDE(this.workspaceConfig!, this.workspacePaths!);
+        await this.workspaceService.startIDE(this.workspaceConfig!, this.workspacePaths);
     }
 
     @action.bound
@@ -124,7 +126,6 @@ export class WorkspaceStore {
         runInAction(() => {
             this.workspaceConfig = userConfig;
             this.configPath = configPath;
-            this.workspacePaths = new WorkspacePaths(configPath, userConfig);
         });
     }
 

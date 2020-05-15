@@ -17,7 +17,7 @@ import * as React from 'react';
 
 @inject('workspaceStore')
 @observer
-export class ConfigurationPage extends React.PureComponent<{ workspaceStore?: WorkspaceStore }> {
+export class ConfigurationPage extends React.Component<{ workspaceStore?: WorkspaceStore }> {
     setProjectName = (name: string) => {
         this.props.workspaceStore!.workspaceConfig!.projectName = name;
     };
