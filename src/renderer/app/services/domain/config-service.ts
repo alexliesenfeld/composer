@@ -1,11 +1,11 @@
-import {DirectoryNotEmptyError} from '@/renderer/app/model/errors';
+import { DirectoryNotEmptyError } from '@/renderer/app/model/errors';
 import {
     IPlugPluginType,
     PluginFormat,
     Vst3Subcategory,
     WorkspaceConfig,
 } from '@/renderer/app/model/workspace-config';
-import {Fsx} from '@/renderer/app/util/fsx';
+import { Fsx } from '@/renderer/app/util/fsx';
 import * as fs from 'fs';
 import * as path from 'path';
 

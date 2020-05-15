@@ -1,6 +1,6 @@
 import { SelectInput, SelectInputItem } from '@/renderer/app/components/SelectInput';
 import { IPlugPluginType, PluginFormat } from '@/renderer/app/model/workspace-config';
-import { enumEntries, enumValues } from '@/renderer/app/util/type-utils';
+import { enumValues } from '@/renderer/app/util/type-utils';
 import { Card, Checkbox, Divider, Elevation, FormGroup, H5, InputGroup } from '@blueprintjs/core';
 
 import * as React from 'react';

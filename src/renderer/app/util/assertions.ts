@@ -1,4 +1,4 @@
-import { AssertionError, OperationFailedError } from '@/renderer/app/model/errors';
+import { AssertionError } from '@/renderer/app/model/errors';
 
 export const assertDefined = <T>(entityReference: string, arr: T[] | null | undefined) => {
     if (!arr) {

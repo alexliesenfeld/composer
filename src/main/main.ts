@@ -1,4 +1,4 @@
-import {IPCMainEvents} from '@common/constants';
+import { IPCMainEvents } from '@common/constants';
 import { app, BrowserWindow, globalShortcut } from 'electron';
 import electronDevtoolsInstaller, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import * as path from 'path';

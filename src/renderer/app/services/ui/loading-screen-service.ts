@@ -11,12 +11,14 @@ export const setLoadingServiceContext = (context: LoadingServiceContext) =>
 
 export function withLoadingScreen(description: string) {
     return function (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         target: any,
         propertyKey: string,
         descriptor: PropertyDescriptor,
     ): PropertyDescriptor {
         const originalMethod = descriptor.value;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         descriptor.value = function (...args: any[]) {
             // Set the loading frame text
             loadingScreenContext!.showLoadingScreen(description);

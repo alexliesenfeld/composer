@@ -1,6 +1,6 @@
 import { NavButton } from '@/renderer/app/components/NavButton';
 import { When } from '@/renderer/app/components/When';
-import {ConfigurationPage} from '@/renderer/app/containers/pages/configuration/ConfigurationPage';
+import { ConfigurationPage } from '@/renderer/app/containers/pages/configuration/ConfigurationPage';
 import { FilesPage } from '@/renderer/app/containers/pages/files/FilesPage';
 import { LogPage } from '@/renderer/app/containers/pages/log/LogPage';
 import SettingsPage from '@/renderer/app/containers/pages/settings/SettingsPage';

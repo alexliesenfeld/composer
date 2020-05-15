@@ -1,6 +1,5 @@
 import {
     Card,
-    Checkbox,
     Divider,
     Elevation,
     FormGroup,
@@ -25,6 +24,22 @@ export interface UserInterfacePanelProps {
 }
 
 const UserInterfacePanel = (props: UserInterfacePanelProps) => {
+    const setUiWidth = (value: number) => {
+        props.setUiWidth(value);
+    };
+
+    const setUiHeight = (value: number) => {
+        props.setUiHeight(value);
+    };
+
+    const setFps = (value: number) => {
+        props.setFps(value);
+    };
+
+    const setUiEnabled = (event: React.FormEvent<HTMLInputElement>) => {
+        props.setUiEnabled(event.currentTarget.value === 'yes');
+    };
+
     return (
         <Card elevation={Elevation.TWO}>
             <H5>Graphical User Interface</H5>
@@ -40,7 +55,7 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                     <NumericInput
                         fill={true}
                         value={props.uiWidth}
-                        onValueChange={(value) => props.setUiWidth(value)}
+                        onValueChange={setUiWidth}
                         disabled={!props.uiEnabled}
                     />
                 </FormGroup>
@@ -54,7 +69,7 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                     <NumericInput
                         fill={true}
                         value={props.uiHeight}
-                        onValueChange={(value) => props.setUiHeight(value)}
+                        onValueChange={setUiHeight}
                         disabled={!props.uiEnabled}
                     />
                 </FormGroup>
@@ -68,7 +83,7 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                     <NumericInput
                         fill={true}
                         value={props.fps}
-                        onValueChange={(value) => props.setFps(value)}
+                        onValueChange={setFps}
                         disabled={!props.uiEnabled}
                     />
                 </FormGroup>
@@ -80,9 +95,7 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                 >
                     <RadioGroup
                         inline={true}
-                        onChange={(value) =>
-                            props.setUiEnabled(value.currentTarget.value === 'yes')
-                        }
+                        onChange={setUiEnabled}
                         selectedValue={props.uiEnabled ? 'yes' : 'no'}
                     >
                         <Radio label="Yes" value="yes" />

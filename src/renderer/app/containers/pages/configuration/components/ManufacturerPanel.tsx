@@ -15,6 +15,26 @@ export interface ManufacturerPanelProps {
 }
 
 const ManufacturerPanel = (props: ManufacturerPanelProps) => {
+    const setManufacturerName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        props.setManufacturerName(e.target.value);
+    };
+
+    const setManufacturerId = (e: React.ChangeEvent<HTMLInputElement>) => {
+        props.setManufacturerId(e.target.value);
+    };
+
+    const setManufacturerEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
+        props.setManufacturerEmail(e.target.value);
+    };
+
+    const setManufacturerCopyrightNotice = (e: React.ChangeEvent<HTMLInputElement>) => {
+        props.setManufacturerCopyrightNotice(e.target.value);
+    };
+
+    const setManufacturerWebsite = (e: React.ChangeEvent<HTMLInputElement>) => {
+        props.setManufacturerWebsite(e.target.value);
+    };
+
     return (
         <Card elevation={Elevation.TWO}>
             <H5>Manufacturer</H5>
@@ -29,9 +49,7 @@ const ManufacturerPanel = (props: ManufacturerPanelProps) => {
                     <InputGroup
                         id="text-input"
                         value={props.manufacturerName}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            props.setManufacturerName(e.target.value)
-                        }
+                        onChange={setManufacturerName}
                     />
                 </FormGroup>
                 <FormGroup
@@ -43,9 +61,7 @@ const ManufacturerPanel = (props: ManufacturerPanelProps) => {
                     <InputGroup
                         id="manufacturer-id"
                         value={props.manufacturerId}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            props.setManufacturerId(e.target.value)
-                        }
+                        onChange={setManufacturerId}
                     />
                 </FormGroup>
                 <FormGroup
@@ -57,9 +73,7 @@ const ManufacturerPanel = (props: ManufacturerPanelProps) => {
                     <InputGroup
                         id="text-input"
                         value={props.manufacturerEmail}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            props.setManufacturerEmail(e.target.value)
-                        }
+                        onChange={setManufacturerEmail}
                     />
                 </FormGroup>
                 <FormGroup
@@ -71,9 +85,7 @@ const ManufacturerPanel = (props: ManufacturerPanelProps) => {
                     <InputGroup
                         id="text-input"
                         value={props.manufacturerCopyrightNotice}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            props.setManufacturerCopyrightNotice(e.target.value)
-                        }
+                        onChange={setManufacturerCopyrightNotice}
                     />
                 </FormGroup>
                 <FormGroup
@@ -85,9 +97,7 @@ const ManufacturerPanel = (props: ManufacturerPanelProps) => {
                     <InputGroup
                         id="text-input"
                         value={props.manufacturerWebsite}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            props.setManufacturerWebsite(e.target.value)
-                        }
+                        onChange={setManufacturerWebsite}
                     />
                 </FormGroup>
             </div>

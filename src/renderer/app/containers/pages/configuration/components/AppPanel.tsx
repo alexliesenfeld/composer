@@ -1,13 +1,4 @@
-import {
-    Card,
-    Divider,
-    Elevation,
-    FormGroup,
-    H5,
-    NumericInput,
-    Radio,
-    RadioGroup,
-} from '@blueprintjs/core';
+import { Card, Divider, Elevation, FormGroup, H5, NumericInput } from '@blueprintjs/core';
 
 import * as React from 'react';
 

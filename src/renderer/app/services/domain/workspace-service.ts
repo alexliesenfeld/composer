@@ -31,7 +31,7 @@ import {
 import { Fsx } from '@/renderer/app/util/fsx';
 import * as git from '@/renderer/app/util/git-utils';
 import { multiline, prependFill } from '@/renderer/app/util/string-utils';
-import { enumEntries, enumKeys, enumValues } from '@/renderer/app/util/type-utils';
+import { enumValues } from '@/renderer/app/util/type-utils';
 import * as path from 'path';
 
 export class WorkspaceService {

@@ -42,6 +42,10 @@ export class FileBrowser extends React.Component<FileBrowserProps> {
         }
     }
 
+    onNodeClick = (node: ITreeNode<string>) => {
+        this.props.onSelectFile(node.id as string);
+    };
+
     render() {
         return (
             <div className={`FileBrowser ${this.props.className ? this.props.className : ''}`}>
@@ -74,6 +78,10 @@ export class FileBrowser extends React.Component<FileBrowserProps> {
                         <Tree
                             className="file-tree"
                             contents={this.props.fileList.map((fileName) => {
+                                const onButtonClick = () => {
+                                    this.props.onDelete(fileName);
+                                };
+
                                 return {
                                     id: fileName,
                                     hasCaret: false,
@@ -86,13 +94,13 @@ export class FileBrowser extends React.Component<FileBrowserProps> {
                                                 small={true}
                                                 minimal={true}
                                                 icon={TRASH}
-                                                onClick={() => this.props.onDelete(fileName)}
+                                                onClick={onButtonClick}
                                             />
                                         </div>
                                     ),
                                 } as ITreeNode;
                             })}
-                            onNodeClick={(node) => this.props.onSelectFile(node.id as string)}
+                            onNodeClick={this.onNodeClick}
                         />
                     </Card>
                 </div>

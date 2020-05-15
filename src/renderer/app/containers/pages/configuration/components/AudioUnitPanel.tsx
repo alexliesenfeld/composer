@@ -1,6 +1,3 @@
-import { SelectInput } from '@/renderer/app/components/SelectInput';
-import { IPlugPluginType } from '@/renderer/app/model/workspace-config';
-import { enumValues } from '@/renderer/app/util/type-utils';
 import { Card, Divider, Elevation, FormGroup, H5, InputGroup } from '@blueprintjs/core';
 import * as React from 'react';
 
@@ -14,6 +11,17 @@ export interface AudioUnitPanelProps {
 }
 
 const AudioUnitPanel = (props: AudioUnitPanelProps) => {
+    const setBundleName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        props.setBundleName(e.target.value);
+    };
+
+    const setBundleManufacturer = (e: React.ChangeEvent<HTMLInputElement>) => {
+        props.setBundleManufacturer(e.target.value);
+    };
+
+    const setBundleDomain = (e: React.ChangeEvent<HTMLInputElement>) => {
+        props.setBundleDomain(e.target.value);
+    };
     return (
         <Card elevation={Elevation.TWO}>
             <H5>Audio Unit (AU)</H5>
@@ -27,13 +35,7 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
                         'The bundle name that will be used for Xcode projects. This value represents the iPlug configuration constant BUNDLE_NAME.'
                     }
                 >
-                    <InputGroup
-                        id="text-input"
-                        value={props.bundleName}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            props.setBundleName(e.target.value)
-                        }
-                    />
+                    <InputGroup id="text-input" value={props.bundleName} onChange={setBundleName} />
                 </FormGroup>
                 <FormGroup
                     label="Bundle Manufacturer"
@@ -46,9 +48,7 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
                     <InputGroup
                         id="text-input"
                         value={props.bundleManufacturer}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            props.setBundleManufacturer(e.target.value)
-                        }
+                        onChange={setBundleManufacturer}
                     />
                 </FormGroup>
 
@@ -63,9 +63,7 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
                     <InputGroup
                         id="text-input"
                         value={props.bundleDomain}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            props.setBundleDomain(e.target.value)
-                        }
+                        onChange={setBundleDomain}
                     />
                 </FormGroup>
             </div>

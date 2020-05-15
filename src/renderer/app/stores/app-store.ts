@@ -2,7 +2,6 @@ import { LoadingServiceContext } from '@/renderer/app/services/ui/loading-screen
 import { LoggingServiceContext, LogLevel } from '@/renderer/app/services/ui/logging-service';
 import { NotificationServiceContext } from '@/renderer/app/services/ui/notification-service';
 import { action, observable } from 'mobx';
-import { fileExistsSync } from 'tsconfig-paths/lib/filesystem';
 
 export interface AppStoreLogMessage {
     level: LogLevel;

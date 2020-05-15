@@ -1,7 +1,4 @@
-import {
-    PluginFormat,
-    WorkspaceConfig
-} from '@/renderer/app/model/workspace-config';
+import { PluginFormat, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
 import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 
 export type VariableNameTranslator = (filePath: string) => string;
@@ -33,5 +30,9 @@ export interface IdeService {
 
     reconfigureFileFilters(paths: WorkspacePaths): Promise<void>;
 
-    removeFormatFromIdeProject(paths: WorkspacePaths, format: PluginFormat, config: WorkspaceConfig): Promise<void>;
+    removeFormatFromIdeProject(
+        paths: WorkspacePaths,
+        format: PluginFormat,
+        config: WorkspaceConfig,
+    ): Promise<void>;
 }

@@ -1,47 +1,51 @@
 import { Button, MenuItem } from '@blueprintjs/core';
-import { ItemRenderer, Select } from '@blueprintjs/select';
+import { Select } from '@blueprintjs/select';
+import { IItemRendererProps } from '@blueprintjs/select/src/common/itemRenderer';
 import * as React from 'react';
 
-export interface SelectInputItem<T> {
-    key: T;
+export type KeyType = string | number | undefined;
+
+export interface SelectInputItem<KeyType> {
+    key: KeyType;
     text: string;
 }
+const TypedSelect = Select.ofType<SelectInputItem<KeyType>>();
 
-const stringItemRenderer: ItemRenderer<SelectInputItem<any>> = (
-    item: SelectInputItem<any>,
-    { handleClick, modifiers, query },
+const stringItemRenderer = (
+    item: SelectInputItem<KeyType>,
+    itemRendererProps: IItemRendererProps,
 ) => {
-    if (!modifiers.matchesPredicate) {
+    if (!itemRendererProps.modifiers.matchesPredicate) {
         return null;
     }
 
     return (
         <MenuItem
-            active={modifiers.active}
-            disabled={modifiers.disabled}
-            //label={itemText}
+            active={itemRendererProps.modifiers.active}
+            disabled={itemRendererProps.modifiers.disabled}
             key={item.key}
-            onClick={handleClick}
+            onClick={itemRendererProps.handleClick}
             text={item.text}
             shouldDismissPopover={false}
         />
     );
 };
 
-export const SelectInput = <T extends unknown>(props: {
-    items: SelectInputItem<T>[];
-    selectedItemKey: T;
-    onClick: (item: SelectInputItem<T>) => void;
+export const SelectInput = (props: {
+    items: SelectInputItem<KeyType>[];
+    selectedItemKey: KeyType;
+    onClick: (item: SelectInputItem<KeyType>) => void;
 }) => {
-    const TypedSelect = Select.ofType<SelectInputItem<T>>();
-
     const selectedItem = props.items.find((e) => e.key == props.selectedItemKey);
+    const onItemSelect = (item: SelectInputItem<KeyType>) => {
+        props.onClick(item);
+    };
 
     return (
         <TypedSelect
             className="SelectInput"
             items={props.items}
-            onItemSelect={(item) => props.onClick(item)}
+            onItemSelect={onItemSelect}
             itemRenderer={stringItemRenderer}
             filterable={false}
             popoverProps={{

@@ -17,6 +17,7 @@ let loggingContext: LoggingServiceContext | undefined;
 export const setLoggingServiceContext = (context: LoggingServiceContext) =>
     (loggingContext = context);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const substitute = (input: string, variables: RegExpMatchArray | null, args: any[]): string => {
     if (!variables) {
         return input;
@@ -35,12 +36,14 @@ export function logActivity(description: string) {
     const variables: RegExpMatchArray | null = description.match(/#{([0-9]+)}/g);
 
     return function (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         target: any,
         propertyKey: string,
         descriptor: PropertyDescriptor,
     ): PropertyDescriptor {
         const originalMethod = descriptor.value;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         descriptor.value = function (...args: any[]) {
             // Set the loading frame text
             const substitutedDescription = substitute(description, variables, args);
@@ -56,6 +59,7 @@ export function logActivity(description: string) {
 
                 // The description will be popped from the execution context once the promise resolves
                 promisifiedResult
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     .then((...args: any[]) => {
                         loggingContext!.logActivityEnded(activityId);
 

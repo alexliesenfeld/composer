@@ -1,13 +1,10 @@
 import {
     Card,
-    Checkbox,
     Divider,
     Elevation,
     FormGroup,
     H5,
     NumericInput,
-    Popover,
-    Position,
     Radio,
     RadioGroup,
 } from '@blueprintjs/core';
@@ -31,6 +28,22 @@ export interface InputOutputPanelProps {
 }
 
 const InputOutputPanel = (props: InputOutputPanelProps) => {
+    const setMidiIn = (value: React.FormEvent<HTMLInputElement>) => {
+        props.setMidiIn(value.currentTarget.value === 'yes');
+    };
+
+    const setMidiOut = (value: React.FormEvent<HTMLInputElement>) => {
+        props.setMidiOut(value.currentTarget.value === 'yes');
+    };
+
+    const setMpe = (value: React.FormEvent<HTMLInputElement>) => {
+        props.setMpe(value.currentTarget.value === 'yes');
+    };
+
+    const setStateChunks = (value: React.FormEvent<HTMLInputElement>) => {
+        props.setStateChunks(value.currentTarget.value === 'yes');
+    };
+
     return (
         <Card elevation={Elevation.TWO}>
             <H5>Input/Output</H5>
@@ -47,7 +60,7 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     <NumericInput
                         fill={true}
                         value={props.inputChannels}
-                        onValueChange={(value) => props.setInputChannels(value)}
+                        onValueChange={props.setInputChannels}
                     />
                 </FormGroup>
                 <FormGroup
@@ -61,7 +74,7 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     <NumericInput
                         fill={true}
                         value={props.outputChannels}
-                        onValueChange={(value) => props.setOutputChannels(value)}
+                        onValueChange={props.setOutputChannels}
                     />
                 </FormGroup>
                 <FormGroup
@@ -75,7 +88,7 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     <NumericInput
                         fill={true}
                         value={props.pluginLatency}
-                        onValueChange={(value) => props.setPluginLatency(value)}
+                        onValueChange={props.setPluginLatency}
                     />
                 </FormGroup>
 
@@ -89,7 +102,7 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                 >
                     <RadioGroup
                         inline={true}
-                        onChange={(value) => props.setMidiIn(value.currentTarget.value === 'yes')}
+                        onChange={setMidiIn}
                         selectedValue={props.midiIn ? 'yes' : 'no'}
                     >
                         <Radio label="Yes" value="yes" />
@@ -107,7 +120,7 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                 >
                     <RadioGroup
                         inline={true}
-                        onChange={(value) => props.setMidiOut(value.currentTarget.value === 'yes')}
+                        onChange={setMidiOut}
                         selectedValue={props.midiOut ? 'yes' : 'no'}
                     >
                         <Radio label="Yes" value="yes" />
@@ -125,7 +138,7 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                 >
                     <RadioGroup
                         inline={true}
-                        onChange={(value) => props.setMpe(value.currentTarget.value === 'yes')}
+                        onChange={setMpe}
                         selectedValue={props.mpe ? 'yes' : 'no'}
                     >
                         <Radio label="Yes" value="yes" />
@@ -143,9 +156,7 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                 >
                     <RadioGroup
                         inline={true}
-                        onChange={(value) =>
-                            props.setStateChunks(value.currentTarget.value === 'yes')
-                        }
+                        onChange={setStateChunks}
                         selectedValue={props.stateChunks ? 'yes' : 'no'}
                     >
                         <Radio label="Yes" value="yes" />

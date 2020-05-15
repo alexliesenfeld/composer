@@ -1,4 +1,4 @@
-import { AssertionError, OperationFailedError } from '@/renderer/app/model/errors';
+import { AssertionError } from '@/renderer/app/model/errors';
 import { PluginFormat, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
 import {
     IdeService,
@@ -8,7 +8,7 @@ import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 import { readFile, writeFile } from '@/renderer/app/services/domain/config-service';
 import { FilesService } from '@/renderer/app/services/domain/files-service';
 import { logActivity } from '@/renderer/app/services/ui/logging-service';
-import { assertArraySize, assertDefined } from '@/renderer/app/util/assertions';
+import { assertArraySize } from '@/renderer/app/util/assertions';
 import { Cpx } from '@/renderer/app/util/cpx';
 import { assertReplaceContentInFile, deleteFileIfExists } from '@/renderer/app/util/file-utils';
 import {

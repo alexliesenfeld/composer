@@ -80,7 +80,10 @@ export class WorkspaceStore {
         await configService.writeConfigToPath(this.configPath!, this.workspaceConfig!);
 
         runInAction(() => {
-            this.registerRecentlyOpenedWorkspace(this.workspaceConfig!.projectName, this.configPath!);
+            this.registerRecentlyOpenedWorkspace(
+                this.workspaceConfig!.projectName,
+                this.configPath!,
+            );
         });
     }
 

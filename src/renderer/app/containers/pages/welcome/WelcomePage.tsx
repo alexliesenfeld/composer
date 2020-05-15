@@ -22,6 +22,10 @@ import { inject, observer } from 'mobx-react';
 import * as React from 'react';
 
 const WelcomePage = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) => {
+    const onNodeClick = (node: ITreeNode) => {
+        return props.workspaceStore!.loadConfigFromPathUi(node.id as string);
+    };
+
     return (
         <div className="WelcomePage">
             <Card>
@@ -52,6 +56,15 @@ const WelcomePage = (props: { appStore?: AppStore; workspaceStore?: WorkspaceSto
                         <Tree
                             contents={props.workspaceStore!.recentlyOpenedWorkspaces.map(
                                 (metadata) => {
+                                    const onDeleteButtonClicked = (
+                                        e: React.MouseEvent<HTMLElement>,
+                                    ) => {
+                                        props.workspaceStore!.deregisterRecentlyOpenedWorkspace(
+                                            metadata.filePath,
+                                        );
+                                        e.stopPropagation();
+                                    };
+
                                     return {
                                         id: metadata.filePath,
                                         hasCaret: false,
@@ -69,21 +82,14 @@ const WelcomePage = (props: { appStore?: AppStore; workspaceStore?: WorkspaceSto
                                                     small={true}
                                                     minimal={true}
                                                     icon={TRASH}
-                                                    onClick={(e: React.MouseEvent<HTMLElement>) => {
-                                                        props.workspaceStore!.deregisterRecentlyOpenedWorkspace(
-                                                            metadata.filePath,
-                                                        );
-                                                        e.stopPropagation();
-                                                    }}
+                                                    onClick={onDeleteButtonClicked}
                                                 />
                                             </div>
                                         ),
                                     } as ITreeNode;
                                 },
                             )}
-                            onNodeClick={(node) => {
-                                props.workspaceStore!.loadConfigFromPathUi(node.id as string);
-                            }}
+                            onNodeClick={onNodeClick}
                         />
                     </div>
                 </When>

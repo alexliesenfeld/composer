@@ -1,4 +1,4 @@
-import { AssertionError, OperationFailedError } from '@/renderer/app/model/errors';
+import { AssertionError } from '@/renderer/app/model/errors';
 import { EOL } from 'ts-loader/dist/constants';
 
 export const removeSpaces = (value: string) => value.replace(' ', '');
@@ -47,8 +47,6 @@ export const assertReplaceRegex = (content: string, from: RegExp, to: string): s
     }
     return newContent;
 };
-
-
 
 export const times = (text: string, repeatTimes: number): string => {
     let content = '';

@@ -48,12 +48,14 @@ export interface WithNotificationOptions {
 
 export function withNotification(options: WithNotificationOptions) {
     return function (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         target: any,
         propertyKey: string,
         descriptor: PropertyDescriptor,
     ): PropertyDescriptor {
         const originalMethod = descriptor.value;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         descriptor.value = function (...args: any[]) {
             // Execute the actual / original method
             try {
@@ -64,6 +66,7 @@ export function withNotification(options: WithNotificationOptions) {
                 const promisifiedResult = Promise.resolve(result);
 
                 // Show a message if the promise resolves successfully
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 promisifiedResult.then((...args: any[]) => {
                     if (options.onSuccess) {
                         showSuccessNotification(options.onSuccess);

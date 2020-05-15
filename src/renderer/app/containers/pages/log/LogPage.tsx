@@ -36,7 +36,7 @@ export class LogPage extends React.PureComponent<{ appStore?: AppStore }> {
     render() {
         return (
             <div className="LogPage custom-scrollbar" ref={this.element}>
-                <ResizeSensor onResize={() => this.scrollLogToBottom()}>
+                <ResizeSensor onResize={this.scrollLogToBottom}>
                     <Pre>
                         {this.props.appStore!.logMessages.map(
                             (e: AppStoreLogMessage, index: number) => {

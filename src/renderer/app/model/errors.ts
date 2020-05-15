@@ -1,4 +1,5 @@
 export class CustomError extends Error {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(type: any, message?: string) {
         super(message);
         // see: https://github.com/Microsoft/TypeScript-wiki/blob/master/Breaking-Changes.md#extending-built-ins-like-error-array-and-map-may-no-longer-work
