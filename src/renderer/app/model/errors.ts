@@ -1,3 +1,4 @@
+
 export class CustomError extends Error {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(type: any, message?: string) {
@@ -6,6 +7,12 @@ export class CustomError extends Error {
         // see: https://joefallon.net/2018/09/typescript-try-catch-finally-and-custom-errors/
         Object.setPrototypeOf(this, type.prototype);
         this.name = type.name;
+    }
+}
+
+export class ValidationError extends CustomError {
+    constructor(public message: string) {
+        super(ValidationError, message);
     }
 }
 

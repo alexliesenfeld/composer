@@ -1,5 +1,6 @@
 import { ElectronContext } from '@/renderer/app/model/electron-context';
 import { OperatingSystem } from '@/renderer/app/services/domain/common/model';
+import { ConfigService } from '@/renderer/app/services/domain/config-service';
 import { FilesService } from '@/renderer/app/services/domain/files-service';
 import { VisualStudioIdeService } from '@/renderer/app/services/domain/ide/visual-studio-ide-service';
 import { WorkspaceService } from '@/renderer/app/services/domain/workspace-service';
@@ -13,9 +14,10 @@ const ideService =
         ? new VisualStudioIdeService(filesService)
         : null; /*new XcodeIdeService()*/
 const workspaceService = new WorkspaceService(filesService, ideService!);
+const configService = new ConfigService();
 
 export const stores = {
     appStore: new AppStore(workspaceService.getIdeName()),
-    workspaceStore: new WorkspaceStore(workspaceService),
+    workspaceStore: new WorkspaceStore(workspaceService, configService),
     filesStore: new FilesStore(filesService),
 };

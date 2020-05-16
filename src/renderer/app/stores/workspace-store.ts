@@ -1,25 +1,29 @@
 import { ElectronContext } from '@/renderer/app/model/electron-context';
-import { SavingError } from '@/renderer/app/model/errors';
-import { WorkspaceConfig } from '@/renderer/app/model/workspace-config';
+import { SavingError, ValidationError } from '@/renderer/app/model/errors';
+import { IPlugPluginType, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
 import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
-import * as configService from '@/renderer/app/services/domain/config-service';
+import { ConfigService } from '@/renderer/app/services/domain/config-service';
 import { WorkspaceService } from '@/renderer/app/services/domain/workspace-service';
 import { withLoadingScreen } from '@/renderer/app/services/ui/loading-screen-service';
 import { LocalStorageAdapter } from '@/renderer/app/services/ui/local-storagea-dapter';
 import {
     showSuccessNotification,
+    showWarningNotification,
     withNotification,
 } from '@/renderer/app/services/ui/notification-service';
 import { WorkspaceMetadata } from '@/renderer/app/stores/app-store';
+import { Fsx } from '@/renderer/app/util/fsx';
 import { action, computed, observable, runInAction } from 'mobx';
 import * as path from 'path';
+import { Simulate } from 'react-dom/test-utils';
+import error = Simulate.error;
 
 export class WorkspaceStore {
     @observable public workspaceConfig: WorkspaceConfig | undefined = undefined;
     @observable public configPath: string | undefined = undefined;
     @observable public recentlyOpenedWorkspaces: WorkspaceMetadata[];
 
-    constructor(private workspaceService: WorkspaceService) {
+    constructor(private workspaceService: WorkspaceService, private configService: ConfigService) {
         this.recentlyOpenedWorkspaces = LocalStorageAdapter.readRecentlyOpenedWorkspaces();
     }
 
@@ -28,24 +32,28 @@ export class WorkspaceStore {
     }
 
     @action.bound
-    @withNotification({ onError: 'Failed creating a new project' })
-    public async createNewUserConfig(): Promise<void> {
-        const result = await ElectronContext.dialog.showSaveDialog({
-            filters: [
-                {
-                    name: 'JSON',
-                    extensions: ['json'],
-                },
-            ],
-            defaultPath: 'composer.json',
-        });
+    @withNotification({ onError: 'Failed creating a new project', warnFor: [ValidationError] })
+    public async initializeWorkspace(
+        projectName: string,
+        pluginType: IPlugPluginType,
+        projectDir: string,
+    ): Promise<void> {
+        const config = {
+            ...this.configService.createInitialConfig(),
+            projectName,
+            pluginType,
+        };
 
-        if (result.canceled || !result.filePath) {
+        const error = await this.validateNewProjectConfig(projectDir, config);
+        if (error) {
+            showWarningNotification(error);
             return;
         }
 
-        await configService.writeNewConfigToPath(result.filePath);
-        await this.loadConfigFromPath(result.filePath);
+        const projectPath = path.join(projectDir, 'composer.json');
+
+        await this.configService.writeConfigToPath(projectPath, config);
+        await this.loadConfigFromPath(projectPath);
 
         showSuccessNotification('Successfully created a new project');
     }
@@ -55,6 +63,7 @@ export class WorkspaceStore {
     public async openConfigFromDialog(): Promise<void> {
         const result = await ElectronContext.dialog.showOpenDialog({
             filters: [{ extensions: ['json'], name: 'composer.json' }],
+            properties: ['createDirectory', 'dontAddToRecent', 'openDirectory', 'promptToCreate'],
         });
 
         if (result.canceled) {
@@ -79,7 +88,7 @@ export class WorkspaceStore {
             throw new SavingError('No project loaded.');
         }
 
-        await configService.writeConfigToPath(this.configPath!, this.workspaceConfig!);
+        await this.configService.writeConfigToPath(this.configPath!, this.workspaceConfig!);
 
         runInAction(() => {
             this.registerRecentlyOpenedWorkspace(
@@ -117,7 +126,7 @@ export class WorkspaceStore {
     }
 
     private async loadConfigFromPath(configPath: string): Promise<void> {
-        const userConfig = await configService.loadConfigFromPath(configPath);
+        const userConfig = await this.configService.loadConfigFromPath(configPath);
         this.setNewConfig(configPath, userConfig);
         this.registerRecentlyOpenedWorkspace(userConfig.projectName, configPath);
     }
@@ -134,5 +143,27 @@ export class WorkspaceStore {
             projectName,
             filePath,
         );
+    }
+
+    private async validateNewProjectConfig(
+        projectDir: string,
+        config: WorkspaceConfig,
+    ): Promise<string | null> {
+        const validationErrors = await this.configService.validate(config);
+        if (validationErrors.hasErrors()) {
+            // Return the first value from the errors array for the first key of the errors map
+            return validationErrors.errors.entries().next().value[1][0];
+        }
+
+        if (!projectDir) {
+            return 'Please select a project directory';
+        }
+
+        const filesInDirectory = await Fsx.readdir(projectDir);
+        if (filesInDirectory && filesInDirectory.length > 0) {
+            return 'The directory of a new project must be empty';
+        }
+
+        return null;
     }
 }

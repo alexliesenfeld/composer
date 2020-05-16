@@ -1,11 +1,10 @@
 import { ProjectPaths } from '@/renderer/app/services/domain/common/paths';
-import { writeFile } from '@/renderer/app/services/domain/config-service';
 import { logActivity } from '@/renderer/app/services/ui/logging-service';
 import {
     copyFile,
     createDirIfNotExists,
     deleteFileIfExists,
-    directoryDoesNotExistOrIsEmpty,
+    directoryDoesNotExistOrIsEmpty, writeFile,
 } from '@/renderer/app/util/file-utils';
 import { Fsx } from '@/renderer/app/util/fsx';
 import * as path from 'path';

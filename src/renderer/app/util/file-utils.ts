@@ -1,5 +1,4 @@
 import { OperationFailedError } from '@/renderer/app/model/errors';
-import { readFile, writeFile } from '@/renderer/app/services/domain/config-service';
 import { withRetry } from '@/renderer/app/util/common-utils';
 import { Fsx } from '@/renderer/app/util/fsx';
 import { assertReplace } from '@/renderer/app/util/string-utils';
@@ -8,6 +7,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as request from 'request';
 import { EOL } from 'ts-loader/dist/constants';
+
+export const writeFile = async (path: string, content: string): Promise<void> => {
+    return Fsx.writeFile(path, content);
+};
+
+export const readFile = async (path: string): Promise<string> => {
+    return (await Fsx.readFile(path)).toString();
+};
 
 async function addFilePermissions(filePath: string, mode: number) {
     await Fsx.chmod(filePath, (await Fsx.stat(filePath)).mode | mode);

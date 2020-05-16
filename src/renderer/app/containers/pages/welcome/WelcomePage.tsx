@@ -1,23 +1,29 @@
+import { SelectInput } from '@/renderer/app/components/SelectInput';
 import { When } from '@/renderer/app/components/When';
+import {
+    ActionsPanel,
+    ActionsPanelProps,
+} from '@/renderer/app/containers/pages/welcome/components/ActionsPanel';
+import { IPlugPluginType } from '@/renderer/app/model/workspace-config';
+import { showWarningNotification } from '@/renderer/app/services/ui/notification-service';
 import { AppStore } from '@/renderer/app/stores/app-store';
 import { WorkspaceStore } from '@/renderer/app/stores/workspace-store';
+import { enumValues } from '@/renderer/app/util/type-utils';
 import {
     Button,
     Card,
     Divider,
+    FormGroup,
     H6,
     Icon,
+    InputGroup,
     ITreeNode,
+    PanelStack,
     Popover,
     Tooltip,
     Tree,
 } from '@blueprintjs/core';
-import {
-    DOCUMENT_OPEN,
-    LAYERS,
-    NEW_OBJECT,
-    TRASH,
-} from '@blueprintjs/icons/lib/esm/generated/iconNames';
+import { DOCUMENT_OPEN, TRASH } from '@blueprintjs/icons/lib/esm/generated/iconNames';
 import { inject, observer } from 'mobx-react';
 import * as React from 'react';
 
@@ -29,26 +35,17 @@ const WelcomePage = (props: { appStore?: AppStore; workspaceStore?: WorkspaceSto
     return (
         <div className="WelcomePage">
             <Card>
-                <div className="welcome-section">
-                    <Icon icon={LAYERS} iconSize={50} />
-                    <h3>Welcome to Composer!</h3>
-                    <Button
-                        icon={NEW_OBJECT}
-                        fill={true}
-                        onClick={props.workspaceStore!.createNewUserConfig}
-                        intent={'primary'}
-                    >
-                        New Project
-                    </Button>
-                    <Button
-                        icon={DOCUMENT_OPEN}
-                        fill={true}
-                        onClick={props.workspaceStore!.openConfigFromDialog}
-                        intent={'warning'}
-                    >
-                        Open Project
-                    </Button>
-                </div>
+                <PanelStack
+                    className="panels-container"
+                    showPanelHeader={false}
+                    initialPanel={{
+                        component: ActionsPanel,
+                        props: {
+                            onCreateWorkspace: props.workspaceStore!.initializeWorkspace,
+                            openConfigFromDialog: props.workspaceStore!.openConfigFromDialog,
+                        } as ActionsPanelProps,
+                    }}
+                />
                 <When condition={props.workspaceStore!.recentlyOpenedWorkspaces.length > 0}>
                     <Divider />
                     <div className="recent-files-section">

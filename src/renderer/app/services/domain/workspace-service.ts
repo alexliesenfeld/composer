@@ -10,7 +10,6 @@ import {
     DEFAULT_FONT_FILE_NAME,
     WorkspacePaths,
 } from '@/renderer/app/services/domain/common/paths';
-import { writeFile } from '@/renderer/app/services/domain/config-service';
 import { FilesService } from '@/renderer/app/services/domain/files-service';
 import { logActivity } from '@/renderer/app/services/ui/logging-service';
 import { Cpx } from '@/renderer/app/util/cpx';
@@ -27,6 +26,7 @@ import {
     moveDirContents,
     recreateDir,
     unzipFile,
+    writeFile,
 } from '@/renderer/app/util/file-utils';
 import { Fsx } from '@/renderer/app/util/fsx';
 import * as git from '@/renderer/app/util/git-utils';

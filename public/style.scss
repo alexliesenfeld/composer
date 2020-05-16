@@ -81,6 +81,15 @@ Generic
   }
 }
 
+.muted-button {
+  color: rgba(167, 182, 194, 0.6) !important;
+}
+
+.muted-button .bp3-icon {
+  color: rgba(167, 182, 194, 0.6) !important;
+}
+
+
 /*****************************************************************
 Custom Scrollbar Colors
 ******************************************************************/
@@ -208,14 +217,40 @@ WelcomePage
   }
 }
 
-.WelcomePage .welcome-section {
+.WelcomePage .actions-panel {
   width: 25em;
   text-align: center;
-  margin-bottom: 2em;
+  overflow: hidden;
+}
+
+.WelcomePage .actions-panel .logo-container {
+  cursor: pointer;
+}
+
+.WelcomePage .actions-panel .buttons-container {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+.WelcomePage .actions-panel .link-buttons-container {
+  margin-top: 2em;
+}
+
+.WelcomePage .create-new-project-panel {
+  padding-left: 1px;
+  padding-right: 1px;
+  overflow: hidden;
+}
+
+
+.WelcomePage .create-new-project-panel h5 {
+  text-align: center;
+}
+
+.WelcomePage .create-new-project-panel .bp3-form-content button {
+    margin-bottom: 0;
 }
 
 .WelcomePage .recent-files-section {
-  width: 25em;
   margin-top: 1em;
 }
 
@@ -241,6 +276,11 @@ WelcomePage
 
 .WelcomePage .recent-files-section .bp3-tree-node {
   background-color: $dark-gray5;
+}
+
+.WelcomePage .panels-container {
+  height: 20em;
+  width: 25em;
 }
 
 .page {

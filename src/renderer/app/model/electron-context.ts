@@ -6,6 +6,7 @@ import { ipcRenderer, remote } from 'electron';
 export abstract class ElectronContext {
     public static readonly dialog = remote.dialog;
     public static readonly shell = remote.shell;
+    public static readonly app = remote.app;
 
     public static registerSaveProjectEventListener(listener: () => void) {
         ipcRenderer.on(IPCMainEvents.INIT_SAVE_PROJECT, listener);
@@ -28,5 +29,13 @@ export abstract class ElectronContext {
                     `Operating system ${process.platform} mot supported`,
                 );
         }
+    }
+
+    public static getAppVersion() {
+        return ElectronContext.app.getVersion();
+    }
+
+    public static openUrlInExternalBrowser(url: string) {
+        return ElectronContext.shell.openExternal(url);
     }
 }

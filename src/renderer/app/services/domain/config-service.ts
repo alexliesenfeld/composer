@@ -6,86 +6,88 @@ import {
     WorkspaceConfig,
 } from '@/renderer/app/model/workspace-config';
 import { Fsx } from '@/renderer/app/util/fsx';
-import * as fs from 'fs';
-import * as path from 'path';
 
-const parseConfig = (content: string): WorkspaceConfig => {
-    return JSON.parse(content);
-};
+export type WorkspaceConfigKey = keyof WorkspaceConfig;
 
-export const writeConfigToPath = async (
-    path: string,
-    config: WorkspaceConfig,
-): Promise<unknown> => {
-    return Fsx.writeFile(path, JSON.stringify(config, null, 4));
-};
+export class WorkspaceConfigValidationErrors {
+    errors = new Map<WorkspaceConfigKey, string[]>();
 
-export const writeFile = async (path: string, content: string): Promise<void> => {
-    return Fsx.writeFile(path, content);
-};
-
-export const readFile = async (path: string): Promise<string> => {
-    return (await Fsx.readFile(path)).toString();
-};
-
-const createInitialConfig = (): WorkspaceConfig => {
-    return {
-        projectName: 'NewProject',
-        uiEnabled: true,
-        fps: 60,
-        uiHeight: 600,
-        uiWidth: 600,
-        pluginVersion: '0.0.0',
-        formats: [PluginFormat.AU2, PluginFormat.VST3, PluginFormat.APP],
-        mpe: false,
-        midiOut: false,
-        midiIn: false,
-        stateChunks: false,
-        outputChannels: 2,
-        inputChannels: 2,
-        pluginLatency: 0,
-        manufacturerWebsite: 'www.my-plugin-company.com',
-        manufacturerCopyrightNotice: '© www.my-plugin-company.com',
-        manufacturerEmail: 'mail@my-plugin-company.com',
-        manufacturerName: 'MyPlugInCompany',
-        manufacturerId: 'MPUC',
-        audioUnitBundleManufacturer: 'MyPlugInCompany',
-        audioUnitBundleDomain: 'com',
-        audioUnitBundleName: 'NewProject',
-        pluginType: IPlugPluginType.EFFECT,
-        vst3Subcategory: Vst3Subcategory.OTHER,
-        vstUniqueId: 'nprj',
-        uiResizable: true,
-        iPlug2GitHash: '33700e4a498c8e9440b7281008d32d4b2a24a12f',
-        vst3SdkGitHash: '0908f475f52af56682321192d800ef25d1823dd2',
-        appOutputMultiplier: 1,
-        appSignalVectorSize: 64,
-        appVectorWaitMultiplier: 0,
-    };
-};
-
-export const writeNewConfigToPath = async (filePath: string): Promise<unknown> => {
-    const directoryPath = path.dirname(filePath);
-    const filesInDirectory = await Fsx.readdir(directoryPath);
-
-    if (filesInDirectory && filesInDirectory.length > 0) {
-        throw new DirectoryNotEmptyError(
-            'The directory of a new project must be empty.',
-            directoryPath,
-        );
+    add(key: WorkspaceConfigKey, error: string) {
+        if (!this.errors.has(key)) {
+            this.errors.set(key, []);
+        }
+        this.errors.get(key)!.push(error);
     }
 
-    return writeConfigToPath(filePath, createInitialConfig());
-};
+    hasErrors() {
+        return this.errors.size > 0;
+    }
+}
 
-export const loadConfigFromPath = async (path: string): Promise<WorkspaceConfig> => {
-    const fileContent = await Fsx.readFile(path, { encoding: 'utf-8' });
+export class ConfigService {
+    createInitialConfig(): WorkspaceConfig {
+        return {
+            projectName: 'NewProject',
+            uiEnabled: true,
+            fps: 60,
+            uiHeight: 600,
+            uiWidth: 600,
+            pluginVersion: '0.0.0',
+            formats: [PluginFormat.AU2, PluginFormat.VST3, PluginFormat.APP],
+            mpe: false,
+            midiOut: false,
+            midiIn: false,
+            stateChunks: false,
+            outputChannels: 2,
+            inputChannels: 2,
+            pluginLatency: 0,
+            manufacturerWebsite: 'www.my-plugin-company.com',
+            manufacturerCopyrightNotice: '© www.my-plugin-company.com',
+            manufacturerEmail: 'mail@my-plugin-company.com',
+            manufacturerName: 'MyPlugInCompany',
+            manufacturerId: 'MPUC',
+            audioUnitBundleManufacturer: 'MyPlugInCompany',
+            audioUnitBundleDomain: 'com',
+            audioUnitBundleName: 'NewProject',
+            pluginType: IPlugPluginType.EFFECT,
+            vst3Subcategory: Vst3Subcategory.OTHER,
+            vstUniqueId: 'nprj',
+            uiResizable: true,
+            iPlug2GitHash: '33700e4a498c8e9440b7281008d32d4b2a24a12f',
+            vst3SdkGitHash: '0908f475f52af56682321192d800ef25d1823dd2',
+            appOutputMultiplier: 1,
+            appSignalVectorSize: 64,
+            appVectorWaitMultiplier: 0,
+        };
+    }
 
-    return parseConfig(fileContent);
-};
+    async validate(config: WorkspaceConfig): Promise<WorkspaceConfigValidationErrors> {
+        const errors = new WorkspaceConfigValidationErrors();
 
-export const loadConfigFromPathSync = (path: string): WorkspaceConfig => {
-    const fileContent = fs.readFileSync(path, { encoding: 'utf-8' });
+        if (!config.projectName || config.projectName.trim().length == 0) {
+            errors.add('projectName', 'The project name must not be empty.');
+        } else if (config.projectName.trim().length < 3) {
+            errors.add('projectName', 'The project name must be at least three characters long.');
+        } else if (!/^[a-z0-9]+$/i.test(config.projectName.trim())) {
+            errors.add(
+                'projectName',
+                'The project name can only contain alphanumeric characters without spaces.',
+            );
+        }
 
-    return parseConfig(fileContent);
-};
+        return errors;
+    }
+
+    writeConfigToPath = async (path: string, config: WorkspaceConfig): Promise<unknown> => {
+        return Fsx.writeFile(path, JSON.stringify(config, null, 4));
+    };
+
+    async loadConfigFromPath(path: string): Promise<WorkspaceConfig> {
+        const fileContent = await Fsx.readFile(path, { encoding: 'utf-8' });
+        return this.parseConfig(fileContent);
+    }
+
+    private parseConfig(content: string): WorkspaceConfig {
+        return JSON.parse(content);
+    }
+}
