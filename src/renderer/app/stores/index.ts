@@ -8,13 +8,13 @@ import { AppStore } from '@/renderer/app/stores/app-store';
 import { FilesStore } from '@/renderer/app/stores/files-store';
 import { WorkspaceStore } from '@/renderer/app/stores/workspace-store';
 
+const configService = new ConfigService();
 const filesService = new FilesService();
 const ideService =
     ElectronContext.currentOperatingSystem() == OperatingSystem.WINDOWS
         ? new VisualStudioIdeService(filesService)
-        : null; /*new XcodeIdeService()*/
-const workspaceService = new WorkspaceService(filesService, ideService!);
-const configService = new ConfigService();
+        : new VisualStudioIdeService(filesService);
+const workspaceService = new WorkspaceService(filesService, ideService, configService);
 
 export const stores = {
     appStore: new AppStore(workspaceService.getIdeName()),

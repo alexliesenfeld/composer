@@ -5,12 +5,13 @@ import {
     Prototype,
     WorkspaceConfig,
 } from '@/renderer/app/model/workspace-config';
-import { IdeService } from '@/renderer/app/services/domain/ide/ide-service';
 import {
     DEFAULT_FONT_FILE_NAME,
     WorkspacePaths,
 } from '@/renderer/app/services/domain/common/paths';
+import { ConfigService } from '@/renderer/app/services/domain/config-service';
 import { FilesService } from '@/renderer/app/services/domain/files-service';
+import { IdeService } from '@/renderer/app/services/domain/ide/ide-service';
 import { logActivity } from '@/renderer/app/services/ui/logging-service';
 import { Cpx } from '@/renderer/app/util/cpx';
 import {
@@ -35,26 +36,36 @@ import { enumValues } from '@/renderer/app/util/type-utils';
 import * as path from 'path';
 
 export class WorkspaceService {
-    constructor(private fileService: FilesService, private ideService: IdeService) {}
+    constructor(
+        private fileService: FilesService,
+        private ideService: IdeService,
+        private configService: ConfigService,
+    ) {}
 
     public getIdeName(): string {
         return this.ideService.getIdeName();
     }
 
-    @logActivity('Starting IDE')
-    public async startIDE(config: WorkspaceConfig, paths: WorkspacePaths) {
+    @logActivity('Setting up workspace')
+    public async setupWorkspace(
+        config: WorkspaceConfig,
+        paths: WorkspacePaths,
+        skipDependencies = false,
+    ) {
         await createDirIfNotExists(paths.getDependenciesDirPath());
 
         if (await this.shouldSetupIPlug2(paths)) {
             await this.downloadIPlug2FromGithub(paths, config.iPlug2GitHash);
         }
 
-        if (await this.shouldSetupIPlug2Dependencies(paths)) {
-            await this.downloadIPlug2DependenciesFromGithub(paths);
-        }
+        if (!skipDependencies) {
+            if (await this.shouldSetupIPlug2Dependencies(paths)) {
+                await this.downloadIPlug2DependenciesFromGithub(paths);
+            }
 
-        if (await this.shouldSetupVst3Sdk(paths)) {
-            await this.downloadVstSdk(paths, config);
+            if (await this.shouldSetupVst3Sdk(paths, config)) {
+                await this.downloadVstSdk(paths, config);
+            }
         }
 
         await this.generateProjectFromPrototype(paths, config);
@@ -78,7 +89,11 @@ export class WorkspaceService {
         await this.ideService.reconfigureFileFilters(paths);
 
         await this.excludeUnselectedPluginFormats(paths, config);
+    }
 
+    @logActivity('Starting IDE')
+    public async startIDE(config: WorkspaceConfig, paths: WorkspacePaths) {
+        await this.setupWorkspace(config, paths);
         await this.ideService.startIDEProject(paths);
     }
 
@@ -246,8 +261,14 @@ export class WorkspaceService {
         return directoryDoesNotExistOrIsEmpty(paths.getIPlug2DependenciesBuildPath());
     }
 
-    public async shouldSetupVst3Sdk(paths: WorkspacePaths): Promise<boolean> {
-        return directoryDoesNotExistOrIsEmpty(paths.getVst3SdkDirPath(), ['README.md']);
+    public async shouldSetupVst3Sdk(
+        paths: WorkspacePaths,
+        config: WorkspaceConfig,
+    ): Promise<boolean> {
+        return (
+            config.formats.includes(PluginFormat.VST3) &&
+            (await directoryDoesNotExistOrIsEmpty(paths.getVst3SdkDirPath(), ['README.md']))
+        );
     }
 
     public async shouldInitializeSourceFiles(paths: WorkspacePaths): Promise<boolean> {

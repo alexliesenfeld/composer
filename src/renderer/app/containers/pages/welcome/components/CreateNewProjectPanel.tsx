@@ -18,7 +18,7 @@ export interface CreateProjectPanelProps {
 }
 
 export const CreateNewProjectPanel = (props: CreateProjectPanelProps & IPanelProps) => {
-    const [projectName, setProjectName] = useState<string>('MySuperDuperPlugin');
+    const [projectName, setProjectName] = useState<string>('MyAudioPlugin');
     const [pluginType, setPluginType] = useState<IPlugPluginType>(IPlugPluginType.EFFECT);
     const [projectLocation, setProjectLocation] = useState<string | undefined>(undefined);
 

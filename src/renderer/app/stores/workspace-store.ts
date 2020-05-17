@@ -16,7 +16,6 @@ import { Fsx } from '@/renderer/app/util/fsx';
 import { action, computed, observable, runInAction } from 'mobx';
 import * as path from 'path';
 import { Simulate } from 'react-dom/test-utils';
-import error = Simulate.error;
 
 export class WorkspaceStore {
     @observable public workspaceConfig: WorkspaceConfig | undefined = undefined;
@@ -29,33 +28,6 @@ export class WorkspaceStore {
 
     @computed({ keepAlive: true }) get workspacePaths() {
         return new WorkspacePaths(this.configPath!, this.workspaceConfig!);
-    }
-
-    @action.bound
-    @withNotification({ onError: 'Failed creating a new project', warnFor: [ValidationError] })
-    public async initializeWorkspace(
-        projectName: string,
-        pluginType: IPlugPluginType,
-        projectDir: string,
-    ): Promise<void> {
-        const config = {
-            ...this.configService.createInitialConfig(),
-            projectName,
-            pluginType,
-        };
-
-        const error = await this.validateNewProjectConfig(projectDir, config);
-        if (error) {
-            showWarningNotification(error);
-            return;
-        }
-
-        const projectPath = path.join(projectDir, 'composer.json');
-
-        await this.configService.writeConfigToPath(projectPath, config);
-        await this.loadConfigFromPath(projectPath);
-
-        showSuccessNotification('Successfully created a new project');
     }
 
     @action.bound
@@ -96,6 +68,36 @@ export class WorkspaceStore {
                 this.configPath!,
             );
         });
+    }
+
+    @action.bound
+    @withNotification({ onError: 'Failed creating a new project', warnFor: [ValidationError] })
+    @withLoadingScreen('Initializing Workspace')
+    public async initializeWorkspace(
+        projectName: string,
+        pluginType: IPlugPluginType,
+        projectDir: string,
+    ): Promise<void> {
+        const config = {
+            ...this.configService.createInitialConfig(),
+            projectName,
+            pluginType,
+        };
+
+        const error = await this.validateNewProjectConfig(projectDir, config);
+        if (error) {
+            showWarningNotification(error);
+            return;
+        }
+
+        const projectPath = path.join(projectDir, 'composer.json');
+
+        await this.configService.writeConfigToPath(projectPath, config);
+        await this.loadConfigFromPath(projectPath);
+
+        await this.workspaceService.setupWorkspace(config, this.workspacePaths, true);
+
+        showSuccessNotification('Successfully created a new project');
     }
 
     @action.bound
