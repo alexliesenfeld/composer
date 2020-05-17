@@ -24,6 +24,7 @@ export class ConfigService {
     createInitialConfig(): WorkspaceConfig {
         return {
             projectName: 'NewProject',
+            mainClassName: 'NewProject',
             uiEnabled: true,
             fps: 60,
             uiHeight: 600,

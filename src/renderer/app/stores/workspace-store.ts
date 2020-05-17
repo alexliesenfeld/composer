@@ -54,20 +54,7 @@ export class WorkspaceStore {
     @action.bound
     @withNotification({ onError: 'Failed saving project', onSuccess: 'Saved' })
     public async save(): Promise<void> {
-        if (!this.configPath) {
-            // Happens when no project has been loaded but the user already pressed
-            // a global keyboard shortcut to save the project.
-            throw new SavingError('No project loaded.');
-        }
-
-        await this.configService.writeConfigToPath(this.configPath!, this.workspaceConfig!);
-
-        runInAction(() => {
-            this.registerRecentlyOpenedWorkspace(
-                this.workspaceConfig!.projectName,
-                this.configPath!,
-            );
-        });
+        this.saveWorkspace();
     }
 
     @action.bound
@@ -80,8 +67,9 @@ export class WorkspaceStore {
     ): Promise<void> {
         const config = {
             ...this.configService.createInitialConfig(),
-            projectName,
             pluginType,
+            projectName,
+            mainClassName: projectName,
         };
 
         const error = await this.validateNewProjectConfig(projectDir, config);
@@ -104,11 +92,12 @@ export class WorkspaceStore {
     @withLoadingScreen('Starting IDE')
     @withNotification({ onError: 'Failed to start IDE' })
     public async startIDE() {
+        await this.saveWorkspace();
         await this.workspaceService.startIDE(this.workspaceConfig!, this.workspacePaths);
     }
 
     @action.bound
-    @withLoadingScreen('Loading recent project')
+    @withLoadingScreen('Loading project')
     @withNotification({
         onError: 'Failed load recently used project',
     })
@@ -167,5 +156,22 @@ export class WorkspaceStore {
         }
 
         return null;
+    }
+
+    private async saveWorkspace() {
+        if (!this.configPath) {
+            // Happens when no project has been loaded but the user already pressed
+            // a global keyboard shortcut to save the project.
+            throw new SavingError('No project loaded.');
+        }
+
+        await this.configService.writeConfigToPath(this.configPath!, this.workspaceConfig!);
+
+        runInAction(() => {
+            this.registerRecentlyOpenedWorkspace(
+                this.workspaceConfig!.projectName,
+                this.configPath!,
+            );
+        });
     }
 }

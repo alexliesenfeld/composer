@@ -26,6 +26,8 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
                 <GeneralPanel
                     projectName={workspaceConfig!.projectName}
                     setProjectName={this.setProjectName}
+                    mainClassName={workspaceConfig!.mainClassName}
+                    setMainClassName={this.setMainClassName}
                     pluginType={workspaceConfig!.pluginType}
                     setPluginType={this.setPluginType}
                     version={workspaceConfig!.pluginVersion}
@@ -111,6 +113,10 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
 
     setProjectName = (name: string) => {
         this.props.workspaceStore!.workspaceConfig!.projectName = name;
+    };
+
+    setMainClassName = (name: string) => {
+        this.props.workspaceStore!.workspaceConfig!.mainClassName = name;
     };
 
     setPluginType = (pluginType: IPlugPluginType) => {

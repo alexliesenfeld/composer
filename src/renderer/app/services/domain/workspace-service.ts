@@ -331,7 +331,7 @@ export class WorkspaceService {
                 `#define PLUG_URL_STR "${config.manufacturerWebsite}"`,
                 `#define PLUG_EMAIL_STR "${config.manufacturerEmail}"`,
                 `#define PLUG_COPYRIGHT_STR "${config.manufacturerCopyrightNotice}"`,
-                `#define PLUG_CLASS_NAME ${config.projectName}`,
+                `#define PLUG_CLASS_NAME ${config.mainClassName}`,
                 ``,
                 `#define PLUG_CHANNEL_IO "${config.inputChannels}-${config.outputChannels}"`,
                 `#define PLUG_LATENCY ${config.pluginLatency}`,

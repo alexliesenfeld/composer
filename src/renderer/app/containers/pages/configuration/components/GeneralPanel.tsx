@@ -2,6 +2,7 @@ import { SelectInput, SelectInputItem } from '@/renderer/app/components/SelectIn
 import { IPlugPluginType, PluginFormat } from '@/renderer/app/model/workspace-config';
 import { enumValues } from '@/renderer/app/util/type-utils';
 import { Card, Checkbox, Divider, Elevation, FormGroup, H5, InputGroup } from '@blueprintjs/core';
+import { useState } from 'react';
 
 import * as React from 'react';
 
@@ -12,6 +13,8 @@ export interface GeneralPanelProps {
     setVersion: (value: string) => void;
     iPlugSha1: string;
     setIPlugSha1: (value: string) => void;
+    mainClassName: string;
+    setMainClassName: (value: string) => void;
     vst3UniqueId: string;
     setVst3UniqueId: (value: string) => void;
     pluginType: IPlugPluginType;
@@ -29,6 +32,10 @@ const GeneralPanel = (props: GeneralPanelProps) => {
 
     const setProjectName = (e: React.ChangeEvent<HTMLInputElement>) => {
         props.setProjectName(e.target.value);
+    };
+
+    const setMainClassName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        props.setMainClassName(e.target.value);
     };
 
     const setVersion = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,6 +132,20 @@ const GeneralPanel = (props: GeneralPanelProps) => {
                             />
                         );
                     })}
+                </FormGroup>
+                <FormGroup
+                    label="Main Class"
+                    labelFor="text-input"
+                    inline={true}
+                    helperText={
+                        'The main C++ class of this plugin. You need to have this class defined somewhere in your code, otherwise it will not compile. This value represents the iPlug configuration constant PLUG_CLASS_NAME.'
+                    }
+                >
+                    <InputGroup
+                        placeholder="Please enter the name of the main C++ class"
+                        value={props.mainClassName}
+                        onChange={setMainClassName}
+                    />
                 </FormGroup>
                 <FormGroup
                     label="iPlug2 Github Hash"
