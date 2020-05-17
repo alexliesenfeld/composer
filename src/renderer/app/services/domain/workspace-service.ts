@@ -5,7 +5,7 @@ import {
     Prototype,
     WorkspaceConfig,
 } from '@/renderer/app/model/workspace-config';
-import { IdeService } from '@/renderer/app/services/domain/common/ide-service';
+import { IdeService } from '@/renderer/app/services/domain/ide/ide-service';
 import {
     DEFAULT_FONT_FILE_NAME,
     WorkspacePaths,

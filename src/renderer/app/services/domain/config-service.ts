@@ -1,30 +1,26 @@
-import { DirectoryNotEmptyError } from '@/renderer/app/model/errors';
 import {
     IPlugPluginType,
     PluginFormat,
     Vst3Subcategory,
     WorkspaceConfig,
 } from '@/renderer/app/model/workspace-config';
+import {
+    WorkspaceConfigKey,
+    WorkspaceConfigValidationErrors,
+    WorkspaceConfigValidator,
+} from '@/renderer/app/services/domain/config-validator';
 import { Fsx } from '@/renderer/app/util/fsx';
 
-export type WorkspaceConfigKey = keyof WorkspaceConfig;
-
-export class WorkspaceConfigValidationErrors {
-    errors = new Map<WorkspaceConfigKey, string[]>();
-
-    add(key: WorkspaceConfigKey, error: string) {
-        if (!this.errors.has(key)) {
-            this.errors.set(key, []);
-        }
-        this.errors.get(key)!.push(error);
-    }
-
-    hasErrors() {
-        return this.errors.size > 0;
-    }
-}
-
 export class ConfigService {
+    readonly validator = new WorkspaceConfigValidator();
+
+    validate(
+        config: WorkspaceConfig,
+        keys?: WorkspaceConfigKey[],
+    ): WorkspaceConfigValidationErrors {
+        return this.validator.validate(config, keys);
+    }
+
     createInitialConfig(): WorkspaceConfig {
         return {
             projectName: 'NewProject',
@@ -59,23 +55,6 @@ export class ConfigService {
             appSignalVectorSize: 64,
             appVectorWaitMultiplier: 0,
         };
-    }
-
-    async validate(config: WorkspaceConfig): Promise<WorkspaceConfigValidationErrors> {
-        const errors = new WorkspaceConfigValidationErrors();
-
-        if (!config.projectName || config.projectName.trim().length == 0) {
-            errors.add('projectName', 'The project name must not be empty.');
-        } else if (config.projectName.trim().length < 3) {
-            errors.add('projectName', 'The project name must be at least three characters long.');
-        } else if (!/^[a-z0-9]+$/i.test(config.projectName.trim())) {
-            errors.add(
-                'projectName',
-                'The project name can only contain alphanumeric characters without spaces.',
-            );
-        }
-
-        return errors;
     }
 
     writeConfigToPath = async (path: string, config: WorkspaceConfig): Promise<unknown> => {

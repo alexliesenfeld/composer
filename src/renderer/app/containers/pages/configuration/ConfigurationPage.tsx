@@ -18,6 +18,97 @@ import * as React from 'react';
 @inject('workspaceStore')
 @observer
 export class ConfigurationPage extends React.Component<{ workspaceStore?: WorkspaceStore }> {
+    render() {
+        const { workspaceConfig } = this.props.workspaceStore!;
+
+        return (
+            <div className="ConfigurationPage">
+                <GeneralPanel
+                    projectName={workspaceConfig!.projectName}
+                    setProjectName={this.setProjectName}
+                    pluginType={workspaceConfig!.pluginType}
+                    setPluginType={this.setPluginType}
+                    version={workspaceConfig!.pluginVersion}
+                    setVersion={this.setVersion}
+                    vst3UniqueId={workspaceConfig!.vstUniqueId}
+                    setVst3UniqueId={this.setVstUniqueId}
+                    iPlugSha1={workspaceConfig!.iPlug2GitHash}
+                    setIPlugSha1={this.setIPlugGitHash}
+                    formats={workspaceConfig!.formats}
+                    setFormats={this.setFormats}
+                />
+
+                <ManufacturerPanel
+                    manufacturerName={workspaceConfig!.manufacturerName}
+                    setManufacturerName={this.setManufacturerName}
+                    manufacturerId={workspaceConfig!.manufacturerId}
+                    setManufacturerId={this.setManufacturerId}
+                    manufacturerEmail={workspaceConfig!.manufacturerEmail}
+                    setManufacturerEmail={this.setManufacturerEmail}
+                    manufacturerCopyrightNotice={workspaceConfig!.manufacturerCopyrightNotice}
+                    setManufacturerCopyrightNotice={this.setManufacturerCopyrightNotice}
+                    manufacturerWebsite={workspaceConfig!.manufacturerWebsite}
+                    setManufacturerWebsite={this.setManufacturerWebsite}
+                />
+
+                <UserInterfacePanel
+                    uiWidth={workspaceConfig!.uiWidth}
+                    setUiWidth={this.setUiWidth}
+                    uiHeight={workspaceConfig!.uiHeight}
+                    setUiHeight={this.setUiHeight}
+                    fps={workspaceConfig!.fps}
+                    setFps={this.setFps}
+                    uiEnabled={workspaceConfig!.uiEnabled}
+                    setUiEnabled={this.setUiEnabled}
+                    uiResizable={workspaceConfig!.uiResizable}
+                    setUiResizable={this.setUiResizable}
+                />
+
+                <InputOutputPanel
+                    inputChannels={workspaceConfig!.inputChannels}
+                    setInputChannels={this.setInputChannels}
+                    outputChannels={workspaceConfig!.outputChannels}
+                    setOutputChannels={this.setOutputChannels}
+                    pluginLatency={workspaceConfig!.pluginLatency}
+                    setPluginLatency={this.setPluginLatency}
+                    midiIn={workspaceConfig!.midiIn}
+                    setMidiIn={this.setMidiIn}
+                    midiOut={workspaceConfig!.midiOut}
+                    setMidiOut={this.setMidiOut}
+                    mpe={workspaceConfig!.mpe}
+                    setMpe={this.setMpe}
+                    stateChunks={workspaceConfig!.stateChunks}
+                    setStateChunks={this.setStateChunks}
+                />
+
+                <AudioUnitPanel
+                    bundleName={workspaceConfig!.audioUnitBundleName}
+                    setBundleName={this.setBundleName}
+                    bundleManufacturer={workspaceConfig!.audioUnitBundleManufacturer}
+                    setBundleManufacturer={this.setBundleManufacturer}
+                    bundleDomain={workspaceConfig!.audioUnitBundleDomain}
+                    setBundleDomain={this.setBundleDomain}
+                />
+
+                <VstPanel
+                    vst3Subcategory={workspaceConfig!.vst3Subcategory}
+                    setVst3Subcategory={this.setVst3Subcategory}
+                    vst3SdkGitHash={workspaceConfig!.vst3SdkGitHash}
+                    setVst3SdkGitHash={this.setVst3SdkGitHash}
+                />
+
+                <AppPanel
+                    waitMultiplier={workspaceConfig!.appVectorWaitMultiplier}
+                    setWaitMultiplier={this.setWaitMultiplier}
+                    outputMultiplier={workspaceConfig!.appOutputMultiplier}
+                    setOutputMultiplier={this.setOutputMultiplier}
+                    signalVectorSize={workspaceConfig!.appSignalVectorSize}
+                    setSignalVectorSize={this.setSignalVectorSize}
+                />
+            </div>
+        );
+    }
+
     setProjectName = (name: string) => {
         this.props.workspaceStore!.workspaceConfig!.projectName = name;
     };
@@ -143,95 +234,4 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
     setSignalVectorSize = (value: number) => {
         this.props.workspaceStore!.workspaceConfig!.appSignalVectorSize = value;
     };
-
-    render() {
-        const { workspaceConfig } = this.props.workspaceStore!;
-
-        return (
-            <div className="ConfigurationPage">
-                <GeneralPanel
-                    projectName={workspaceConfig!.projectName}
-                    setProjectName={this.setProjectName}
-                    pluginType={workspaceConfig!.pluginType}
-                    setPluginType={this.setPluginType}
-                    version={workspaceConfig!.pluginVersion}
-                    setVersion={this.setVersion}
-                    vst3UniqueId={workspaceConfig!.vstUniqueId}
-                    setVst3UniqueId={this.setVstUniqueId}
-                    iPlugSha1={workspaceConfig!.iPlug2GitHash}
-                    setIPlugSha1={this.setIPlugGitHash}
-                    formats={workspaceConfig!.formats}
-                    setFormats={this.setFormats}
-                />
-
-                <ManufacturerPanel
-                    manufacturerName={workspaceConfig!.manufacturerName}
-                    setManufacturerName={this.setManufacturerName}
-                    manufacturerId={workspaceConfig!.manufacturerId}
-                    setManufacturerId={this.setManufacturerId}
-                    manufacturerEmail={workspaceConfig!.manufacturerEmail}
-                    setManufacturerEmail={this.setManufacturerEmail}
-                    manufacturerCopyrightNotice={workspaceConfig!.manufacturerCopyrightNotice}
-                    setManufacturerCopyrightNotice={this.setManufacturerCopyrightNotice}
-                    manufacturerWebsite={workspaceConfig!.manufacturerWebsite}
-                    setManufacturerWebsite={this.setManufacturerWebsite}
-                />
-
-                <UserInterfacePanel
-                    uiWidth={workspaceConfig!.uiWidth}
-                    setUiWidth={this.setUiWidth}
-                    uiHeight={workspaceConfig!.uiHeight}
-                    setUiHeight={this.setUiHeight}
-                    fps={workspaceConfig!.fps}
-                    setFps={this.setFps}
-                    uiEnabled={workspaceConfig!.uiEnabled}
-                    setUiEnabled={this.setUiEnabled}
-                    uiResizable={workspaceConfig!.uiResizable}
-                    setUiResizable={this.setUiResizable}
-                />
-
-                <InputOutputPanel
-                    inputChannels={workspaceConfig!.inputChannels}
-                    setInputChannels={this.setInputChannels}
-                    outputChannels={workspaceConfig!.outputChannels}
-                    setOutputChannels={this.setOutputChannels}
-                    pluginLatency={workspaceConfig!.pluginLatency}
-                    setPluginLatency={this.setPluginLatency}
-                    midiIn={workspaceConfig!.midiIn}
-                    setMidiIn={this.setMidiIn}
-                    midiOut={workspaceConfig!.midiOut}
-                    setMidiOut={this.setMidiOut}
-                    mpe={workspaceConfig!.mpe}
-                    setMpe={this.setMpe}
-                    stateChunks={workspaceConfig!.stateChunks}
-                    setStateChunks={this.setStateChunks}
-                />
-
-                <AudioUnitPanel
-                    bundleName={workspaceConfig!.audioUnitBundleName}
-                    setBundleName={this.setBundleName}
-                    bundleManufacturer={workspaceConfig!.audioUnitBundleManufacturer}
-                    setBundleManufacturer={this.setBundleManufacturer}
-                    bundleDomain={workspaceConfig!.audioUnitBundleDomain}
-                    setBundleDomain={this.setBundleDomain}
-                />
-
-                <VstPanel
-                    vst3Subcategory={workspaceConfig!.vst3Subcategory}
-                    setVst3Subcategory={this.setVst3Subcategory}
-                    vst3SdkGitHash={workspaceConfig!.vst3SdkGitHash}
-                    setVst3SdkGitHash={this.setVst3SdkGitHash}
-                />
-
-                <AppPanel
-                    waitMultiplier={workspaceConfig!.appVectorWaitMultiplier}
-                    setWaitMultiplier={this.setWaitMultiplier}
-                    outputMultiplier={workspaceConfig!.appOutputMultiplier}
-                    setOutputMultiplier={this.setOutputMultiplier}
-                    signalVectorSize={workspaceConfig!.appSignalVectorSize}
-                    setSignalVectorSize={this.setSignalVectorSize}
-                />
-            </div>
-        );
-    }
 }

@@ -53,15 +53,15 @@ const GeneralPanel = (props: GeneralPanelProps) => {
             <Divider />
             <div className="card-content">
                 <FormGroup
-                    label="Plug-In name"
+                    label="Plugin Name"
                     labelFor="text-input"
                     inline={true}
                     helperText={
-                        'The Plugin name. It must not contain spaces. This value represents the iPlug configuration constant PLUG_NAME.'
+                        'The plugin name. It must not contain spaces. This value represents the iPlug configuration constant PLUG_NAME.'
                     }
                 >
                     <InputGroup
-                        placeholder="Please enter the name of the plug-in"
+                        placeholder="Please enter the name of the plugin"
                         value={props.projectName}
                         onChange={setProjectName}
                     />
@@ -90,7 +90,7 @@ const GeneralPanel = (props: GeneralPanelProps) => {
                     helperText={`The Plugin version number. It's of the form "major.minor.patch". This value represents the iPlug configuration constant PLUG_VERSION_STR and PLUG_VERSION_HEX.`}
                 >
                     <InputGroup
-                        placeholder="Please enter the name of the plug-in"
+                        placeholder="Please enter the name of the plugin"
                         value={props.version}
                         onChange={setVersion}
                     />

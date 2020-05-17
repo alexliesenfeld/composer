@@ -37,9 +37,9 @@ export const CreateNewProjectPanel = (props: CreateProjectPanelProps & IPanelPro
     return (
         <div className="create-new-project-panel">
             <H5>New Project</H5>
-            <FormGroup label="Plug-In name" labelFor="text-input">
+            <FormGroup label="Plugin Name" labelFor="text-input">
                 <InputGroup
-                    placeholder="Please enter the name of the plug-in"
+                    placeholder="Please enter the name of the plugin"
                     value={projectName}
                     onChange={setProjectNameUi}
                 />

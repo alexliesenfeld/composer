@@ -3,7 +3,7 @@ import { PluginFormat, WorkspaceConfig } from '@/renderer/app/model/workspace-co
 import {
     IdeService,
     VariableNameTranslator,
-} from '@/renderer/app/services/domain/common/ide-service';
+} from '@/renderer/app/services/domain/ide/ide-service';
 import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 import { FilesService } from '@/renderer/app/services/domain/files-service';
 import { logActivity } from '@/renderer/app/services/ui/logging-service';

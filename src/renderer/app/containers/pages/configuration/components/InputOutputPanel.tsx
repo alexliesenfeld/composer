@@ -78,7 +78,7 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                     />
                 </FormGroup>
                 <FormGroup
-                    label="Plug-In Latency"
+                    label="Plugin Latency"
                     labelFor="prototype-input"
                     inline={true}
                     helperText={
