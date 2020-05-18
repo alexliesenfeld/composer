@@ -6,11 +6,6 @@ export type VariableNameTranslator = (filePath: string) => string;
 export interface IdeService {
     getIdeName(): string;
 
-    initializeFontFilesInIDEProject(
-        context: WorkspacePaths,
-        translate: VariableNameTranslator,
-    ): Promise<void>;
-
     removeDefaultPrototypeFontFilesFromIDEProject(context: WorkspacePaths): Promise<void>;
 
     removeDefaultPrototypeSourceFilesFromIDEProject(

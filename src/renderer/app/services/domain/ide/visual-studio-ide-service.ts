@@ -126,18 +126,7 @@ export class VisualStudioIdeService implements IdeService {
         await this.addUserSourcesToIncludePath(paths);
     }
 
-    public async initializeFontFilesInIDEProject(
-        paths: WorkspacePaths,
-        translateToVariable: VariableNameTranslator,
-    ): Promise<void> {
-        // As fonts have a naming scheme. We are therefore removing the default iPlug name for roboto and re-adding it
-        // with the standard naming scheme.
-        await assertReplaceContentInFile(
-            paths.getMainPluginCppFile(),
-            'ROBOTO_FN',
-            translateToVariable(`Roboto-Regular.ttf`),
-        );
-    }
+
 
     public async addImageFileToIdeProject(
         paths: WorkspacePaths,

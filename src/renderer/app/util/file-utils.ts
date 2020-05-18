@@ -83,6 +83,14 @@ export const moveDirContents = async (fromDir: string, toDir: string) => {
     }
 };
 
+export const copyDir = async (fromDir: string, toDir: string) => {
+    return Fsx.copyDir(fromDir, toDir, {
+        overwrite: true,
+        errorOnExist: false,
+        recursive: true,
+    });
+};
+
 export const moveDir = async (fromPath: string, toPath: string) => {
     await Fsx.move(fromPath, toPath);
 };

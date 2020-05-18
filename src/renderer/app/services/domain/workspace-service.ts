@@ -16,6 +16,7 @@ import { logActivity } from '@/renderer/app/services/ui/logging-service';
 import { Cpx } from '@/renderer/app/util/cpx';
 import {
     addLineToFile,
+    assertReplaceContentInFile, copyDir,
     copyFile,
     createDirIfNotExists,
     createHardLink,
@@ -142,21 +143,21 @@ export class WorkspaceService {
 
     @logActivity('Cloning iPlug2 Git repo')
     public async downloadIPlug2FromGithub(paths: WorkspacePaths, shaRef?: string): Promise<void> {
-        const workDirPath = paths.getWorkDirPath();
-        const zipFilePath = path.join(workDirPath, `${shaRef}.zip`);
-        const zipFileContentDirPath = path.join(workDirPath, `iPlug2-${shaRef}`);
+        const tempDir = paths.getTempDirPath();
+        const zipFilePath = path.join(tempDir, `${shaRef}.zip`);
+        const zipFileContentDirPath = path.join(tempDir, `iPlug2-${shaRef}`);
         const iPlug2Path = paths.getIPlug2BaseDirPath();
 
-        await recreateDir(workDirPath);
+        await recreateDir(tempDir);
 
         await downloadFile(`https://github.com/iPlug2/iPlug2/archive/${shaRef}.zip`, zipFilePath);
-        await unzipFile(zipFilePath, workDirPath);
+        await unzipFile(zipFilePath, tempDir);
 
         await Fsx.unlink(zipFilePath);
         await deleteDirectory(iPlug2Path);
 
         await Fsx.rename(zipFileContentDirPath, iPlug2Path);
-        await deleteDirectory(workDirPath);
+        await deleteDirectory(tempDir);
     }
 
     @logActivity('Downloading iPlug2 prebuilt dependencies')
@@ -211,16 +212,21 @@ export class WorkspaceService {
         config: WorkspaceConfig,
     ): Promise<void> {
         const buildsDir = paths.getBuildsDir();
+        const tempDir = paths.getTempDirPath();
+
         const examplesPath = path.join(paths.getIPlug2BaseDirPath(), 'Examples');
         const prototype = this.mapPluginTypeToPrototype(config.pluginType);
 
-        await recreateDir(buildsDir);
+        await createDirIfNotExists(buildsDir);
+        await recreateDir(tempDir);
+
         await Cpx.spawn(
-            `python duplicate.py ${prototype} ${config.projectName} ${config.manufacturerName} ${buildsDir}`,
+            `python duplicate.py ${prototype} ${config.projectName} ${config.manufacturerName} ${tempDir}`,
             examplesPath,
         );
 
-        await moveDir(path.join(buildsDir, config.projectName), paths.getProjectBuildDir());
+        await copyDir(tempDir, buildsDir);
+        await deleteDirectory(tempDir);
     }
 
     @logActivity('Copying initial fonts from iPlug prototype project to project sources')
@@ -235,8 +241,6 @@ export class WorkspaceService {
         const filesToCopy = path.join(vsSolutionFontsDir, DEFAULT_FONT_FILE_NAME);
 
         await copyFile(filesToCopy, path.join(workspaceFontsDir, path.basename(filesToCopy)));
-
-        await this.ideService.initializeFontFilesInIDEProject(paths, this.getVariableNameForFile);
     }
 
     @logActivity('Copying initial sources from iPlug prototype project to project sources')
@@ -250,6 +254,14 @@ export class WorkspaceService {
         const filesToCopy = this.getDefaultPrototypeSourceFiles(paths, config);
         await Promise.all(
             filesToCopy.map((f) => copyFile(f, path.join(sourcesDir, path.basename(f)))),
+        );
+
+        // As fonts have a naming scheme. We are therefore removing the default
+        // iPlug name for roboto and re-adding it with the standard naming scheme.
+        await assertReplaceContentInFile(
+            paths.getMainPluginCppFile(),
+            'ROBOTO_FN',
+            this.getVariableNameForFile(`Roboto-Regular.ttf`),
         );
     }
 

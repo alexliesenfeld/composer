@@ -15,7 +15,6 @@ import { WorkspaceMetadata } from '@/renderer/app/stores/app-store';
 import { Fsx } from '@/renderer/app/util/fsx';
 import { action, computed, observable, runInAction } from 'mobx';
 import * as path from 'path';
-import { Simulate } from 'react-dom/test-utils';
 
 export class WorkspaceStore {
     @observable public workspaceConfig: WorkspaceConfig | undefined = undefined;

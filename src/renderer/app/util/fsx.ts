@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import * as mv from 'mv';
+import * as fsExtra from 'fs-extra';
 import * as util from 'util';
 
 /**
@@ -17,8 +17,9 @@ export abstract class Fsx {
     public static readonly chmod = util.promisify(fs.chmod);
     public static readonly rmdir = util.promisify(fs.rmdir);
     public static readonly rename = util.promisify(fs.rename);
-    public static readonly move = util.promisify(mv);
     public static readonly copyFile = util.promisify(fs.copyFile);
     public static readonly link = util.promisify(fs.link);
     public static readonly symlink = util.promisify(fs.symlink);
+    public static readonly move = fsExtra.move;
+    public static readonly copyDir = fsExtra.copy;
 }

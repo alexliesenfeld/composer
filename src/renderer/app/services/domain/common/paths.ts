@@ -7,16 +7,16 @@ export const DEFAULT_FONT_FILE_NAME = 'Roboto-Regular.ttf';
 export class ProjectPaths {
     constructor(protected configFilePath: string) {}
 
-    public getWorkspaceDir(): string {
+    public getComposerProjectDir(): string {
         return path.dirname(this.configFilePath);
     }
 
     public getSourcesDir(): string {
-        return path.join(this.getWorkspaceDir(), 'Source');
+        return path.join(this.getComposerProjectDir(), 'Source');
     }
 
     public getResourcesDir(): string {
-        return path.join(this.getWorkspaceDir(), 'Resources');
+        return path.join(this.getComposerProjectDir(), 'Resources');
     }
 
     public getFontsDir(): string {
@@ -28,7 +28,7 @@ export class ProjectPaths {
     }
 
     public getDependenciesDirPath(): string {
-        return path.join(this.getWorkspaceDir(), 'Dependencies');
+        return path.join(this.getComposerProjectDir(), 'Dependencies');
     }
 
     public getIPlug2BaseDirPath(): string {
@@ -48,7 +48,7 @@ export class ProjectPaths {
     }
 
     public getBuildsDir(): string {
-        return path.join(this.getWorkspaceDir(), 'Build');
+        return path.join(this.getComposerProjectDir(), 'Build');
     }
 }
 
@@ -57,8 +57,8 @@ export class WorkspacePaths extends ProjectPaths {
         super(configFilePath);
     }
 
-    public getWorkDirPath(): string {
-        return path.join(this.getWorkspaceDir(), '.work');
+    public getTempDirPath(): string {
+        return path.join(this.getComposerProjectDir(), '.tmp');
     }
 
     public getProjectBuildDir(): string {
