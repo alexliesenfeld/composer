@@ -53,7 +53,7 @@ export class WorkspaceStore {
     @action.bound
     @withNotification({ onError: 'Failed saving project', onSuccess: 'Saved' })
     public async save(): Promise<void> {
-        this.saveWorkspace();
+        return this.saveWorkspace();
     }
 
     @action.bound

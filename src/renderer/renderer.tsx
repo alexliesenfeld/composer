@@ -1,6 +1,6 @@
 import App from '@/renderer/app/App';
 import ThemeProvider from '@/renderer/app/components/ThemeProvider';
-import ElectronEventLister from '@/renderer/app/containers/common/ElectronEventListener';
+import HotKeyListener from '@/renderer/app/containers/common/HotKeyListener';
 import LoadingPanel from '@/renderer/app/containers/common/LoadingPanel';
 import { setLoadingServiceContext } from '@/renderer/app/services/ui/loading-screen-service';
 import { setLoggingServiceContext } from '@/renderer/app/services/ui/logging-service';
@@ -17,11 +17,11 @@ setNotificationServiceContext(stores.appStore);
 ReactDOM.render(
     <Provider {...stores}>
         <ThemeProvider>
-            <ElectronEventLister>
+            <HotKeyListener>
                 <LoadingPanel>
                     <App />
                 </LoadingPanel>
-            </ElectronEventLister>
+            </HotKeyListener>
         </ThemeProvider>
     </Provider>,
     document.getElementById('app'),

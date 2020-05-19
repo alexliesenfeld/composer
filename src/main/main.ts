@@ -1,5 +1,4 @@
-import { IPCMainEvents } from '@common/constants';
-import { app, BrowserWindow, globalShortcut } from 'electron';
+import { app, BrowserWindow } from 'electron';
 import electronDevtoolsInstaller, { REACT_DEVELOPER_TOOLS } from 'electron-devtools-installer';
 import * as path from 'path';
 import * as url from 'url';
@@ -43,10 +42,6 @@ function createWindow(): void {
     mainWindow.on('ready-to-show', () => {
         mainWindow!.show();
         mainWindow!.focus();
-    });
-
-    globalShortcut.register('CommandOrControl+S', () => {
-        mainWindow!.webContents.send(IPCMainEvents.INIT_SAVE_PROJECT);
     });
 }
 
