@@ -2,10 +2,9 @@ import { CommandFailedError, OperationFailedError } from '@/renderer/app/model/e
 import * as childProcess from 'child_process';
 import * as sudo from 'sudo-prompt';
 
-const spawn = (cmd: string, cwd?: string): Promise<string> => {
+const spawn = (cmd: string, args: string[], cwd?: string): Promise<string> => {
     return new Promise<string>((resolve, reject) => {
-        const parts = cmd.split(/\s+/g);
-        const cp = childProcess.spawn(parts[0], parts.slice(1), {
+        const cp = childProcess.spawn(cmd, args, {
             stdio: ['ignore', 'pipe', 'pipe'],
             cwd: cwd,
         });
@@ -23,7 +22,7 @@ const spawn = (cmd: string, cwd?: string): Promise<string> => {
 
         cp.on('exit', function (code) {
             if (code != 0) {
-                reject(new CommandFailedError(cmd, output, errorOutput, code));
+                reject(new CommandFailedError(cmd, args, output, errorOutput, code));
             } else {
                 resolve(output);
             }

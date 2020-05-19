@@ -1,4 +1,3 @@
-
 export class CustomError extends Error {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(type: any, message?: string) {
@@ -48,13 +47,16 @@ export class OperationFailedError extends CustomError {
 export class CommandFailedError extends CustomError {
     constructor(
         public command: string,
+        public args: string[],
         public output: string,
         public errorOutput: string,
         public statusCode: number | null,
     ) {
         super(
             CommandFailedError,
-            `Command "${command}" failed with error code "${statusCode}". Output: ${output}, Error output: "${errorOutput}".`,
+            `Command "${command} ${args.join(
+                ' ',
+            )}" failed with error code "${statusCode}". Output: ${output}, Error output: "${errorOutput}".`,
         );
     }
 }

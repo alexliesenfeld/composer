@@ -9,14 +9,14 @@ import {
     DEFAULT_FONT_FILE_NAME,
     WorkspacePaths,
 } from '@/renderer/app/services/domain/common/paths';
-import { ConfigService } from '@/renderer/app/services/domain/config-service';
 import { FilesService } from '@/renderer/app/services/domain/files-service';
 import { IdeService } from '@/renderer/app/services/domain/ide/ide-service';
 import { logActivity } from '@/renderer/app/services/ui/logging-service';
 import { Cpx } from '@/renderer/app/util/cpx';
 import {
     addLineToFile,
-    assertReplaceContentInFile, copyDir,
+    assertReplaceContentInFile,
+    copyDir,
     copyFile,
     createDirIfNotExists,
     createHardLink,
@@ -24,7 +24,6 @@ import {
     deleteFileIfExists,
     directoryDoesNotExistOrIsEmpty,
     downloadFile,
-    moveDir,
     moveDirContents,
     recreateDir,
     unzipFile,
@@ -37,11 +36,7 @@ import { enumValues } from '@/renderer/app/util/type-utils';
 import * as path from 'path';
 
 export class WorkspaceService {
-    constructor(
-        private fileService: FilesService,
-        private ideService: IdeService,
-        private configService: ConfigService,
-    ) {}
+    constructor(private fileService: FilesService, private ideService: IdeService) {}
 
     public getIdeName(): string {
         return this.ideService.getIdeName();
@@ -196,7 +191,7 @@ export class WorkspaceService {
         await recreateDir(targetDir);
 
         await git.cloneRepo(
-            'git clone https://github.com/steinbergmedia/vst3sdk.git',
+            'https://github.com/steinbergmedia/vst3sdk.git',
             config.vst3SdkGitHash,
             targetDir,
         );
@@ -221,7 +216,8 @@ export class WorkspaceService {
         await recreateDir(tempDir);
 
         await Cpx.spawn(
-            `python duplicate.py ${prototype} ${config.projectName} ${config.manufacturerName} ${tempDir}`,
+            'python',
+            ['duplicate.py', prototype, config.projectName, config.manufacturerName, `${tempDir}`],
             examplesPath,
         );
 

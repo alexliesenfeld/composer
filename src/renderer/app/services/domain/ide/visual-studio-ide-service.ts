@@ -1,9 +1,6 @@
 import { AssertionError } from '@/renderer/app/model/errors';
 import { PluginFormat, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
-import {
-    IdeService,
-    VariableNameTranslator,
-} from '@/renderer/app/services/domain/ide/ide-service';
+import { IdeService, VariableNameTranslator } from '@/renderer/app/services/domain/ide/ide-service';
 import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 import { FilesService } from '@/renderer/app/services/domain/files-service';
 import { logActivity } from '@/renderer/app/services/ui/logging-service';
@@ -12,7 +9,8 @@ import { Cpx } from '@/renderer/app/util/cpx';
 import {
     assertReplaceContentInFile,
     deleteFileIfExists,
-    readFile, writeFile
+    readFile,
+    writeFile,
 } from '@/renderer/app/util/file-utils';
 import {
     assertReplace,
@@ -52,7 +50,11 @@ export class VisualStudioIdeService implements IdeService {
     @logActivity('Starting Visual Studio project')
     public async startIDEProject(paths: WorkspacePaths): Promise<void> {
         const vsSolutionPath = paths.getVisualStudioSolutionFilePath();
-        await Cpx.sudoExec(`start ${vsSolutionPath}`);
+        // We need to wrap the path in quotes because it can contain spaces.
+        // The two quotes after 'start' seem to be necessary if we want to
+        // use quotes:
+        // https://superuser.com/questions/239565/can-i-use-the-start-command-with-spaces-in-the-path
+        await Cpx.sudoExec(`start "" "${vsSolutionPath}"`);
     }
 
     public async removeDefaultPrototypeSourceFilesFromIDEProject(
@@ -125,8 +127,6 @@ export class VisualStudioIdeService implements IdeService {
 
         await this.addUserSourcesToIncludePath(paths);
     }
-
-
 
     public async addImageFileToIdeProject(
         paths: WorkspacePaths,

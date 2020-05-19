@@ -14,7 +14,7 @@ const ideService =
     ElectronContext.currentOperatingSystem() == OperatingSystem.WINDOWS
         ? new VisualStudioIdeService(filesService)
         : new VisualStudioIdeService(filesService);
-const workspaceService = new WorkspaceService(filesService, ideService, configService);
+const workspaceService = new WorkspaceService(filesService, ideService);
 
 export const stores = {
     appStore: new AppStore(workspaceService.getIdeName()),
