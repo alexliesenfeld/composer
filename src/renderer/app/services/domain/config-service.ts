@@ -21,7 +21,7 @@ export class ConfigService {
         return this.validator.validate(config, keys);
     }
 
-    createInitialConfig(): WorkspaceConfig {
+    createDefaultConfig(): WorkspaceConfig {
         return {
             projectName: 'NewProject',
             mainClassName: 'NewProject',

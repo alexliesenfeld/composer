@@ -1,5 +1,5 @@
 import { ElectronContext } from '@/renderer/app/model/electron-context';
-import { SavingError, ValidationError } from '@/renderer/app/model/errors';
+import { SavingError } from '@/renderer/app/model/errors';
 import { IPlugPluginType, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
 import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 import { ConfigService } from '@/renderer/app/services/domain/config-service';
@@ -53,11 +53,17 @@ export class WorkspaceStore {
     @action.bound
     @withNotification({ onError: 'Failed saving project', onSuccess: 'Saved' })
     public async save(): Promise<void> {
-        return this.saveWorkspace();
+        if (!this.configPath) {
+            // Happens when no project has been loaded but the user already pressed
+            // a global keyboard shortcut to save the project.
+            throw new SavingError('No project loaded.');
+        }
+
+        await this.configService.writeConfigToPath(this.configPath!, this.workspaceConfig!);
     }
 
     @action.bound
-    @withNotification({ onError: 'Failed creating a new project', warnFor: [ValidationError] })
+    @withNotification({ onError: 'Failed creating a new project' })
     @withLoadingScreen('Initializing Workspace')
     public async initializeWorkspace(
         projectName: string,
@@ -65,15 +71,17 @@ export class WorkspaceStore {
         projectDir: string,
     ): Promise<void> {
         const config = {
-            ...this.configService.createInitialConfig(),
+            ...this.configService.createDefaultConfig(),
             pluginType,
             projectName,
             mainClassName: projectName,
         };
 
-        const error = await this.validateNewProjectConfig(projectDir, config);
-        if (error) {
-            showWarningNotification(error);
+        const validationError =
+            (await this.validateConfig(config)) ||
+            (await this.validateProjectDirectory(projectDir));
+        if (validationError) {
+            this.showValidationError(validationError);
             return;
         }
 
@@ -91,7 +99,13 @@ export class WorkspaceStore {
     @withLoadingScreen('Starting IDE')
     @withNotification({ onError: 'Failed to start IDE' })
     public async startIDE() {
-        await this.saveWorkspace();
+        const validationError = await this.validateConfig(this.workspaceConfig!);
+        if (validationError) {
+            this.showValidationError(validationError);
+            return;
+        }
+
+        await this.configService.writeConfigToPath(this.configPath!, this.workspaceConfig!);
         await this.workspaceService.startIDE(this.workspaceConfig!, this.workspacePaths);
     }
 
@@ -117,11 +131,11 @@ export class WorkspaceStore {
 
     private async loadConfigFromPath(configPath: string): Promise<void> {
         const userConfig = await this.configService.loadConfigFromPath(configPath);
-        this.setNewConfig(configPath, userConfig);
+        this.setConfig(configPath, userConfig);
         this.registerRecentlyOpenedWorkspace(userConfig.projectName, configPath);
     }
 
-    private setNewConfig(configPath: string, userConfig: WorkspaceConfig) {
+    private setConfig(configPath: string, userConfig: WorkspaceConfig) {
         runInAction(() => {
             this.workspaceConfig = userConfig;
             this.configPath = configPath;
@@ -135,16 +149,7 @@ export class WorkspaceStore {
         );
     }
 
-    private async validateNewProjectConfig(
-        projectDir: string,
-        config: WorkspaceConfig,
-    ): Promise<string | null> {
-        const validationErrors = await this.configService.validate(config);
-        if (validationErrors.hasErrors()) {
-            // Return the first value from the errors array for the first key of the errors map
-            return validationErrors.errors.entries().next().value[1][0];
-        }
-
+    private async validateProjectDirectory(projectDir: string): Promise<string | void> {
         if (!projectDir) {
             return 'Please select a project directory';
         }
@@ -153,24 +158,17 @@ export class WorkspaceStore {
         if (filesInDirectory && filesInDirectory.length > 0) {
             return 'The directory of a new project must be empty';
         }
-
-        return null;
     }
 
-    private async saveWorkspace() {
-        if (!this.configPath) {
-            // Happens when no project has been loaded but the user already pressed
-            // a global keyboard shortcut to save the project.
-            throw new SavingError('No project loaded.');
+    private async validateConfig(config: WorkspaceConfig): Promise<string | void> {
+        const validationErrors = await this.configService.validate(config);
+        if (validationErrors.hasErrors()) {
+            // Return the first value from the errors array for the first key of the errors map
+            return validationErrors.errors.entries().next().value[1][0];
         }
+    }
 
-        await this.configService.writeConfigToPath(this.configPath!, this.workspaceConfig!);
-
-        runInAction(() => {
-            this.registerRecentlyOpenedWorkspace(
-                this.workspaceConfig!.projectName,
-                this.configPath!,
-            );
-        });
+    private showValidationError(error: string) {
+        showWarningNotification(error);
     }
 }

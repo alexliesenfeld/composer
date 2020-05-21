@@ -15,6 +15,7 @@ export class WorkspaceConfigValidationErrors {
     hasErrors() {
         return this.errors.size > 0;
     }
+
 }
 
 type ValidatorFunction = (config: WorkspaceConfig) => string | null | undefined;

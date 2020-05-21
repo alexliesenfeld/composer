@@ -1,4 +1,3 @@
-import { CustomError } from '@/renderer/app/model/errors';
 import { logError } from '@/renderer/app/services/ui/logging-service';
 import { Intent, Position, Toaster } from '@blueprintjs/core';
 
@@ -54,7 +53,6 @@ export interface WithNotificationOptions {
     onError?: string;
     onSuccess?: string;
     showLogButton?: boolean;
-    warnFor?: Array<typeof CustomError>;
 }
 
 export function withNotification(options: WithNotificationOptions) {
@@ -88,9 +86,7 @@ export function withNotification(options: WithNotificationOptions) {
 
                 // Show an error message if the promise is rejected with an error
                 promisifiedResult.catch((error) => {
-                    if (options.warnFor && options.warnFor.find((t) => error instanceof t)) {
-                        showWarningNotification(error.message);
-                    } else if (options.onError) {
+                    if (options.onError) {
                         showErrorNotification(options.onError, error, options.showLogButton);
                     }
                     throw error;
