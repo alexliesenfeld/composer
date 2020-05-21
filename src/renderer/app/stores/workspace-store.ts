@@ -32,34 +32,39 @@ export class WorkspaceStore {
     @action.bound
     @withNotification({ onError: 'Failed to open project' })
     public async openConfigFromDialog(): Promise<void> {
-        const result = await ElectronContext.dialog.showOpenDialog({
+        const result = await ElectronContext.showOpenDialog({
             filters: [{ extensions: ['json'], name: 'composer.json' }],
-            properties: ['createDirectory', 'dontAddToRecent', 'openDirectory', 'promptToCreate'],
+            properties: ['createDirectory', 'dontAddToRecent', 'openFile', 'promptToCreate'],
         });
 
         if (result.canceled) {
             return;
         }
 
-        await this.loadConfigFromPath(result.filePaths[0]);
+        await this.loadWorkspaceConfigFromPath(result.filePaths[0]);
     }
 
     @action.bound
     @withNotification({ onError: 'Failed to open project directory' })
     public openProjectDirectoryInFileExplorer() {
-        ElectronContext.shell.openItem(path.dirname(this.configPath!));
+        ElectronContext.openDirectoryInOsExplorer(path.dirname(this.configPath!));
     }
 
     @action.bound
-    @withNotification({ onError: 'Failed saving project', onSuccess: 'Saved' })
+    @withNotification({ onError: 'Failed saving project' })
     public async save(): Promise<void> {
         if (!this.configPath) {
             // Happens when no project has been loaded but the user already pressed
             // a global keyboard shortcut to save the project.
-            throw new SavingError('No project loaded.');
+            return;
         }
 
-        await this.configService.writeConfigToPath(this.configPath!, this.workspaceConfig!);
+        await this.configService.writeWorkspaceConfigToPath(
+            this.configPath!,
+            this.workspaceConfig!,
+        );
+
+        showSuccessNotification('Saved');
     }
 
     @action.bound
@@ -87,8 +92,8 @@ export class WorkspaceStore {
 
         const projectPath = path.join(projectDir, 'composer.json');
 
-        await this.configService.writeConfigToPath(projectPath, config);
-        await this.loadConfigFromPath(projectPath);
+        await this.configService.writeWorkspaceConfigToPath(projectPath, config);
+        await this.loadWorkspaceConfigFromPath(projectPath);
 
         await this.workspaceService.setupWorkspace(config, this.workspacePaths, true);
 
@@ -105,7 +110,11 @@ export class WorkspaceStore {
             return;
         }
 
-        await this.configService.writeConfigToPath(this.configPath!, this.workspaceConfig!);
+        await this.configService.writeWorkspaceConfigToPath(
+            this.configPath!,
+            this.workspaceConfig!,
+        );
+
         await this.workspaceService.startIDE(this.workspaceConfig!, this.workspacePaths);
     }
 
@@ -114,12 +123,8 @@ export class WorkspaceStore {
     @withNotification({
         onError: 'Failed load recently used project',
     })
-    public async loadConfigFromPathUi(path: string): Promise<void> {
-        await this.loadConfigFromPath(path);
-    }
-
-    public getResourceAliasName(filePath: string): string {
-        return this.workspaceService.getVariableNameForFile(filePath);
+    public async loadWorkspace(path: string): Promise<void> {
+        await this.loadWorkspaceConfigFromPath(path);
     }
 
     @action.bound
@@ -129,24 +134,20 @@ export class WorkspaceStore {
         );
     }
 
-    private async loadConfigFromPath(configPath: string): Promise<void> {
-        const userConfig = await this.configService.loadConfigFromPath(configPath);
-        this.setConfig(configPath, userConfig);
-        this.registerRecentlyOpenedWorkspace(userConfig.projectName, configPath);
+    public getResourceAliasName(filePath: string): string {
+        return this.workspaceService.getVariableNameForFile(filePath);
     }
 
-    private setConfig(configPath: string, userConfig: WorkspaceConfig) {
+    private async loadWorkspaceConfigFromPath(configPath: string): Promise<void> {
+        const userConfig = await this.configService.loadConfigFromPath(configPath);
         runInAction(() => {
             this.workspaceConfig = userConfig;
             this.configPath = configPath;
+            this.recentlyOpenedWorkspaces = LocalStorageAdapter.registerRecentlyOpenedWorkspace(
+                userConfig.projectName,
+                configPath,
+            );
         });
-    }
-
-    private registerRecentlyOpenedWorkspace(projectName: string, filePath: string): void {
-        this.recentlyOpenedWorkspaces = LocalStorageAdapter.registerRecentlyOpenedWorkspace(
-            projectName,
-            filePath,
-        );
     }
 
     private async validateProjectDirectory(projectDir: string): Promise<string | void> {

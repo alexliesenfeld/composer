@@ -58,7 +58,7 @@ export class ConfigService {
         };
     }
 
-    writeConfigToPath = async (path: string, config: WorkspaceConfig): Promise<unknown> => {
+    writeWorkspaceConfigToPath = async (path: string, config: WorkspaceConfig): Promise<unknown> => {
         return Fsx.writeFile(path, JSON.stringify(config, null, 4));
     };
 

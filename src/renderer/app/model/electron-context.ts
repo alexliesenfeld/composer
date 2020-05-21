@@ -29,4 +29,10 @@ export abstract class ElectronContext {
     public static openUrlInExternalBrowser(url: string) {
         return ElectronContext.shell.openExternal(url);
     }
+
+    public static openDirectoryInOsExplorer(path: string) {
+        ElectronContext.shell.openItem(path);
+    }
+
+    public static showOpenDialog = ElectronContext.dialog.showOpenDialog;
 }

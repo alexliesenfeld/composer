@@ -29,7 +29,7 @@ import * as React from 'react';
 
 const WelcomePage = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) => {
     const onNodeClick = (node: ITreeNode) => {
-        return props.workspaceStore!.loadConfigFromPathUi(node.id as string);
+        return props.workspaceStore!.loadWorkspace(node.id as string);
     };
 
     return (
