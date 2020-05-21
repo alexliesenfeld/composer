@@ -164,7 +164,7 @@ export class WorkspaceStore {
     private async validateConfig(config: WorkspaceConfig): Promise<string | void> {
         const validationErrors = await this.configService.validate(config);
         if (validationErrors.hasErrors()) {
-            // Return the first value from the errors array for the first key of the errors map
+            // Return the first value from the errors map, for the first key of the errors map only
             return validationErrors.errors.entries().next().value[1][0];
         }
     }
