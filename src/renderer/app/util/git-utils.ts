@@ -12,3 +12,8 @@ export const cloneRepo = async (url: string, sha1: string, targetDir: string): P
 export const initSubmodule = async (submodule: string, targetDir: string): Promise<void> => {
     await runGit(['-C', targetDir, 'submodule', 'update', '--init', submodule]);
 };
+
+export const getCurrentHash = async (repoDir: string) => {
+    // This reads the full hash of a git repo
+    return await runGit(['-C', repoDir, 'rev-parse', 'HEAD']);
+};

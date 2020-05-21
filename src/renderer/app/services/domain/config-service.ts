@@ -50,7 +50,7 @@ export class ConfigService {
             vst3Subcategory: Vst3Subcategory.OTHER,
             vstUniqueId: 'nprj',
             uiResizable: true,
-            iPlug2GitHash: '33700e4a498c8e9440b7281008d32d4b2a24a12f',
+            iPlug2GitHash: 'ec24c55360f518ea31a54af8343a2c3b6211cc5c',
             vst3SdkGitHash: '0908f475f52af56682321192d800ef25d1823dd2',
             appOutputMultiplier: 1,
             appSignalVectorSize: 64,

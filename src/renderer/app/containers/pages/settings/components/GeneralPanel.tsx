@@ -1,10 +1,22 @@
-import { Card, Divider, Elevation, FormGroup, H5, Radio, RadioGroup } from '@blueprintjs/core';
+import {setLoadingServiceContext} from '@/renderer/app/services/ui/loading-screen-service';
+import {
+    Card,
+    Divider,
+    Elevation,
+    FormGroup,
+    H5,
+    NumericInput,
+    Radio,
+    RadioGroup
+} from '@blueprintjs/core';
 
 import * as React from 'react';
 
 export interface GeneralPanelProps {
     darkTheme: boolean;
     setDarkTheme: (value: boolean) => void;
+    codeEditorFontSize: number;
+    setCodeEditorFontSize: (value: number) => void;
 }
 
 export const GeneralPanel = (props: GeneralPanelProps) => {
@@ -31,6 +43,17 @@ export const GeneralPanel = (props: GeneralPanelProps) => {
                         <Radio label="Dark" value="dark" />
                         <Radio label="Light" value="light" />
                     </RadioGroup>
+                </FormGroup>
+                <FormGroup
+                    label="Code Editor Font Size"
+                    inline={true}
+                    helperText={`The size of the font in the code editor window.`}
+                >
+                    <NumericInput
+                        fill={true}
+                        value={props.codeEditorFontSize}
+                        onValueChange={props.setCodeEditorFontSize}
+                    />
                 </FormGroup>
             </div>
         </Card>

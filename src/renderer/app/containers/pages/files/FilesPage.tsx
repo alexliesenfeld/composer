@@ -37,6 +37,7 @@ export class FilesPage extends React.Component<FilesPageProps> {
                 <When condition={filesStore.activeTab == FilesTab.SOURCE_FILES_TAB}>
                     <SourceFileTabPage
                         darkTheme={appStore.darkTheme}
+                        codeEditorFontSize={appStore.codeEditorFontSize}
                         isCreateFileDialogOpen={filesStore.createNewSourceFileDialogOpened}
                         onAcceptCreateSourceFileDialog={this.onAcceptCreateSourceFileDialog}
                         onCancelCreateSourceFileDialog={this.onCancelCreateSourceFileDialog}

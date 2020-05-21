@@ -24,6 +24,7 @@ interface SourceFileTabPageProps {
     onCreateNewItem: () => void;
     onDeleteItem: (fileName: string) => void;
     selectedSourceFileContent: string | undefined;
+    codeEditorFontSize: number;
 }
 
 export const SourceFileTabPage = (props: SourceFileTabPageProps) => {
@@ -64,7 +65,7 @@ export const SourceFileTabPage = (props: SourceFileTabPageProps) => {
                     theme="tomorrow_night"
                     name="source-file-editor"
                     value={props.selectedSourceFileContent}
-                    fontSize={16}
+                    fontSize={props.codeEditorFontSize}
                     showPrintMargin={false}
                     showGutter={true}
                     highlightActiveLine={false}

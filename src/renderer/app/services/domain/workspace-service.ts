@@ -29,7 +29,6 @@ import {
     unzipFile,
     writeFile,
 } from '@/renderer/app/util/file-utils';
-import { Fsx } from '@/renderer/app/util/fsx';
 import * as git from '@/renderer/app/util/git-utils';
 import { multiline, prependFill } from '@/renderer/app/util/string-utils';
 import { enumValues } from '@/renderer/app/util/type-utils';
@@ -50,8 +49,8 @@ export class WorkspaceService {
     ) {
         await createDirIfNotExists(paths.getDependenciesDirPath());
 
-        if (await this.shouldSetupIPlug2(paths)) {
-            await this.downloadIPlug2FromGithub(paths, config.iPlug2GitHash);
+        if (await this.shouldSetupIPlug2(paths, config)) {
+            await this.cloneIPlug2Repository(paths, config);
         }
 
         if (!skipDependencies) {
@@ -137,22 +136,17 @@ export class WorkspaceService {
     }
 
     @logActivity('Cloning iPlug2 Git repo')
-    public async downloadIPlug2FromGithub(paths: WorkspacePaths, shaRef?: string): Promise<void> {
-        const tempDir = paths.getTempDirPath();
-        const zipFilePath = path.join(tempDir, `${shaRef}.zip`);
-        const zipFileContentDirPath = path.join(tempDir, `iPlug2-${shaRef}`);
+    public async cloneIPlug2Repository(
+        paths: WorkspacePaths,
+        config: WorkspaceConfig,
+    ): Promise<void> {
         const iPlug2Path = paths.getIPlug2BaseDirPath();
-
-        await recreateDir(tempDir);
-
-        await downloadFile(`https://github.com/iPlug2/iPlug2/archive/${shaRef}.zip`, zipFilePath);
-        await unzipFile(zipFilePath, tempDir);
-
-        await Fsx.unlink(zipFilePath);
-        await deleteDirectory(iPlug2Path);
-
-        await Fsx.rename(zipFileContentDirPath, iPlug2Path);
-        await deleteDirectory(tempDir);
+        await recreateDir(iPlug2Path);
+        await git.cloneRepo(
+            'https://github.com/iPlug2/iPlug2.git',
+            config.iPlug2GitHash,
+            iPlug2Path,
+        );
     }
 
     @logActivity('Downloading iPlug2 prebuilt dependencies')
@@ -261,22 +255,31 @@ export class WorkspaceService {
         );
     }
 
-    public async shouldSetupIPlug2(paths: WorkspacePaths): Promise<boolean> {
-        return directoryDoesNotExistOrIsEmpty(paths.getIPlug2BaseDirPath());
-    }
-
-    public async shouldSetupIPlug2Dependencies(paths: WorkspacePaths): Promise<boolean> {
-        return directoryDoesNotExistOrIsEmpty(paths.getIPlug2DependenciesBuildPath());
+    public async shouldSetupIPlug2(
+        paths: WorkspacePaths,
+        config: WorkspaceConfig,
+    ): Promise<boolean> {
+        const iPlugDir = paths.getIPlug2BaseDirPath();
+        return !(await this.gitRepoExistsAndAtHash(iPlugDir, config.iPlug2GitHash));
     }
 
     public async shouldSetupVst3Sdk(
         paths: WorkspacePaths,
         config: WorkspaceConfig,
     ): Promise<boolean> {
-        return (
-            config.formats.includes(PluginFormat.VST3) &&
-            (await directoryDoesNotExistOrIsEmpty(paths.getVst3SdkDirPath(), ['README.md']))
-        );
+        if (!config.formats.includes(PluginFormat.VST3)) {
+            return false;
+        }
+
+        return !(await this.gitRepoExistsAndAtHash(
+            paths.getVst3SdkDirPath(),
+            config.vst3SdkGitHash,
+            ['README.md'],
+        ));
+    }
+
+    public async shouldSetupIPlug2Dependencies(paths: WorkspacePaths): Promise<boolean> {
+        return directoryDoesNotExistOrIsEmpty(paths.getIPlug2DependenciesBuildPath());
     }
 
     public async shouldInitializeSourceFiles(paths: WorkspacePaths): Promise<boolean> {
@@ -429,5 +432,20 @@ export class WorkspaceService {
         return pluginType === IPlugPluginType.INSTRUMENT
             ? Prototype.IPLUGINSTRUMENT
             : Prototype.IPLIGEFFECT;
+    }
+
+    private async gitRepoExistsAndAtHash(
+        localRepoPath: string,
+        requiredHash: string,
+        fileNamesToIgnore?: string[],
+    ): Promise<boolean> {
+        if (await directoryDoesNotExistOrIsEmpty(localRepoPath, fileNamesToIgnore)) {
+            return false;
+        }
+
+        const rawHash = await git.getCurrentHash(localRepoPath);
+        const cleanHash = rawHash.replace(/\s/g, '');
+
+        return requiredHash === cleanHash;
     }
 }

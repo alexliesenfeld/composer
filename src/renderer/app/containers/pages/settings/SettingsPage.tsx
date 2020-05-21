@@ -8,9 +8,18 @@ const SettingsPage = (props: { appStore?: AppStore }) => {
         props.appStore!.darkTheme = value;
     };
 
+    const setCodeEditorFontSize = (value: number) => {
+        props.appStore!.codeEditorFontSize = value;
+    };
+
     return (
         <div className="ConfigurationPage">
-            <GeneralPanel darkTheme={props.appStore!.darkTheme} setDarkTheme={setDarkTheme} />
+            <GeneralPanel
+                darkTheme={props.appStore!.darkTheme}
+                setDarkTheme={setDarkTheme}
+                codeEditorFontSize={props.appStore!.codeEditorFontSize}
+                setCodeEditorFontSize={setCodeEditorFontSize}
+            />
         </div>
     );
 };
