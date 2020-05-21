@@ -29,7 +29,7 @@ import * as React from 'react';
 
 const WelcomePage = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) => {
     const onNodeClick = (node: ITreeNode) => {
-        return props.workspaceStore!.loadWorkspace(node.id as string);
+        return props.workspaceStore!.openWorkspaceFromPath(node.id as string);
     };
 
     return (
@@ -42,7 +42,7 @@ const WelcomePage = (props: { appStore?: AppStore; workspaceStore?: WorkspaceSto
                         component: ActionsPanel,
                         props: {
                             onCreateWorkspace: props.workspaceStore!.initializeWorkspace,
-                            openConfigFromDialog: props.workspaceStore!.openConfigFromDialog,
+                            openConfigFromDialog: props.workspaceStore!.openWorkspaceFromDialog,
                         } as ActionsPanelProps,
                     }}
                 />

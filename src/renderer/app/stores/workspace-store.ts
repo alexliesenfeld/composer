@@ -1,5 +1,4 @@
 import { ElectronContext } from '@/renderer/app/model/electron-context';
-import { SavingError } from '@/renderer/app/model/errors';
 import { IPlugPluginType, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
 import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 import { ConfigService } from '@/renderer/app/services/domain/config-service';
@@ -31,7 +30,7 @@ export class WorkspaceStore {
 
     @action.bound
     @withNotification({ onError: 'Failed to open project' })
-    public async openConfigFromDialog(): Promise<void> {
+    public async openWorkspaceFromDialog(): Promise<void> {
         const result = await ElectronContext.showOpenDialog({
             filters: [{ extensions: ['json'], name: 'composer.json' }],
             properties: ['createDirectory', 'dontAddToRecent', 'openFile', 'promptToCreate'],
@@ -45,9 +44,12 @@ export class WorkspaceStore {
     }
 
     @action.bound
-    @withNotification({ onError: 'Failed to open project directory' })
-    public openProjectDirectoryInFileExplorer() {
-        ElectronContext.openDirectoryInOsExplorer(path.dirname(this.configPath!));
+    @withLoadingScreen('Loading project')
+    @withNotification({
+        onError: 'Failed load recently used project',
+    })
+    public async openWorkspaceFromPath(path: string): Promise<void> {
+        await this.loadWorkspaceConfigFromPath(path);
     }
 
     @action.bound
@@ -119,19 +121,16 @@ export class WorkspaceStore {
     }
 
     @action.bound
-    @withLoadingScreen('Loading project')
-    @withNotification({
-        onError: 'Failed load recently used project',
-    })
-    public async loadWorkspace(path: string): Promise<void> {
-        await this.loadWorkspaceConfigFromPath(path);
-    }
-
-    @action.bound
     public deregisterRecentlyOpenedWorkspace(filePath: string): void {
         this.recentlyOpenedWorkspaces = LocalStorageAdapter.deregisterRecentlyOpenedWorkspace(
             filePath,
         );
+    }
+
+    @action.bound
+    @withNotification({ onError: 'Failed to open project directory' })
+    public openProjectDirectoryInFileExplorer() {
+        ElectronContext.openDirectoryInOsExplorer(path.dirname(this.configPath!));
     }
 
     public getResourceAliasName(filePath: string): string {
