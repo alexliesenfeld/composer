@@ -6,7 +6,9 @@ import { VisualStudioIdeService } from '@/renderer/app/services/domain/ide/visua
 import { WorkspaceService } from '@/renderer/app/services/domain/workspace-service';
 import { AppStore } from '@/renderer/app/stores/app-store';
 import { FilesStore } from '@/renderer/app/stores/files-store';
+import { SettingsStore } from '@/renderer/app/stores/settings-store';
 import { WorkspaceStore } from '@/renderer/app/stores/workspace-store';
+import { create } from 'mobx-persist';
 
 const configService = new ConfigService();
 const filesService = new FilesService();
@@ -20,4 +22,14 @@ export const stores = {
     appStore: new AppStore(workspaceService.getIdeName()),
     workspaceStore: new WorkspaceStore(workspaceService, configService),
     filesStore: new FilesStore(filesService),
+    settingsStore: new SettingsStore(),
 };
+
+// Enhance selected stores to persist data
+const hydrate = create({
+    storage: localStorage,
+    jsonify: true,
+});
+
+// Enhance all keys of the store so that their values are persisted
+Object.keys(stores.settingsStore).map((key) => hydrate(key, stores.settingsStore));

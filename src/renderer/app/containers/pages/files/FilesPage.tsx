@@ -2,8 +2,8 @@ import { When } from '@/renderer/app/components/When';
 import { FontFileTabPage } from '@/renderer/app/containers/pages/files/components/FontFileTabPage';
 import { ImageFileTabPage } from '@/renderer/app/containers/pages/files/components/ImageFileTabPage';
 import { SourceFileTabPage } from '@/renderer/app/containers/pages/files/components/SourceFileTabPage';
-import { AppStore } from '@/renderer/app/stores/app-store';
 import { FilesStore, FilesTab } from '@/renderer/app/stores/files-store';
+import { SettingsStore } from '@/renderer/app/stores/settings-store';
 import { WorkspaceStore } from '@/renderer/app/stores/workspace-store';
 import { Tab, Tabs } from '@blueprintjs/core';
 import { inject, observer } from 'mobx-react';
@@ -12,15 +12,15 @@ import * as React from 'react';
 export interface FilesPageProps {
     workspaceStore?: WorkspaceStore;
     filesStore?: FilesStore;
-    appStore?: AppStore;
+    settingsStore?: SettingsStore;
 }
 
-@inject('workspaceStore', 'filesStore', 'appStore')
+@inject('workspaceStore', 'filesStore', 'settingsStore')
 @observer
 export class FilesPage extends React.Component<FilesPageProps> {
     render() {
         const filesStore = this.props.filesStore!;
-        const appStore = this.props.appStore!;
+        const settingsStore = this.props.settingsStore!;
 
         return (
             <div className="FilesPage page">
@@ -36,8 +36,8 @@ export class FilesPage extends React.Component<FilesPageProps> {
                 </Tabs>
                 <When condition={filesStore.activeTab == FilesTab.SOURCE_FILES_TAB}>
                     <SourceFileTabPage
-                        darkTheme={appStore.darkTheme}
-                        codeEditorFontSize={appStore.codeEditorFontSize}
+                        darkTheme={settingsStore.darkTheme}
+                        codeEditorFontSize={settingsStore.codeEditorFontSize}
                         isCreateFileDialogOpen={filesStore.createNewSourceFileDialogOpened}
                         onAcceptCreateSourceFileDialog={this.onAcceptCreateSourceFileDialog}
                         onCancelCreateSourceFileDialog={this.onCancelCreateSourceFileDialog}
@@ -56,7 +56,7 @@ export class FilesPage extends React.Component<FilesPageProps> {
                 </When>
                 <When condition={this.props.filesStore!.activeTab == FilesTab.FONTS_TAB}>
                     <FontFileTabPage
-                        darkTheme={appStore.darkTheme}
+                        darkTheme={settingsStore.darkTheme}
                         fileToDelete={filesStore.fontFileToDelete}
                         onCancelDeletingFile={filesStore.cancelDeletingFontFile}
                         onCompleteDeletingFile={this.onCompleteDeletingFontFile}
@@ -76,7 +76,7 @@ export class FilesPage extends React.Component<FilesPageProps> {
                 </When>
                 <When condition={this.props.filesStore!.activeTab == FilesTab.IMAGES_TAB}>
                     <ImageFileTabPage
-                        darkTheme={appStore.darkTheme}
+                        darkTheme={settingsStore.darkTheme}
                         fileToDelete={filesStore.imageFileToDelete}
                         onCancelDeletingFile={filesStore.cancelDeletingImageFile}
                         onCompleteDeletingFile={this.onCompleteDeletingImageFile}

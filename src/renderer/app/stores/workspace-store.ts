@@ -29,50 +29,9 @@ export class WorkspaceStore {
     }
 
     @action.bound
-    @withNotification({ onError: 'Failed to open project' })
-    public async openWorkspaceFromDialog(): Promise<void> {
-        const result = await ElectronContext.showOpenDialog({
-            filters: [{ extensions: ['json'], name: 'composer.json' }],
-            properties: ['createDirectory', 'dontAddToRecent', 'openFile', 'promptToCreate'],
-        });
-
-        if (result.canceled) {
-            return;
-        }
-
-        await this.loadWorkspaceConfigFromPath(result.filePaths[0]);
-    }
-
-    @action.bound
-    @withLoadingScreen('Loading project')
-    @withNotification({
-        onError: 'Failed load recently used project',
-    })
-    public async openWorkspaceFromPath(path: string): Promise<void> {
-        await this.loadWorkspaceConfigFromPath(path);
-    }
-
-    @action.bound
-    @withNotification({ onError: 'Failed saving project' })
-    public async save(): Promise<void> {
-        if (!this.configPath) {
-            // Happens when no project has been loaded but the user already pressed
-            // a global keyboard shortcut to save the project.
-            return;
-        }
-
-        await this.configService.writeWorkspaceConfigToPath(
-            this.configPath!,
-            this.workspaceConfig!,
-        );
-
-        showSuccessNotification('Saved');
-    }
-
-    @action.bound
     @withNotification({ onError: 'Failed creating a new project' })
     @withLoadingScreen('Initializing Workspace')
-    public async initializeWorkspace(
+    public async createWorkspace(
         projectName: string,
         pluginType: IPlugPluginType,
         projectDir: string,
@@ -100,6 +59,47 @@ export class WorkspaceStore {
         await this.workspaceService.setupWorkspace(config, this.workspacePaths, true);
 
         showSuccessNotification('Successfully created a new project');
+    }
+
+    @action.bound
+    @withNotification({ onError: 'Failed saving project' })
+    public async saveWorkspace(): Promise<void> {
+        if (!this.configPath) {
+            // Happens when no project has been loaded but the user already pressed
+            // a global keyboard shortcut to saveWorkspace the project.
+            return;
+        }
+
+        await this.configService.writeWorkspaceConfigToPath(
+            this.configPath!,
+            this.workspaceConfig!,
+        );
+
+        showSuccessNotification('Saved');
+    }
+
+    @action.bound
+    @withNotification({ onError: 'Failed to open project' })
+    public async openWorkspaceFromDialog(): Promise<void> {
+        const result = await ElectronContext.showOpenDialog({
+            filters: [{ extensions: ['json'], name: 'composer.json' }],
+            properties: ['createDirectory', 'dontAddToRecent', 'openFile', 'promptToCreate'],
+        });
+
+        if (result.canceled) {
+            return;
+        }
+
+        await this.loadWorkspaceConfigFromPath(result.filePaths[0]);
+    }
+
+    @action.bound
+    @withLoadingScreen('Loading project')
+    @withNotification({
+        onError: 'Failed load recently used project',
+    })
+    public async openWorkspaceFromPath(path: string): Promise<void> {
+        await this.loadWorkspaceConfigFromPath(path);
     }
 
     @action.bound

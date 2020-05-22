@@ -24,8 +24,6 @@ export interface WorkspaceMetadata {
 
 export class AppStore
     implements LoadingServiceContext, LoggingServiceContext, NotificationServiceContext {
-    @observable public darkTheme = true;
-    @observable public codeEditorFontSize = 16;
     @observable public logMessages: AppStoreLogMessage[] = [];
     @observable public isLoadingScreenShown: boolean;
     @observable public loadingScreenText: string | undefined;

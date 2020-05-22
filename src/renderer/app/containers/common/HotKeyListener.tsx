@@ -10,7 +10,7 @@ const keyMap: KeyMap = {
 
 const HotKeyListener = (props: { workspaceStore?: WorkspaceStore; children: React.ReactNode }) => {
     const saveWorkspace = useCallback(async () => {
-        props.workspaceStore!.save();
+        props.workspaceStore!.saveWorkspace();
     }, [props.workspaceStore]);
 
     const handlers = {

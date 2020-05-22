@@ -83,7 +83,7 @@ const App = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) =>
                 <NavbarGroup align={Alignment.RIGHT}>
                     <Tooltip content="Save" position={Position.BOTTOM}>
                         <Button
-                            onClick={props.workspaceStore!.save}
+                            onClick={props.workspaceStore!.saveWorkspace}
                             className={Classes.MINIMAL}
                             icon={FLOPPY_DISK}
                         />

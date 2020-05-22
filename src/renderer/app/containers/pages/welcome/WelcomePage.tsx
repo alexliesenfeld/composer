@@ -41,7 +41,7 @@ const WelcomePage = (props: { appStore?: AppStore; workspaceStore?: WorkspaceSto
                     initialPanel={{
                         component: ActionsPanel,
                         props: {
-                            onCreateWorkspace: props.workspaceStore!.initializeWorkspace,
+                            onCreateWorkspace: props.workspaceStore!.createWorkspace,
                             openConfigFromDialog: props.workspaceStore!.openWorkspaceFromDialog,
                         } as ActionsPanelProps,
                     }}

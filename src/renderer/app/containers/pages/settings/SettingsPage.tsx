@@ -1,27 +1,27 @@
+import { SettingsStore } from '@/renderer/app/stores/settings-store';
 import * as React from 'react';
 import { GeneralPanel } from '@/renderer/app/containers/pages/settings/components/GeneralPanel';
-import { AppStore } from '@/renderer/app/stores/app-store';
 import { inject, observer } from 'mobx-react';
 
-const SettingsPage = (props: { appStore?: AppStore }) => {
+const SettingsPage = (props: { settingsStore?: SettingsStore }) => {
     const setDarkTheme = (value: boolean) => {
-        props.appStore!.darkTheme = value;
+        props.settingsStore!.darkTheme = value;
     };
 
     const setCodeEditorFontSize = (value: number) => {
-        props.appStore!.codeEditorFontSize = value;
+        props.settingsStore!.codeEditorFontSize = value;
     };
 
     return (
         <div className="ConfigurationPage">
             <GeneralPanel
-                darkTheme={props.appStore!.darkTheme}
+                darkTheme={props.settingsStore!.darkTheme}
                 setDarkTheme={setDarkTheme}
-                codeEditorFontSize={props.appStore!.codeEditorFontSize}
+                codeEditorFontSize={props.settingsStore!.codeEditorFontSize}
                 setCodeEditorFontSize={setCodeEditorFontSize}
             />
         </div>
     );
 };
 
-export default inject('appStore')(observer(SettingsPage));
+export default inject('settingsStore')(observer(SettingsPage));
