@@ -21,7 +21,6 @@ import {
     Tooltip,
 } from '@blueprintjs/core';
 import {
-    ARCHIVE,
     COG,
     CONSOLE,
     DOCUMENT,
@@ -70,14 +69,6 @@ const App = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) =>
                         icon={WRENCH}
                         selectedPage={props.appStore!.selectedPage}
                         onPageSelected={onPageSelected}
-                    />
-                    <NavButton
-                        text="Installer"
-                        target={Page.PACKAGING}
-                        icon={ARCHIVE}
-                        selectedPage={props.appStore!.selectedPage}
-                        onPageSelected={onPageSelected}
-                        disabled={true}
                     />
                 </NavbarGroup>
                 <NavbarGroup align={Alignment.RIGHT}>

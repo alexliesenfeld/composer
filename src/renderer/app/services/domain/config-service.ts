@@ -1,3 +1,4 @@
+import { ValidationErrors } from '@/renderer/app/model/validation';
 import {
     IPlugPluginType,
     PluginFormat,
@@ -6,7 +7,6 @@ import {
 } from '@/renderer/app/model/workspace-config';
 import {
     WorkspaceConfigKey,
-    WorkspaceConfigValidationErrors,
     WorkspaceConfigValidator,
 } from '@/renderer/app/services/domain/config-validator';
 import { Fsx } from '@/renderer/app/util/fsx';
@@ -17,7 +17,7 @@ export class ConfigService {
     validate(
         config: WorkspaceConfig,
         keys?: WorkspaceConfigKey[],
-    ): WorkspaceConfigValidationErrors {
+    ): ValidationErrors<WorkspaceConfigKey> {
         return this.validator.validate(config, keys);
     }
 
@@ -58,7 +58,10 @@ export class ConfigService {
         };
     }
 
-    writeWorkspaceConfigToPath = async (path: string, config: WorkspaceConfig): Promise<unknown> => {
+    writeWorkspaceConfigToPath = async (
+        path: string,
+        config: WorkspaceConfig,
+    ): Promise<unknown> => {
         return Fsx.writeFile(path, JSON.stringify(config, null, 4));
     };
 

@@ -1,3 +1,5 @@
+import {ValidationErrors} from '@/renderer/app/model/validation';
+import {WorkspaceConfigKey} from '@/renderer/app/services/domain/config-validator';
 import {
     Card,
     Divider,
@@ -21,6 +23,7 @@ export interface UserInterfacePanelProps {
     setUiEnabled: (value: boolean) => void;
     uiResizable: boolean;
     setUiResizable: (value: boolean) => void;
+    validationErrors: ValidationErrors<WorkspaceConfigKey>;
 }
 
 const UserInterfacePanel = (props: UserInterfacePanelProps) => {

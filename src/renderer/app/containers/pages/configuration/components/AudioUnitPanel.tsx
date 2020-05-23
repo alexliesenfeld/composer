@@ -1,3 +1,5 @@
+import {ValidationErrors} from '@/renderer/app/model/validation';
+import {WorkspaceConfigKey} from '@/renderer/app/services/domain/config-validator';
 import { Card, Divider, Elevation, FormGroup, H5, InputGroup } from '@blueprintjs/core';
 import * as React from 'react';
 
@@ -8,6 +10,7 @@ export interface AudioUnitPanelProps {
     setBundleManufacturer: (value: string) => void;
     bundleDomain: string;
     setBundleDomain: (value: string) => void;
+    validationErrors: ValidationErrors<WorkspaceConfigKey>;
 }
 
 const AudioUnitPanel = (props: AudioUnitPanelProps) => {

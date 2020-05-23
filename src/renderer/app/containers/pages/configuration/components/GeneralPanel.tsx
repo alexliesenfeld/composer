@@ -1,8 +1,10 @@
 import { SelectInput, SelectInputItem } from '@/renderer/app/components/SelectInput';
+import { WorkspaceAttributeFormGroup } from '@/renderer/app/components/WorkspaceAttributeFormGroup';
+import { ValidationErrors } from '@/renderer/app/model/validation';
 import { IPlugPluginType, PluginFormat } from '@/renderer/app/model/workspace-config';
+import { WorkspaceConfigKey } from '@/renderer/app/services/domain/config-validator';
 import { enumValues } from '@/renderer/app/util/type-utils';
-import { Card, Checkbox, Divider, Elevation, FormGroup, H5, InputGroup } from '@blueprintjs/core';
-import { useState } from 'react';
+import { Card, Checkbox, Divider, Elevation, H5, InputGroup } from '@blueprintjs/core';
 
 import * as React from 'react';
 
@@ -21,6 +23,7 @@ export interface GeneralPanelProps {
     setPluginType: (value: IPlugPluginType) => void;
     formats: PluginFormat[];
     setFormats: (value: PluginFormat[]) => void;
+    validationErrors: ValidationErrors<WorkspaceConfigKey>;
 }
 
 const GeneralPanel = (props: GeneralPanelProps) => {
@@ -59,27 +62,29 @@ const GeneralPanel = (props: GeneralPanelProps) => {
             <H5>General</H5>
             <Divider />
             <div className="card-content">
-                <FormGroup
+                <WorkspaceAttributeFormGroup
                     label="Plugin Name"
-                    labelFor="text-input"
                     inline={true}
                     helperText={
                         'The plugin name. It must not contain spaces. This value represents the iPlug configuration constant PLUG_NAME.'
                     }
+                    validationErrors={props.validationErrors}
+                    validationKey={'projectName'}
                 >
                     <InputGroup
                         placeholder="Please enter the name of the plugin"
                         value={props.projectName}
                         onChange={setProjectName}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Plugin Type"
-                    labelFor="plugin-input"
                     inline={true}
                     helperText={
                         'The plugin type. This value represents the iPlug configuration constant PLUG_TYPE.'
                     }
+                    validationErrors={props.validationErrors}
+                    validationKey={'pluginType'}
                 >
                     <SelectInput
                         items={enumValues(IPlugPluginType).map((e) => ({
@@ -89,32 +94,35 @@ const GeneralPanel = (props: GeneralPanelProps) => {
                         selectedItemKey={props.pluginType}
                         onClick={setPluginType}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Version"
-                    labelFor="text-input"
                     inline={true}
                     helperText={`The Plugin version number. It's of the form "major.minor.patch". This value represents the iPlug configuration constant PLUG_VERSION_STR and PLUG_VERSION_HEX.`}
+                    validationErrors={props.validationErrors}
+                    validationKey={'pluginVersion'}
                 >
                     <InputGroup
                         placeholder="Please enter the name of the plugin"
                         value={props.version}
                         onChange={setVersion}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Unique ID"
-                    labelFor="text-input"
                     inline={true}
                     helperText={`Your unique plugin ID. This value needs to consist of four characters. Example: IPeF. This value represents the iPlug configuration constant PLUG_UNIQUE_ID.`}
+                    validationErrors={props.validationErrors}
+                    validationKey={'vstUniqueId'}
                 >
                     <InputGroup value={props.vst3UniqueId} onChange={setVst3UniqueId} />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Formats"
-                    labelFor="text-input"
                     inline={true}
                     helperText={'The plugin formats that will be available.'}
+                    validationErrors={props.validationErrors}
+                    validationKey={'formats'}
                 >
                     {availablePluginFormats.map((format) => {
                         const onSelectFormat = () => {
@@ -132,35 +140,37 @@ const GeneralPanel = (props: GeneralPanelProps) => {
                             />
                         );
                     })}
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Main Class"
-                    labelFor="text-input"
                     inline={true}
                     helperText={
                         'The main C++ class of this plugin. You need to have this class defined somewhere in your code, otherwise it will not compile. This value represents the iPlug configuration constant PLUG_CLASS_NAME.'
                     }
+                    validationErrors={props.validationErrors}
+                    validationKey={'mainClassName'}
                 >
                     <InputGroup
                         placeholder="Please enter the name of the main C++ class"
                         value={props.mainClassName}
                         onChange={setMainClassName}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="iPlug2 Github Hash"
-                    labelFor="text-input"
                     inline={true}
                     helperText={
                         'The SHA1 Git hash that will be cloned from Github to generate IDE projects. You need to provide the full hash with 40 characters.'
                     }
+                    validationErrors={props.validationErrors}
+                    validationKey={'iPlug2GitHash'}
                 >
                     <InputGroup
                         placeholder="Please enter the version of iPlug2 to use"
                         value={props.iPlugSha1}
                         onChange={setIPlugSha1}
                     />
-                </FormGroup>
+                </WorkspaceAttributeFormGroup>
             </div>
         </Card>
     );

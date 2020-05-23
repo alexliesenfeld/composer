@@ -1,5 +1,7 @@
 import { SelectInput, SelectInputItem } from '@/renderer/app/components/SelectInput';
+import {ValidationErrors} from '@/renderer/app/model/validation';
 import { Vst3Subcategory } from '@/renderer/app/model/workspace-config';
+import {WorkspaceConfigKey} from '@/renderer/app/services/domain/config-validator';
 import { enumValues } from '@/renderer/app/util/type-utils';
 import { Card, Divider, Elevation, FormGroup, H5, InputGroup } from '@blueprintjs/core';
 import * as React from 'react';
@@ -9,6 +11,7 @@ export interface VstPanelProps {
     setVst3Subcategory: (value: Vst3Subcategory) => void;
     vst3SdkGitHash: string;
     setVst3SdkGitHash: (value: string) => void;
+    validationErrors: ValidationErrors<WorkspaceConfigKey>;
 }
 
 const VstPanel = (props: VstPanelProps) => {

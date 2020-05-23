@@ -11,7 +11,6 @@ import {
     Vst3Subcategory,
 } from '@/renderer/app/model/workspace-config';
 import { WorkspaceStore } from '@/renderer/app/stores/workspace-store';
-import { matchesVersion } from '@/renderer/app/util/string-utils';
 import { inject, observer } from 'mobx-react';
 import * as React from 'react';
 
@@ -19,7 +18,7 @@ import * as React from 'react';
 @observer
 export class ConfigurationPage extends React.Component<{ workspaceStore?: WorkspaceStore }> {
     render() {
-        const { workspaceConfig } = this.props.workspaceStore!;
+        const { workspaceConfig, validationErrors } = this.props.workspaceStore!;
 
         return (
             <div className="ConfigurationPage">
@@ -38,6 +37,7 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
                     setIPlugSha1={this.setIPlugGitHash}
                     formats={workspaceConfig!.formats}
                     setFormats={this.setFormats}
+                    validationErrors={validationErrors}
                 />
 
                 <ManufacturerPanel
@@ -51,6 +51,7 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
                     setManufacturerCopyrightNotice={this.setManufacturerCopyrightNotice}
                     manufacturerWebsite={workspaceConfig!.manufacturerWebsite}
                     setManufacturerWebsite={this.setManufacturerWebsite}
+                    validationErrors={validationErrors}
                 />
 
                 <UserInterfacePanel
@@ -64,6 +65,7 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
                     setUiEnabled={this.setUiEnabled}
                     uiResizable={workspaceConfig!.uiResizable}
                     setUiResizable={this.setUiResizable}
+                    validationErrors={validationErrors}
                 />
 
                 <InputOutputPanel
@@ -81,6 +83,7 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
                     setMpe={this.setMpe}
                     stateChunks={workspaceConfig!.stateChunks}
                     setStateChunks={this.setStateChunks}
+                    validationErrors={validationErrors}
                 />
 
                 <AudioUnitPanel
@@ -90,6 +93,7 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
                     setBundleManufacturer={this.setBundleManufacturer}
                     bundleDomain={workspaceConfig!.audioUnitBundleDomain}
                     setBundleDomain={this.setBundleDomain}
+                    validationErrors={validationErrors}
                 />
 
                 <VstPanel
@@ -97,6 +101,7 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
                     setVst3Subcategory={this.setVst3Subcategory}
                     vst3SdkGitHash={workspaceConfig!.vst3SdkGitHash}
                     setVst3SdkGitHash={this.setVst3SdkGitHash}
+                    validationErrors={validationErrors}
                 />
 
                 <AppPanel
@@ -106,6 +111,7 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
                     setOutputMultiplier={this.setOutputMultiplier}
                     signalVectorSize={workspaceConfig!.appSignalVectorSize}
                     setSignalVectorSize={this.setSignalVectorSize}
+                    validationErrors={validationErrors}
                 />
             </div>
         );
@@ -124,9 +130,7 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
     };
 
     setVersion = (version: string) => {
-        if (matchesVersion(version)) {
-            this.props.workspaceStore!.workspaceConfig!.pluginVersion = version;
-        }
+        this.props.workspaceStore!.workspaceConfig!.pluginVersion = version;
     };
 
     setVstUniqueId = (value: string) => {

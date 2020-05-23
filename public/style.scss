@@ -460,3 +460,14 @@ ConfigurationPage
 .ConfigurationPage .card-content {
   margin-top: 1em;
 }
+
+/*****************************************************************
+WorkspaceAttributeFormGroup
+******************************************************************/
+.WorkspaceAttributeFormGroup.validation-error .bp3-input-group .bp3-input  {
+  box-shadow: 0 0 0 1px $pt-intent-warning, 0 0 0 3px rgba(217, 130, 43, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+}
+
+.WorkspaceAttributeFormGroup.validation-error .SelectInput .bp3-button  {
+  box-shadow: 0 0 0 1px $pt-intent-warning, 0 0 0 3px rgba(217, 130, 43, 0.3), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+}

@@ -24,7 +24,7 @@ export const FontHelpPanel = (props: FontHelpPanelProps) => {
                 <div className={Classes.DIALOG_BODY}>
                     <p>You can use the font like demonstrated in the following example:</p>
                     <Pre>
-                        pGraphics-&gt;LoadFont(`&quot;{fontId}`&quot;, {props.variableName});
+                        pGraphics-&gt;LoadFont(&quot;{fontId}&quot;, {props.variableName});
                     </Pre>
                     <p>
                         Based on the example above the font will be available using the font id{' '}

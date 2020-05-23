@@ -30,7 +30,11 @@ import {
     writeFile,
 } from '@/renderer/app/util/file-utils';
 import * as git from '@/renderer/app/util/git-utils';
-import { multiline, prependFill } from '@/renderer/app/util/string-utils';
+import {
+    multiline,
+    parseVersionNumber,
+    prependFill
+} from '@/renderer/app/util/string-utils';
 import { enumValues } from '@/renderer/app/util/type-utils';
 import * as path from 'path';
 
@@ -410,16 +414,11 @@ export class WorkspaceService {
     }
 
     private mapVersionToHex(value: string) {
-        const parts: string[] = value.split('.');
-        const major = prependFill(parseInt(parts[0]).toString(16), 4, '0');
-        const minor = prependFill(parseInt(parts[1]).toString(16), 2, '0');
-        const patch = prependFill(parseInt(parts[2]).toString(16), 2, '0');
+        const parts = parseVersionNumber(value);
 
-        if (major.length > 4 || minor.length > 2 || patch.length > 2) {
-            throw new OperationFailedError(
-                'Version number too long. Maximum version values are "65535.255.255".',
-            );
-        }
+        const major = prependFill(parts.major.toString(16), 4, '0');
+        const minor = prependFill(parts.minor.toString(16), 2, '0');
+        const patch = prependFill(parts.patch.toString(16), 2, '0');
 
         return major + minor + patch;
     }

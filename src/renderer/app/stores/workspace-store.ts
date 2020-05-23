@@ -28,6 +28,10 @@ export class WorkspaceStore {
         return new WorkspacePaths(this.configPath!, this.workspaceConfig!);
     }
 
+    @computed({ keepAlive: true }) get validationErrors() {
+        return this.configService.validate(this.workspaceConfig!);
+    }
+
     @action.bound
     @withNotification({ onError: 'Failed creating a new project' })
     @withLoadingScreen('Initializing Workspace')

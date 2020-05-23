@@ -1,3 +1,5 @@
+import {ValidationErrors} from '@/renderer/app/model/validation';
+import {WorkspaceConfigKey} from '@/renderer/app/services/domain/config-validator';
 import { Card, Divider, Elevation, FormGroup, H5, NumericInput } from '@blueprintjs/core';
 
 import * as React from 'react';
@@ -9,6 +11,7 @@ export interface AppPanelProps {
     setOutputMultiplier: (value: number) => void;
     signalVectorSize: number;
     setSignalVectorSize: (value: number) => void;
+    validationErrors: ValidationErrors<WorkspaceConfigKey>;
 }
 
 const AppPanel = (props: AppPanelProps) => {

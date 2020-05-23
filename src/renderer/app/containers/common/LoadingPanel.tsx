@@ -3,10 +3,8 @@ import { H4, H6, Spinner } from '@blueprintjs/core';
 import { inject, observer } from 'mobx-react';
 import * as React from 'react';
 
-@inject('appStore')
-@observer
-class LoadingPanel extends React.Component<{ appStore?: AppStore }> {
-    renderSpinnerIfNecessary(loadingText: string | undefined, activities: string[]) {
+const LoadingPanel = (props: { appStore?: AppStore; children: React.ReactNode }) => {
+    const renderSpinnerIfNecessary = (loadingText: string | undefined, activities: string[]) => {
         if (loadingText) {
             return (
                 <div className="LoadingPanel">
@@ -16,19 +14,17 @@ class LoadingPanel extends React.Component<{ appStore?: AppStore }> {
                 </div>
             );
         }
-    }
+    };
 
-    render() {
-        return (
-            <div>
-                {this.renderSpinnerIfNecessary(
-                    this.props.appStore!.loadingScreenText,
-                    this.props.appStore!.loadingActivities,
-                )}
-                {this.props.children}
-            </div>
-        );
-    }
-}
+    return (
+        <div>
+            {renderSpinnerIfNecessary(
+                props.appStore!.loadingScreenText,
+                props.appStore!.loadingActivities,
+            )}
+            {props.children}
+        </div>
+    );
+};
 
-export default LoadingPanel;
+export default inject('appStore')(observer(LoadingPanel));

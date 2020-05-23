@@ -140,7 +140,6 @@ export class FilesStore {
     @action.bound
     public async createNewSourceFile(projectPaths: ProjectPaths, fileName: string): Promise<void> {
         await this.filesService.addNewSourceFile(projectPaths, fileName);
-
         return this.refreshSourceFilesList(projectPaths);
     }
 

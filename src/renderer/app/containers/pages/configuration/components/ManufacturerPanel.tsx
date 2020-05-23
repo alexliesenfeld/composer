@@ -1,3 +1,5 @@
+import {ValidationErrors} from '@/renderer/app/model/validation';
+import {WorkspaceConfigKey} from '@/renderer/app/services/domain/config-validator';
 import { Card, Divider, Elevation, FormGroup, H5, InputGroup } from '@blueprintjs/core';
 import * as React from 'react';
 
@@ -12,6 +14,7 @@ export interface ManufacturerPanelProps {
     setManufacturerCopyrightNotice: (value: string) => void;
     manufacturerWebsite: string;
     setManufacturerWebsite: (value: string) => void;
+    validationErrors: ValidationErrors<WorkspaceConfigKey>;
 }
 
 const ManufacturerPanel = (props: ManufacturerPanelProps) => {
