@@ -1,3 +1,5 @@
+import {CustomNumericInput} from '@/renderer/app/components/CustomNumericInput';
+import {WorkspaceAttributeFormGroup} from '@/renderer/app/components/WorkspaceAttributeFormGroup';
 import {ValidationErrors} from '@/renderer/app/model/validation';
 import {WorkspaceConfigKey} from '@/renderer/app/services/domain/config-validator';
 import {
@@ -48,53 +50,57 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
             <H5>Graphical User Interface</H5>
             <Divider />
             <div className="card-content">
-                <FormGroup
+                <WorkspaceAttributeFormGroup
                     label="Width"
-                    labelFor="prototype-input"
                     disabled={!props.uiEnabled}
                     inline={true}
                     helperText={`The width of the plugin window in pixels. This value represents the iPlug configuration constant PLUG_WIDTH.`}
+                    validationKey={'uiWidth'}
+                    validationErrors={props.validationErrors}
                 >
-                    <NumericInput
+                    <CustomNumericInput
                         fill={true}
                         value={props.uiWidth}
                         onValueChange={setUiWidth}
                         disabled={!props.uiEnabled}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Height"
-                    labelFor="prototype-input"
                     disabled={!props.uiEnabled}
                     inline={true}
                     helperText={`The height of the plugin window in pixels. This value represents the iPlug configuration constant PLUG_HEIGHT.`}
+                    validationKey={'uiHeight'}
+                    validationErrors={props.validationErrors}
                 >
-                    <NumericInput
+                    <CustomNumericInput
                         fill={true}
                         value={props.uiHeight}
                         onValueChange={setUiHeight}
                         disabled={!props.uiEnabled}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="FPS"
-                    labelFor="prototype-input"
                     disabled={!props.uiEnabled}
                     inline={true}
                     helperText={`The target frames per second that the window will be rendering at. This value represents the iPlug configuration constant PLUG_FPS.`}
+                    validationKey={'fps'}
+                    validationErrors={props.validationErrors}
                 >
-                    <NumericInput
+                    <CustomNumericInput
                         fill={true}
                         value={props.fps}
                         onValueChange={setFps}
                         disabled={!props.uiEnabled}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Enabled"
-                    labelFor="prototype-input"
                     inline={true}
                     helperText={`If the plugin has a GUI. This value represents the iPlug configuration constant PLUG_HAS_UI.`}
+                    validationKey={'uiEnabled'}
+                    validationErrors={props.validationErrors}
                 >
                     <RadioGroup
                         inline={true}
@@ -104,7 +110,7 @@ const UserInterfacePanel = (props: UserInterfacePanelProps) => {
                         <Radio label="Yes" value="yes" />
                         <Radio label="No" value="no" />
                     </RadioGroup>
-                </FormGroup>
+                </WorkspaceAttributeFormGroup>
             </div>
         </Card>
     );

@@ -1,15 +1,8 @@
-import {ValidationErrors} from '@/renderer/app/model/validation';
-import {WorkspaceConfigKey} from '@/renderer/app/services/domain/config-validator';
-import {
-    Card,
-    Divider,
-    Elevation,
-    FormGroup,
-    H5,
-    NumericInput,
-    Radio,
-    RadioGroup,
-} from '@blueprintjs/core';
+import {CustomNumericInput} from '@/renderer/app/components/CustomNumericInput';
+import { WorkspaceAttributeFormGroup } from '@/renderer/app/components/WorkspaceAttributeFormGroup';
+import { ValidationErrors } from '@/renderer/app/model/validation';
+import { WorkspaceConfigKey } from '@/renderer/app/services/domain/config-validator';
+import { Card, Divider, Elevation, H5, NumericInput, Radio, RadioGroup } from '@blueprintjs/core';
 import * as React from 'react';
 
 export interface InputOutputPanelProps {
@@ -52,56 +45,60 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
             <H5>Input/Output</H5>
             <Divider />
             <div className="card-content">
-                <FormGroup
+                <WorkspaceAttributeFormGroup
                     label="Input-Channels"
-                    labelFor="prototype-input"
                     inline={true}
                     helperText={
                         'The number of input channels. This value partially represents the iPlug configuration constant PLUG_CHANNEL_IO.'
                     }
+                    validationKey={'inputChannels'}
+                    validationErrors={props.validationErrors}
                 >
-                    <NumericInput
+                    <CustomNumericInput
                         fill={true}
                         value={props.inputChannels}
                         onValueChange={props.setInputChannels}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Output-Channels"
-                    labelFor="prototype-input"
                     inline={true}
                     helperText={
                         'The number of output channels. This value partially represents the iPlug configuration constant PLUG_CHANNEL_IO.'
                     }
+                    validationKey={'outputChannels'}
+                    validationErrors={props.validationErrors}
                 >
-                    <NumericInput
+                    <CustomNumericInput
                         fill={true}
                         value={props.outputChannels}
                         onValueChange={props.setOutputChannels}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Plugin Latency"
-                    labelFor="prototype-input"
                     inline={true}
                     helperText={
                         'The plugin latency announced to hosts. This value represents the iPlug configuration constant PLUG_LATENCY.'
                     }
+                    validationKey={'pluginLatency'}
+                    validationErrors={props.validationErrors}
                 >
-                    <NumericInput
+                    <CustomNumericInput
                         fill={true}
                         value={props.pluginLatency}
                         onValueChange={props.setPluginLatency}
                     />
-                </FormGroup>
+                </WorkspaceAttributeFormGroup>
 
-                <FormGroup
+                <WorkspaceAttributeFormGroup
                     label="MIDI-In"
-                    labelFor="midi-in"
                     inline={true}
                     helperText={
                         'If the plugin needs to receive MIDI. This value represents the iPlug configuration constant PLUG_DOES_MIDI_IN.'
                     }
+                    validationKey={'midiIn'}
+                    validationErrors={props.validationErrors}
                 >
                     <RadioGroup
                         inline={true}
@@ -111,15 +108,16 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                         <Radio label="Yes" value="yes" />
                         <Radio label="No" value="no" />
                     </RadioGroup>
-                </FormGroup>
+                </WorkspaceAttributeFormGroup>
 
-                <FormGroup
+                <WorkspaceAttributeFormGroup
                     label="MIDI-Out"
-                    labelFor="midi-out"
                     inline={true}
                     helperText={
                         'If the plugin needs to send MIDI. This value represents the iPlug configuration constant PLUG_DOES_MIDI_OUT.'
                     }
+                    validationKey={'midiOut'}
+                    validationErrors={props.validationErrors}
                 >
                     <RadioGroup
                         inline={true}
@@ -129,15 +127,16 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                         <Radio label="Yes" value="yes" />
                         <Radio label="No" value="no" />
                     </RadioGroup>
-                </FormGroup>
+                </WorkspaceAttributeFormGroup>
 
-                <FormGroup
+                <WorkspaceAttributeFormGroup
                     label="MPE"
-                    labelFor="mpe"
                     inline={true}
                     helperText={
                         'If the plugin uses MPE (MIDI Polyphonic Expression). This value represents the iPlug configuration constant PLUG_DOES_MPE.'
                     }
+                    validationKey={'mpe'}
+                    validationErrors={props.validationErrors}
                 >
                     <RadioGroup
                         inline={true}
@@ -147,15 +146,16 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                         <Radio label="Yes" value="yes" />
                         <Radio label="No" value="no" />
                     </RadioGroup>
-                </FormGroup>
+                </WorkspaceAttributeFormGroup>
 
-                <FormGroup
+                <WorkspaceAttributeFormGroup
                     label="State Chunks"
-                    labelFor="state-chunks"
                     inline={true}
                     helperText={
                         'If the plugin needs to receive state as chunks of memory. This value represents the iPlug configuration constant PLUG_DOES_STATE_CHUNKS.'
                     }
+                    validationKey={'stateChunks'}
+                    validationErrors={props.validationErrors}
                 >
                     <RadioGroup
                         inline={true}
@@ -165,7 +165,7 @@ const InputOutputPanel = (props: InputOutputPanelProps) => {
                         <Radio label="Yes" value="yes" />
                         <Radio label="No" value="no" />
                     </RadioGroup>
-                </FormGroup>
+                </WorkspaceAttributeFormGroup>
             </div>
         </Card>
     );

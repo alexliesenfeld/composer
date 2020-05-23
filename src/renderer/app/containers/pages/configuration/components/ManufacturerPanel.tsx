@@ -1,6 +1,7 @@
-import {ValidationErrors} from '@/renderer/app/model/validation';
-import {WorkspaceConfigKey} from '@/renderer/app/services/domain/config-validator';
-import { Card, Divider, Elevation, FormGroup, H5, InputGroup } from '@blueprintjs/core';
+import { WorkspaceAttributeFormGroup } from '@/renderer/app/components/WorkspaceAttributeFormGroup';
+import { ValidationErrors } from '@/renderer/app/model/validation';
+import { WorkspaceConfigKey } from '@/renderer/app/services/domain/config-validator';
+import { Card, Divider, Elevation, H5, InputGroup } from '@blueprintjs/core';
 import * as React from 'react';
 
 export interface ManufacturerPanelProps {
@@ -43,66 +44,71 @@ const ManufacturerPanel = (props: ManufacturerPanelProps) => {
             <H5>Manufacturer</H5>
             <Divider />
             <div className="card-content">
-                <FormGroup
+                <WorkspaceAttributeFormGroup
                     label="Name"
-                    labelFor="text-input"
                     inline={true}
                     helperText={`The name of the manufacturer. It must not contain spaces. This value represents the iPlug configuration constant PLUG_MFR.`}
+                    validationKey={'manufacturerName'}
+                    validationErrors={props.validationErrors}
                 >
                     <InputGroup
                         id="text-input"
                         value={props.manufacturerName}
                         onChange={setManufacturerName}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Unique ID"
-                    labelFor="manufacturer-id"
                     inline={true}
                     helperText={`A unique four character manufacturer ID. This value represents the iPlug configuration constant PLUG_MFR_ID.`}
+                    validationKey={'manufacturerId'}
+                    validationErrors={props.validationErrors}
                 >
                     <InputGroup
                         id="manufacturer-id"
                         value={props.manufacturerId}
                         onChange={setManufacturerId}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="E-Mail"
-                    labelFor="text-input"
                     inline={true}
                     helperText={`The email address of the manufacturer. This field is optional. This value represents the iPlug configuration constant PLUG_EMAIL_STR.`}
+                    validationKey={'manufacturerEmail'}
+                    validationErrors={props.validationErrors}
                 >
                     <InputGroup
                         id="text-input"
                         value={props.manufacturerEmail}
                         onChange={setManufacturerEmail}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Copyright"
-                    labelFor="text-input"
                     inline={true}
                     helperText={`The copyright notice of the manufacturer. This field is optional. This value represents the iPlug configuration constant PLUG_COPYRIGHT_STR.`}
+                    validationKey={'manufacturerCopyrightNotice'}
+                    validationErrors={props.validationErrors}
                 >
                     <InputGroup
                         id="text-input"
                         value={props.manufacturerCopyrightNotice}
                         onChange={setManufacturerCopyrightNotice}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Website"
-                    labelFor="text-input"
                     inline={true}
                     helperText={`The manufacturer or product website URL. This field is optional. This value represents the iPlug configuration constant PLUG_URL_STR.`}
+                    validationKey={'manufacturerWebsite'}
+                    validationErrors={props.validationErrors}
                 >
                     <InputGroup
                         id="text-input"
                         value={props.manufacturerWebsite}
                         onChange={setManufacturerWebsite}
                     />
-                </FormGroup>
+                </WorkspaceAttributeFormGroup>
             </div>
         </Card>
     );

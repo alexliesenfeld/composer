@@ -40,3 +40,8 @@ export function arraysEqual<T>(a: T[], b: T[]) {
 
     return true;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isDefined(value: any): boolean {
+    return typeof value !== 'undefined' && value !== null;
+}

@@ -1,4 +1,5 @@
 import { SelectInput, SelectInputItem } from '@/renderer/app/components/SelectInput';
+import {WorkspaceAttributeFormGroup} from '@/renderer/app/components/WorkspaceAttributeFormGroup';
 import {ValidationErrors} from '@/renderer/app/model/validation';
 import { Vst3Subcategory } from '@/renderer/app/model/workspace-config';
 import {WorkspaceConfigKey} from '@/renderer/app/services/domain/config-validator';
@@ -28,13 +29,14 @@ const VstPanel = (props: VstPanelProps) => {
             <H5>Virtual Studio Technology (VST)</H5>
             <Divider />
             <div className="card-content">
-                <FormGroup
+                <WorkspaceAttributeFormGroup
                     label="Subcategory"
-                    labelFor="text-input"
                     inline={true}
                     helperText={
                         'The VST3 subcategory of the plugin. This value represents the iPlug configuration constant VST3_SUBCATEGORY.'
                     }
+                    validationKey={'vst3Subcategory'}
+                    validationErrors={props.validationErrors}
                 >
                     <SelectInput
                         items={enumValues(Vst3Subcategory).map((e) => ({
@@ -44,17 +46,18 @@ const VstPanel = (props: VstPanelProps) => {
                         selectedItemKey={props.vst3Subcategory}
                         onClick={setVst3Subcategory}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="SDK Github Hash"
-                    labelFor="text-input"
                     inline={true}
                     helperText={
                         'The SHA1 Git hash that will be cloned from Github to retrieve the VST3 SDK. You need to provide the full hash with 40 characters.'
                     }
+                    validationKey={'vst3SdkGitHash'}
+                    validationErrors={props.validationErrors}
                 >
                     <InputGroup value={props.vst3SdkGitHash} onChange={setVst3SdkGitSha} />
-                </FormGroup>
+                </WorkspaceAttributeFormGroup>
             </div>
         </Card>
     );

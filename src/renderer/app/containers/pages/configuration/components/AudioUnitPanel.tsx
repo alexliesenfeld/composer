@@ -1,6 +1,7 @@
-import {ValidationErrors} from '@/renderer/app/model/validation';
-import {WorkspaceConfigKey} from '@/renderer/app/services/domain/config-validator';
-import { Card, Divider, Elevation, FormGroup, H5, InputGroup } from '@blueprintjs/core';
+import { WorkspaceAttributeFormGroup } from '@/renderer/app/components/WorkspaceAttributeFormGroup';
+import { ValidationErrors } from '@/renderer/app/model/validation';
+import { WorkspaceConfigKey } from '@/renderer/app/services/domain/config-validator';
+import { Card, Divider, Elevation, H5, InputGroup } from '@blueprintjs/core';
 import * as React from 'react';
 
 export interface AudioUnitPanelProps {
@@ -25,50 +26,48 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
     const setBundleDomain = (e: React.ChangeEvent<HTMLInputElement>) => {
         props.setBundleDomain(e.target.value);
     };
+
     return (
         <Card elevation={Elevation.TWO}>
-            <H5>Audio Unit (AU)</H5>
+            <H5>macOS</H5>
+            {/* and iOS later */}
             <Divider />
             <div className="card-content">
-                <FormGroup
+                <WorkspaceAttributeFormGroup
                     label="Bundle Name"
-                    labelFor="text-input"
                     inline={true}
-                    helperText={
-                        'The bundle name that will be used for Xcode projects. This value represents the iPlug configuration constant BUNDLE_NAME.'
-                    }
+                    helperText={`The product name part of the plugin's bundle ID. This value represents the iPlug configuration constant BUNDLE_NAME.`}
+                    validationKey={'audioUnitBundleName'}
+                    validationErrors={props.validationErrors}
                 >
                     <InputGroup id="text-input" value={props.bundleName} onChange={setBundleName} />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Bundle Manufacturer"
-                    labelFor="text-input"
                     inline={true}
-                    helperText={
-                        'The bundle manufacturer that will be used for Xcode projects. This value represents the iPlug configuration constant BUNDLE_MFR.'
-                    }
+                    helperText={`The manufacturer name part of the plugin's bundle ID. This value represents the iPlug configuration constant BUNDLE_MFR.`}
+                    validationKey={'audioUnitBundleManufacturer'}
+                    validationErrors={props.validationErrors}
                 >
                     <InputGroup
                         id="text-input"
                         value={props.bundleManufacturer}
                         onChange={setBundleManufacturer}
                     />
-                </FormGroup>
-
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Bundle Domain"
-                    labelFor="text-input"
                     inline={true}
-                    helperText={
-                        'The bundle domain that will be used for Xcode projects. This value represents the iPlug configuration constant BUNDLE_DOMAIN.'
-                    }
+                    helperText={`The domain name part of the plugin's bundle ID. This value represents the iPlug configuration constant BUNDLE_DOMAIN.`}
+                    validationKey={'audioUnitBundleDomain'}
+                    validationErrors={props.validationErrors}
                 >
                     <InputGroup
                         id="text-input"
                         value={props.bundleDomain}
                         onChange={setBundleDomain}
                     />
-                </FormGroup>
+                </WorkspaceAttributeFormGroup>
             </div>
         </Card>
     );

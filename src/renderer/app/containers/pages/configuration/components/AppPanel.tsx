@@ -1,6 +1,8 @@
-import {ValidationErrors} from '@/renderer/app/model/validation';
-import {WorkspaceConfigKey} from '@/renderer/app/services/domain/config-validator';
-import { Card, Divider, Elevation, FormGroup, H5, NumericInput } from '@blueprintjs/core';
+import { CustomNumericInput } from '@/renderer/app/components/CustomNumericInput';
+import { WorkspaceAttributeFormGroup } from '@/renderer/app/components/WorkspaceAttributeFormGroup';
+import { ValidationErrors } from '@/renderer/app/model/validation';
+import { WorkspaceConfigKey } from '@/renderer/app/services/domain/config-validator';
+import { Card, Divider, Elevation, H5, NumericInput } from '@blueprintjs/core';
 
 import * as React from 'react';
 
@@ -32,49 +34,51 @@ const AppPanel = (props: AppPanelProps) => {
             <H5>Standalone App</H5>
             <Divider />
             <div className="card-content">
-                <FormGroup
+                <WorkspaceAttributeFormGroup
                     label="Wait Multiplier"
-                    labelFor="vector-wait"
                     inline={true}
                     helperText={
                         'This value represents the iPlug configuration constant APP_N_VECTOR_WAIT. Default: 0.'
                     }
+                    validationKey={'appVectorWaitMultiplier'}
+                    validationErrors={props.validationErrors}
                 >
-                    <NumericInput
-                        id="vector-wait"
+                    <CustomNumericInput
                         fill={true}
                         value={props.waitMultiplier}
                         onValueChange={setWaitMultiplier}
                     />
-                </FormGroup>
-                <FormGroup
-                    label="Output Multiplicator"
-                    labelFor="prototype-input"
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
+                    label="Output Multiplier"
                     inline={true}
                     helperText={
                         'This value represents the iPlug configuration constant APP_MULT. Default: 1.'
                     }
+                    validationKey={'appOutputMultiplier'}
+                    validationErrors={props.validationErrors}
                 >
-                    <NumericInput
+                    <CustomNumericInput
                         fill={true}
                         value={props.outputMultiplier}
                         onValueChange={setOutputMultiplier}
                     />
-                </FormGroup>
-                <FormGroup
+                </WorkspaceAttributeFormGroup>
+                <WorkspaceAttributeFormGroup
                     label="Signal Vector Size"
-                    labelFor="prototype-input"
                     inline={true}
                     helperText={
                         'This value represents the iPlug configuration constant APP_SIGNAL_VECTOR_SIZE. Default: 64.'
                     }
+                    validationKey={'appSignalVectorSize'}
+                    validationErrors={props.validationErrors}
                 >
-                    <NumericInput
+                    <CustomNumericInput
                         fill={true}
                         value={props.signalVectorSize}
                         onValueChange={setSignalVectorSize}
                     />
-                </FormGroup>
+                </WorkspaceAttributeFormGroup>
             </div>
         </Card>
     );

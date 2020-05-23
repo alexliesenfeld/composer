@@ -6,7 +6,8 @@ import * as React from 'react';
 export interface WorkspaceAttributeFormGroupProps {
     label: string;
     inline: boolean;
-    helperText: string | undefined;
+    helperText?: string;
+    disabled?: boolean;
     validationErrors: ValidationErrors<WorkspaceConfigKey>;
     validationKey: WorkspaceConfigKey;
 }
@@ -22,6 +23,7 @@ export class WorkspaceAttributeFormGroup extends React.Component<WorkspaceAttrib
                 }`}
                 label={this.props.label}
                 inline={this.props.inline}
+                disabled={this.props.disabled}
                 helperText={helperText}
                 intent={validationError ? 'warning' : 'none'}
             >
