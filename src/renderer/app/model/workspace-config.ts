@@ -83,9 +83,9 @@ export interface WorkspaceConfig {
     manufacturerEmail: string;
     manufacturerWebsite: string;
     manufacturerCopyrightNotice: string;
-    audioUnitBundleName: string;
-    audioUnitBundleManufacturer: string;
-    audioUnitBundleDomain: string;
+    macOsBundleName: string;
+    macOsBundleManufacturer: string;
+    macOsBundleDomain: string;
     vst3Subcategory: Vst3Subcategory;
     vstUniqueId: string;
     iPlug2GitHash: string;

@@ -1,5 +1,5 @@
 import AppPanel from '@/renderer/app/containers/pages/configuration/components/AppPanel';
-import AudioUnitPanel from '@/renderer/app/containers/pages/configuration/components/AudioUnitPanel';
+import MacOsPanel from '@/renderer/app/containers/pages/configuration/components/MacOsPanel';
 import GeneralPanel from '@/renderer/app/containers/pages/configuration/components/GeneralPanel';
 import InputOutputPanel from '@/renderer/app/containers/pages/configuration/components/InputOutputPanel';
 import ManufacturerPanel from '@/renderer/app/containers/pages/configuration/components/ManufacturerPanel';
@@ -86,12 +86,12 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
                     validationErrors={validationErrors}
                 />
 
-                <AudioUnitPanel
-                    bundleName={workspaceConfig!.audioUnitBundleName}
+                <MacOsPanel
+                    bundleName={workspaceConfig!.macOsBundleName}
                     setBundleName={this.setBundleName}
-                    bundleManufacturer={workspaceConfig!.audioUnitBundleManufacturer}
+                    bundleManufacturer={workspaceConfig!.macOsBundleManufacturer}
                     setBundleManufacturer={this.setBundleManufacturer}
-                    bundleDomain={workspaceConfig!.audioUnitBundleDomain}
+                    bundleDomain={workspaceConfig!.macOsBundleDomain}
                     setBundleDomain={this.setBundleDomain}
                     validationErrors={validationErrors}
                 />
@@ -214,15 +214,15 @@ export class ConfigurationPage extends React.Component<{ workspaceStore?: Worksp
     };
 
     setBundleName = (value: string) => {
-        this.props.workspaceStore!.workspaceConfig!.audioUnitBundleName = value;
+        this.props.workspaceStore!.workspaceConfig!.macOsBundleName = value;
     };
 
     setBundleManufacturer = (value: string) => {
-        this.props.workspaceStore!.workspaceConfig!.audioUnitBundleManufacturer = value;
+        this.props.workspaceStore!.workspaceConfig!.macOsBundleManufacturer = value;
     };
 
     setBundleDomain = (value: string) => {
-        this.props.workspaceStore!.workspaceConfig!.audioUnitBundleDomain = value;
+        this.props.workspaceStore!.workspaceConfig!.macOsBundleDomain = value;
     };
 
     setVst3Subcategory = (value: Vst3Subcategory) => {

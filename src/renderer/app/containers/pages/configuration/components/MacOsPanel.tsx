@@ -4,7 +4,7 @@ import { WorkspaceConfigKey } from '@/renderer/app/services/domain/config-valida
 import { Card, Divider, Elevation, H5, InputGroup } from '@blueprintjs/core';
 import * as React from 'react';
 
-export interface AudioUnitPanelProps {
+export interface MacOsPanelProps {
     bundleName: string;
     setBundleName: (value: string) => void;
     bundleManufacturer: string;
@@ -14,7 +14,7 @@ export interface AudioUnitPanelProps {
     validationErrors: ValidationErrors<WorkspaceConfigKey>;
 }
 
-const AudioUnitPanel = (props: AudioUnitPanelProps) => {
+const MacOsPanel = (props: MacOsPanelProps) => {
     const setBundleName = (e: React.ChangeEvent<HTMLInputElement>) => {
         props.setBundleName(e.target.value);
     };
@@ -37,7 +37,7 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
                     label="Bundle Name"
                     inline={true}
                     helperText={`The product name part of the plugin's bundle ID. This value represents the iPlug configuration constant BUNDLE_NAME.`}
-                    validationKey={'audioUnitBundleName'}
+                    validationKey={'macOsBundleName'}
                     validationErrors={props.validationErrors}
                 >
                     <InputGroup id="text-input" value={props.bundleName} onChange={setBundleName} />
@@ -46,7 +46,7 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
                     label="Bundle Manufacturer"
                     inline={true}
                     helperText={`The manufacturer name part of the plugin's bundle ID. This value represents the iPlug configuration constant BUNDLE_MFR.`}
-                    validationKey={'audioUnitBundleManufacturer'}
+                    validationKey={'macOsBundleManufacturer'}
                     validationErrors={props.validationErrors}
                 >
                     <InputGroup
@@ -59,7 +59,7 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
                     label="Bundle Domain"
                     inline={true}
                     helperText={`The domain name part of the plugin's bundle ID. This value represents the iPlug configuration constant BUNDLE_DOMAIN.`}
-                    validationKey={'audioUnitBundleDomain'}
+                    validationKey={'macOsBundleDomain'}
                     validationErrors={props.validationErrors}
                 >
                     <InputGroup
@@ -73,4 +73,4 @@ const AudioUnitPanel = (props: AudioUnitPanelProps) => {
     );
 };
 
-export default AudioUnitPanel;
+export default MacOsPanel;

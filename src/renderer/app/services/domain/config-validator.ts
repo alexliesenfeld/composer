@@ -167,43 +167,40 @@ export class WorkspaceConfigValidator {
             },
         ],
         [
-            'audioUnitBundleName',
+            'macOsBundleName',
             (config: WorkspaceConfig) => {
-                if (!config.audioUnitBundleName || config.audioUnitBundleName.trim().length === 0) {
+                if (!config.macOsBundleName || config.macOsBundleName.trim().length === 0) {
                     return 'You need to provide a bundle name.';
                 }
 
-                if (!/^[a-z0-9]+$/i.test(config.audioUnitBundleName)) {
+                if (!/^[a-z0-9]+$/i.test(config.macOsBundleName)) {
                     return 'The bundle name must consist of alphanumeric characters only.';
                 }
             },
         ],
         [
-            'audioUnitBundleManufacturer',
+            'macOsBundleManufacturer',
             (config: WorkspaceConfig) => {
                 if (
-                    !config.audioUnitBundleManufacturer ||
-                    config.audioUnitBundleManufacturer.trim().length === 0
+                    !config.macOsBundleManufacturer ||
+                    config.macOsBundleManufacturer.trim().length === 0
                 ) {
                     return 'You need to provide a bundle manufacturer name.';
                 }
 
-                if (!/^[a-z0-9]+$/i.test(config.audioUnitBundleManufacturer)) {
+                if (!/^[a-z0-9]+$/i.test(config.macOsBundleManufacturer)) {
                     return 'The bundle manufacturer name must consist of alphanumeric characters only.';
                 }
             },
         ],
         [
-            'audioUnitBundleDomain',
+            'macOsBundleDomain',
             (config: WorkspaceConfig) => {
-                if (
-                    !config.audioUnitBundleDomain ||
-                    config.audioUnitBundleDomain.trim().length === 0
-                ) {
+                if (!config.macOsBundleDomain || config.macOsBundleDomain.trim().length === 0) {
                     return 'You need to provide a bundle domain.';
                 }
 
-                if (!/^[a-z0-9]+$/i.test(config.audioUnitBundleDomain)) {
+                if (!/^[a-z0-9]+$/i.test(config.macOsBundleDomain)) {
                     return 'The bundle domain must consist of alphanumeric characters only.';
                 }
             },
