@@ -86,20 +86,18 @@ const App = (props: { appStore?: AppStore; workspaceStore?: WorkspaceStore }) =>
                             icon={FOLDER_SHARED_OPEN}
                         />
                     </Tooltip>
-                    <NavbarDivider />
-                    <Tooltip content="Settings" position={Position.BOTTOM}>
-                        <NavButton
-                            target={Page.SETTINGS}
-                            icon={COG}
-                            selectedPage={props.appStore!.selectedPage}
-                            onPageSelected={onPageSelected}
-                        />
-                    </Tooltip>
-                    <NavbarDivider />
                     <Tooltip content="Log Viewer" position={Position.BOTTOM}>
                         <NavButton
                             target={Page.LOG}
                             icon={CONSOLE}
+                            selectedPage={props.appStore!.selectedPage}
+                            onPageSelected={onPageSelected}
+                        />
+                    </Tooltip>
+                    <Tooltip content="Settings" position={Position.BOTTOM}>
+                        <NavButton
+                            target={Page.SETTINGS}
+                            icon={COG}
                             selectedPage={props.appStore!.selectedPage}
                             onPageSelected={onPageSelected}
                         />

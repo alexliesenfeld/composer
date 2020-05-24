@@ -1,6 +1,8 @@
 import { UnsupportedOperationError } from '@/renderer/app/model/errors';
 import { OperatingSystem } from '@/renderer/app/services/domain/common/model';
+import { Cpx } from '@/renderer/app/util/cpx';
 import { remote } from 'electron';
+import { action } from 'mobx';
 
 export abstract class ElectronContext {
     public static readonly dialog = remote.dialog;
@@ -32,6 +34,14 @@ export abstract class ElectronContext {
 
     public static openDirectoryInOsExplorer(path: string) {
         ElectronContext.shell.openItem(path);
+    }
+
+    public static locateFileInExplorer(filePath: string) {
+        ElectronContext.shell.showItemInFolder(filePath);
+    }
+
+    public static openInExternalEditor(fileName: string) {
+        return ElectronContext.shell.openItem(fileName);
     }
 
     public static showOpenDialog = ElectronContext.dialog.showOpenDialog;

@@ -19,14 +19,23 @@ export class FilesStore {
     @observable public selectedSourceFile: string | undefined;
     @observable public selectedFontFile: string | undefined;
     @observable public selectedImageFile: string | undefined;
+    @observable public selectedSourceFilePath: string | undefined;
+    @observable public selectedFontFilePath: string | undefined;
+    @observable public selectedImageFilePath: string | undefined;
     @observable public selectedSourceFileContent: string | undefined;
     @observable public selectedFontFileContent: Buffer | undefined;
     @observable public selectedImageFileContent: string | undefined;
     @observable public fontViewerFontSize = 18;
     @observable public createNewSourceFileDialogOpened = false;
+    @observable public renameSourceFileDialogOpened = false;
+    @observable public renameFontFileDialogOpened = false;
+    @observable public renameImageFileDialogOpened = false;
     @observable public sourceFileToDelete: string | undefined;
     @observable public fontFileToDelete: string | undefined;
     @observable public imageFileToDelete: string | undefined;
+    @observable public sourceFileToRename: string | undefined;
+    @observable public fontFileToRename: string | undefined;
+    @observable public imageFileToRename: string | undefined;
     @observable public imageInfoPanelOpened = false;
     @observable public fontInfoPanelOpened = false;
     private sourceFilesWatcher: FileWatcher | undefined;
@@ -102,8 +111,10 @@ export class FilesStore {
     ): Promise<void> {
         if (file) {
             const content = await this.filesService.loadFontContent(projectPaths, file);
+            const path = await this.filesService.getFontFilePath(projectPaths, file);
             runInAction(() => {
                 this.selectedFontFile = file;
+                this.selectedFontFilePath = path;
                 this.selectedFontFileContent = content;
             });
         }
@@ -116,8 +127,10 @@ export class FilesStore {
     ): Promise<void> {
         if (file) {
             const content = await this.filesService.loadSourceFileContent(projectPaths, file);
+            const path = await this.filesService.getSourceFilePath(projectPaths, file);
             runInAction(() => {
                 this.selectedSourceFile = file;
+                this.selectedSourceFilePath = path;
                 this.selectedSourceFileContent = content;
             });
         }
@@ -130,8 +143,10 @@ export class FilesStore {
     ): Promise<void> {
         if (file) {
             const content = await this.filesService.loadImageFileContent(projectPaths, file);
+            const path = this.filesService.getImageFilePath(projectPaths, file);
             runInAction(() => {
                 this.selectedImageFile = file;
+                this.selectedImageFilePath = path;
                 this.selectedImageFileContent = content;
             });
         }
@@ -293,5 +308,122 @@ export class FilesStore {
         if (this.imageFilesWatcher) {
             await this.imageFilesWatcher.stop();
         }
+    }
+
+    // **************************************************************
+    // Opening files in external editor
+    // **************************************************************
+    openSourceFileInExternalEditor = (projectPaths: ProjectPaths, fileName: string) => {
+        ElectronContext.openInExternalEditor(
+            this.filesService.getSourceFilePath(projectPaths, fileName),
+        );
+    };
+
+    openFontFileInExternalEditor = (projectPaths: ProjectPaths, fileName: string) => {
+        ElectronContext.openInExternalEditor(
+            this.filesService.getFontFilePath(projectPaths, fileName),
+        );
+    };
+
+    openImageFileInExternalEditor = (projectPaths: ProjectPaths, fileName: string) => {
+        ElectronContext.openInExternalEditor(
+            this.filesService.getImageFilePath(projectPaths, fileName),
+        );
+    };
+
+    // **************************************************************
+    // Locating files
+    // **************************************************************
+    locateSourceFileInExplorer = (projectPaths: ProjectPaths, fileName: string) => {
+        ElectronContext.locateFileInExplorer(
+            this.filesService.getSourceFilePath(projectPaths, fileName),
+        );
+    };
+
+    locateFontFileInExplorer = (projectPaths: ProjectPaths, fileName: string) => {
+        ElectronContext.locateFileInExplorer(
+            this.filesService.getFontFilePath(projectPaths, fileName),
+        );
+    };
+
+    locateImageFileInExplorer = (projectPaths: ProjectPaths, fileName: string) => {
+        ElectronContext.locateFileInExplorer(
+            this.filesService.getImageFilePath(projectPaths, fileName),
+        );
+    };
+
+    // **************************************************************
+    // Renaming source files
+    // **************************************************************
+    @action.bound
+    public async startRenamingSourceFile(fileName: string) {
+        this.sourceFileToRename = fileName;
+        this.renameSourceFileDialogOpened = true;
+    }
+
+    @action.bound
+    public async cancelRenamingSourceFile() {
+        this.sourceFileToRename = undefined;
+        this.renameSourceFileDialogOpened = false;
+    }
+
+    @action.bound
+    public async completeRenamingSourceFile(paths: ProjectPaths, newFileName: string) {
+        await this.filesService.renameSourceFile(paths, this.sourceFileToRename!, newFileName);
+        await this.refreshSourceFilesList(paths);
+        runInAction(() => {
+            this.sourceFileToRename = undefined;
+            this.renameSourceFileDialogOpened = false;
+        });
+    }
+
+    // **************************************************************
+    // Renaming font files
+    // **************************************************************
+    @action.bound
+    public async startRenamingFontFile(fileName: string) {
+        this.fontFileToRename = fileName;
+        this.renameFontFileDialogOpened = true;
+    }
+
+    @action.bound
+    public async cancelRenamingFontFile() {
+        this.fontFileToRename = undefined;
+        this.renameFontFileDialogOpened = false;
+    }
+
+    @action.bound
+    public async completeRenamingFontFile(paths: ProjectPaths, newFileName: string) {
+        await this.filesService.renameFontFile(paths, this.fontFileToRename!, newFileName);
+        await this.refreshFontFilesList(paths);
+        runInAction(() => {
+            this.fontFileToRename = undefined;
+            this.renameFontFileDialogOpened = false;
+        });
+    }
+
+    // **************************************************************
+    // Renaming image files
+    // **************************************************************
+    @action.bound
+    public async startRenamingImageFile(fileName: string) {
+        this.imageFileToRename = fileName;
+        this.renameImageFileDialogOpened = true;
+    }
+
+    @action.bound
+    public async cancelRenamingImageFile() {
+        this.imageFileToRename = undefined;
+        this.renameImageFileDialogOpened = false;
+    }
+
+    @action.bound
+    public async completeRenamingImageFile(paths: ProjectPaths, newFileName: string) {
+        await this.filesService.renameImageFile(paths, this.imageFileToRename!, newFileName);
+        await this.refreshImageFilesList(paths);
+        runInAction(() => {
+            this.imageFileToRename = undefined;
+            this.renameImageFileDialogOpened = false;
+        });
     }
 }

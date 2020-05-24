@@ -285,10 +285,11 @@ WelcomePage
 
 .page {
   position: absolute;
-  top: calc(#{$pt-navbar-height} + 1em);
-  left: 1em;
-  bottom: 2em;
-  right: 1em;
+  top: $pt-navbar-height;
+  left: 0;
+  bottom: 1em;
+  right: 0;
+  padding: 1em;
 }
 
 /*****************************************************************

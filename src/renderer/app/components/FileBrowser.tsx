@@ -1,5 +1,16 @@
 import { When } from '@/renderer/app/components/When';
-import { Button, ButtonGroup, Card, ITreeNode, Navbar, Tree } from '@blueprintjs/core';
+import {
+    Button,
+    ButtonGroup,
+    Card,
+    ContextMenu,
+    ITreeNode,
+    Menu,
+    MenuDivider,
+    MenuItem,
+    Navbar,
+    Tree,
+} from '@blueprintjs/core';
 import { ELEVATION_2 } from '@blueprintjs/core/lib/esm/common/classes';
 import { IconName } from '@blueprintjs/icons';
 import {
@@ -9,7 +20,6 @@ import {
     HEADER,
     IMPORT,
     MEDIA,
-    TRASH,
 } from '@blueprintjs/icons/lib/esm/generated/iconNames';
 import * as path from 'path';
 import * as React from 'react';
@@ -21,6 +31,9 @@ export interface FileBrowserProps {
     onImportExistingItem: () => void;
     onCreateNewItem?: () => void;
     onDelete: (fileName: string) => void;
+    onOpenInExternalEditor: (fileName: string) => void;
+    onLocateFileInExplorer: (fileName: string) => void;
+    onRenameFile: (fileName: string) => void;
     showContentArea: boolean;
     className?: string;
 }
@@ -42,8 +55,53 @@ export class FileBrowser extends React.Component<FileBrowserProps> {
         }
     }
 
-    onNodeClick = (node: ITreeNode<string>) => {
+    onSelectFile = (node: ITreeNode<string>) => {
         this.props.onSelectFile(node.id as string);
+    };
+
+    showContextMenu = (
+        node: ITreeNode<string>,
+        nodePath: number[],
+        e: React.MouseEvent<HTMLElement>,
+    ) => {
+        const fileName = node.nodeData!;
+
+        this.onSelectFile(node);
+
+        const onOpenExternalEditorButtonClicked = () => {
+            this.props.onOpenInExternalEditor(fileName);
+        };
+
+        const onOpenContainingDirectoryButtonClicked = () => {
+            this.props.onLocateFileInExplorer(fileName);
+        };
+
+        const onRenameButtonClicked = () => {
+            this.props.onRenameFile(fileName);
+        };
+
+        const onDeleteButtonClicked = () => {
+            this.props.onDelete(fileName);
+        };
+
+        ContextMenu.show(
+            <Menu>
+                <MenuItem
+                    icon="application"
+                    text="Open in external editor"
+                    onClick={onOpenExternalEditorButtonClicked}
+                />
+                <MenuItem
+                    icon="add-to-folder"
+                    text="Open containing directory"
+                    onClick={onOpenContainingDirectoryButtonClicked}
+                />
+                <MenuItem icon="translate" text="Rename" onClick={onRenameButtonClicked} />
+                <MenuDivider />
+                <MenuItem icon="trash" text="Delete" onClick={onDeleteButtonClicked} />
+            </Menu>,
+            { left: e.clientX, top: e.clientY },
+        );
     };
 
     render() {
@@ -77,30 +135,18 @@ export class FileBrowser extends React.Component<FileBrowserProps> {
                         </Navbar>
                         <Tree
                             className="file-tree"
+                            onNodeContextMenu={this.showContextMenu}
                             contents={this.props.fileList.map((fileName) => {
-                                const onButtonClick = () => {
-                                    this.props.onDelete(fileName);
-                                };
-
                                 return {
                                     id: fileName,
                                     hasCaret: false,
                                     icon: this.getIconForFileName(fileName),
                                     label: fileName,
+                                    nodeData: fileName,
                                     isSelected: fileName === this.props.selectedFile,
-                                    secondaryLabel: (
-                                        <div>
-                                            <Button
-                                                small={true}
-                                                minimal={true}
-                                                icon={TRASH}
-                                                onClick={onButtonClick}
-                                            />
-                                        </div>
-                                    ),
                                 } as ITreeNode;
                             })}
-                            onNodeClick={this.onNodeClick}
+                            onNodeClick={this.onSelectFile}
                         />
                     </Card>
                 </div>

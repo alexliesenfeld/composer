@@ -4,18 +4,13 @@ import {
     copyFile,
     createDirIfNotExists,
     deleteFileIfExists,
-    directoryDoesNotExistOrIsEmpty, writeFile,
+    directoryDoesNotExistOrIsEmpty,
+    writeFile,
 } from '@/renderer/app/util/file-utils';
 import { Fsx } from '@/renderer/app/util/fsx';
 import * as path from 'path';
 
 export class FilesService {
-    public async loadSourceFileNamesList(projectPaths: ProjectPaths): Promise<string[]> {
-        const result = await this.loadSourceFilesList(projectPaths);
-
-        return result.map((filePath) => path.basename(filePath));
-    }
-
     public async loadSourceFilesList(projectPaths: ProjectPaths): Promise<string[]> {
         const dir = projectPaths.getSourcesDir();
         if (await directoryDoesNotExistOrIsEmpty(dir)) {
@@ -25,12 +20,6 @@ export class FilesService {
         return (await Fsx.readdir(dir)).map((fileName) => path.join(dir, fileName));
     }
 
-    public async loadFontFileNamesList(projectPaths: ProjectPaths): Promise<string[]> {
-        const result = await this.loadFontFileList(projectPaths);
-
-        return result.map((filePath) => path.basename(filePath));
-    }
-
     public async loadFontFileList(projectPaths: ProjectPaths): Promise<string[]> {
         const dir = projectPaths.getFontsDir();
         if (await directoryDoesNotExistOrIsEmpty(dir)) {
@@ -38,12 +27,6 @@ export class FilesService {
         }
 
         return (await Fsx.readdir(dir)).map((fileName) => path.join(dir, fileName));
-    }
-
-    public async loadImageFileNamesList(projectPaths: ProjectPaths): Promise<string[]> {
-        const result = await this.loadImageFilesList(projectPaths);
-
-        return result.map((filePath) => path.basename(filePath));
     }
 
     public async loadImageFilesList(projectPaths: ProjectPaths): Promise<string[]> {
@@ -59,17 +42,14 @@ export class FilesService {
         projectPaths: ProjectPaths,
         fileName: string,
     ): Promise<string> {
-        const dir = projectPaths.getSourcesDir();
-        const filePath = path.join(dir, fileName);
+        const filePath = this.getSourceFilePath(projectPaths, fileName);
         const buffer = await Fsx.readFile(filePath);
 
         return buffer.toString();
     }
 
     public async loadFontContent(projectPaths: ProjectPaths, fileName: string): Promise<Buffer> {
-        const dir = projectPaths.getFontsDir();
-        const filePath = path.join(dir, fileName);
-
+        const filePath = this.getFontFilePath(projectPaths, fileName);
         return Fsx.readFile(filePath);
     }
 
@@ -77,8 +57,7 @@ export class FilesService {
         projectPaths: ProjectPaths,
         fileName: string,
     ): Promise<string> {
-        const dir = projectPaths.getImagesDir();
-        const filePath = path.join(dir, fileName);
+        const filePath = this.getImageFilePath(projectPaths, fileName);
         const buffer = await Fsx.readFile(filePath);
 
         return buffer.toString('base64');
@@ -97,7 +76,7 @@ export class FilesService {
     @logActivity('Adding new source file {1}')
     public async addNewSourceFile(projectPaths: ProjectPaths, fileName: string): Promise<void> {
         const sourcesDir = projectPaths.getSourcesDir();
-        const filePath = path.join(sourcesDir, fileName);
+        const filePath = this.getSourceFilePath(projectPaths, fileName);
 
         await createDirIfNotExists(sourcesDir);
         await writeFile(filePath, '');
@@ -105,9 +84,7 @@ export class FilesService {
 
     @logActivity('Deleting source file {1}')
     public async deleteSourceFile(projectPaths: ProjectPaths, fileName: string): Promise<void> {
-        const sourcesDir = projectPaths.getSourcesDir();
-        const filePath = path.join(sourcesDir, fileName);
-
+        const filePath = this.getSourceFilePath(projectPaths, fileName);
         await deleteFileIfExists(filePath);
     }
 
@@ -128,7 +105,7 @@ export class FilesService {
     ): Promise<void> {
         const sourcesDir = projectPaths.getSourcesDir();
         const fileName = path.basename(newSourceFilePath);
-        const filePath = path.join(sourcesDir, fileName);
+        const filePath = this.getSourceFilePath(projectPaths, fileName);
 
         await createDirIfNotExists(sourcesDir);
         await copyFile(newSourceFilePath, filePath);
@@ -149,7 +126,7 @@ export class FilesService {
         const resourcesDir = projectPaths.getResourcesDir();
         const fontsDir = projectPaths.getFontsDir();
         const fileName = path.basename(newFontFilePath);
-        const filePath = path.join(fontsDir, fileName);
+        const filePath = this.getFontFilePath(projectPaths, fileName);
 
         await createDirIfNotExists(resourcesDir);
         await createDirIfNotExists(fontsDir);
@@ -159,9 +136,7 @@ export class FilesService {
 
     @logActivity('Deleting font file {1}')
     public async deleteFontFile(projectPaths: ProjectPaths, fileName: string): Promise<void> {
-        const sourcesDir = projectPaths.getFontsDir();
-        const filePath = path.join(sourcesDir, fileName);
-
+        const filePath = this.getFontFilePath(projectPaths, fileName);
         await deleteFileIfExists(filePath);
     }
 
@@ -180,7 +155,7 @@ export class FilesService {
         const resourcesDir = projectPaths.getResourcesDir();
         const imagesDir = projectPaths.getImagesDir();
         const fileName = path.basename(newImageFilePath);
-        const filePath = path.join(imagesDir, fileName);
+        const filePath = this.getImageFilePath(projectPaths, fileName);
 
         await createDirIfNotExists(resourcesDir);
         await createDirIfNotExists(imagesDir);
@@ -190,9 +165,54 @@ export class FilesService {
 
     @logActivity('Deleting image file {1}')
     public async deleteImageFile(projectPaths: ProjectPaths, fileName: string): Promise<void> {
-        const sourcesDir = projectPaths.getImagesDir();
-        const filePath = path.join(sourcesDir, fileName);
-
+        const filePath = this.getImageFilePath(projectPaths, fileName);
         await deleteFileIfExists(filePath);
+    }
+
+    public async renameSourceFile(
+        projectPaths: ProjectPaths,
+        oldFileName: string,
+        newFileName: string,
+    ): Promise<void> {
+        return Fsx.move(
+            this.getSourceFilePath(projectPaths, oldFileName),
+            this.getSourceFilePath(projectPaths, newFileName),
+        );
+    }
+
+    public async renameImageFile(
+        projectPaths: ProjectPaths,
+        oldFileName: string,
+        newFileName: string,
+    ): Promise<void> {
+        return Fsx.move(
+            this.getImageFilePath(projectPaths, oldFileName),
+            this.getImageFilePath(projectPaths, newFileName),
+        );
+    }
+    public async renameFontFile(
+        projectPaths: ProjectPaths,
+        oldFileName: string,
+        newFileName: string,
+    ): Promise<void> {
+        return Fsx.move(
+            this.getFontFilePath(projectPaths, oldFileName),
+            this.getFontFilePath(projectPaths, newFileName),
+        );
+    }
+
+    public getSourceFilePath(projectPaths: ProjectPaths, fileName: string): string {
+        const sourcesDir = projectPaths.getSourcesDir();
+        return path.join(sourcesDir, fileName);
+    }
+
+    public getImageFilePath(projectPaths: ProjectPaths, fileName: string): string {
+        const sourcesDir = projectPaths.getImagesDir();
+        return path.join(sourcesDir, fileName);
+    }
+
+    public getFontFilePath(projectPaths: ProjectPaths, fileName: string): string {
+        const sourcesDir = projectPaths.getFontsDir();
+        return path.join(sourcesDir, fileName);
     }
 }

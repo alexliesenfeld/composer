@@ -1,5 +1,5 @@
 import { ConfirmDeleteFileDialog } from '@/renderer/app/components/ConfirmDeleteFileDialog';
-import CreateFileDialog from '@/renderer/app/components/CreateNewFileDialog';
+import { CreateOrRenameFileDialog } from '@/renderer/app/components/CreateRenameFileDialog';
 import { FileBrowser } from '@/renderer/app/components/FileBrowser';
 import { Alignment, Navbar, Text } from '@blueprintjs/core';
 
@@ -11,8 +11,11 @@ import 'ace-builds/webpack-resolver';
 interface SourceFileTabPageProps {
     darkTheme: boolean;
     isCreateFileDialogOpen: boolean;
-    onAcceptCreateSourceFileDialog: (fileName: string) => void;
-    onCancelCreateSourceFileDialog: () => void;
+    onAcceptCreateFileDialog: (fileName: string) => void;
+    onCancelCreateFileDialog: () => void;
+    isRenameFileDialogOpen: boolean;
+    onAcceptRenamingFileDialog: (fileName: string) => void;
+    onCancelRenamingFileDialog: () => void;
     checkFileExists: (file: string) => boolean;
     fileToDelete: string | undefined;
     onCancelDeletingSourceFile: () => void;
@@ -25,25 +28,50 @@ interface SourceFileTabPageProps {
     onDeleteItem: (fileName: string) => void;
     selectedSourceFileContent: string | undefined;
     codeEditorFontSize: number;
+    onOpenInExternalEditor: (fileName: string) => void;
+    onLocateFileInExplorer: (fileName: string) => void;
+    onRenameFile: (fileName: string) => void;
+    fileToRename?: string;
 }
 
 export const SourceFileTabPage = (props: SourceFileTabPageProps) => {
     return (
         <div className="SourceFileTabPage">
-            <CreateFileDialog
-                isOpen={props.isCreateFileDialogOpen}
-                title={'Create file'}
-                onAccept={props.onAcceptCreateSourceFileDialog}
-                onCancel={props.onCancelCreateSourceFileDialog}
-                fileExists={props.checkFileExists}
-                allowedFileExtensions={['.h', '.hpp', '.cpp']}
-            />
-            <ConfirmDeleteFileDialog
-                darkTheme={props.darkTheme}
-                fileName={props.fileToDelete}
-                onCancel={props.onCancelDeletingSourceFile}
-                onAccept={props.onConfirmDeleteFileDialog}
-            />
+            {props.isCreateFileDialogOpen && (
+                <CreateOrRenameFileDialog
+                    mode={'create'}
+                    initialValue={''}
+                    isOpen={props.isCreateFileDialogOpen}
+                    title={'Create file'}
+                    onAccept={props.onAcceptCreateFileDialog}
+                    onCancel={props.onCancelCreateFileDialog}
+                    fileExists={props.checkFileExists}
+                    allowedFileExtensions={['.h', '.hpp', '.cpp']}
+                />
+            )}
+
+            {!!props.fileToRename && (
+                <CreateOrRenameFileDialog
+                    mode={'rename'}
+                    initialValue={props.fileToRename}
+                    isOpen={props.isRenameFileDialogOpen}
+                    title={'Rename file'}
+                    onAccept={props.onAcceptRenamingFileDialog}
+                    onCancel={props.onCancelRenamingFileDialog}
+                    fileExists={props.checkFileExists}
+                    allowedFileExtensions={['.h', '.hpp', '.cpp']}
+                />
+            )}
+
+            {!!props.fileToDelete && (
+                <ConfirmDeleteFileDialog
+                    darkTheme={props.darkTheme}
+                    fileName={props.fileToDelete}
+                    onCancel={props.onCancelDeletingSourceFile}
+                    onAccept={props.onConfirmDeleteFileDialog}
+                />
+            )}
+
             <FileBrowser
                 showContentArea={true}
                 fileList={props.sourceFileNamesList}
@@ -52,6 +80,9 @@ export const SourceFileTabPage = (props: SourceFileTabPageProps) => {
                 onImportExistingItem={props.onImportFile}
                 onCreateNewItem={props.onCreateNewItem}
                 onDelete={props.onDeleteItem}
+                onLocateFileInExplorer={props.onLocateFileInExplorer}
+                onOpenInExternalEditor={props.onOpenInExternalEditor}
+                onRenameFile={props.onRenameFile}
             >
                 <Navbar>
                     <Navbar.Group align={Alignment.LEFT}>

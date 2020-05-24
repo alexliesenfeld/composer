@@ -39,9 +39,9 @@ export class FilesPage extends React.Component<FilesPageProps> {
                         darkTheme={settingsStore.darkTheme}
                         codeEditorFontSize={settingsStore.codeEditorFontSize}
                         isCreateFileDialogOpen={filesStore.createNewSourceFileDialogOpened}
-                        onAcceptCreateSourceFileDialog={this.onAcceptCreateSourceFileDialog}
-                        onCancelCreateSourceFileDialog={this.onCancelCreateSourceFileDialog}
-                        checkFileExists={filesStore.sourceFileNamesList.includes}
+                        onAcceptCreateFileDialog={this.onAcceptCreateSourceFileDialog}
+                        onCancelCreateFileDialog={this.onCancelCreateSourceFileDialog}
+                        checkFileExists={this.checkSourceFileExists}
                         fileToDelete={filesStore.sourceFileToDelete}
                         onCancelDeletingSourceFile={filesStore.cancelDeletingSourceFile}
                         onConfirmDeleteFileDialog={this.onConfirmDeleteFileDialog}
@@ -52,6 +52,13 @@ export class FilesPage extends React.Component<FilesPageProps> {
                         onCreateNewItem={this.onCreateNewSourceFile}
                         onDeleteItem={this.onDeleteSourceFile}
                         selectedSourceFileContent={filesStore.selectedSourceFileContent}
+                        onOpenInExternalEditor={this.onOpenSourceFileInExternalEditor}
+                        onLocateFileInExplorer={this.onLocateSourceFileInExplorer}
+                        isRenameFileDialogOpen={filesStore.renameSourceFileDialogOpened}
+                        onCancelRenamingFileDialog={filesStore.cancelRenamingSourceFile}
+                        onRenameFile={filesStore.startRenamingSourceFile}
+                        onAcceptRenamingFileDialog={this.onAcceptRenamingSourceFileDialog}
+                        fileToRename={filesStore.sourceFileToRename}
                     />
                 </When>
                 <When condition={this.props.filesStore!.activeTab == FilesTab.FONTS_TAB}>
@@ -72,6 +79,14 @@ export class FilesPage extends React.Component<FilesPageProps> {
                         onInfoPanelOpen={this.onFontInfoPanelOpen}
                         fontSize={filesStore.fontViewerFontSize}
                         onFontSizeChanged={this.onFontSizeChange}
+                        onOpenInExternalEditor={this.onOpenFontFileInExternalEditor}
+                        onLocateFileInExplorer={this.onLocateFontFileInExplorer}
+                        isRenameFileDialogOpen={filesStore.renameFontFileDialogOpened}
+                        onCancelRenamingFileDialog={filesStore.cancelRenamingFontFile}
+                        onRenameFile={filesStore.startRenamingFontFile}
+                        onAcceptRenamingFileDialog={this.onAcceptRenamingFontFileDialog}
+                        checkFileExists={this.checkFontFileExists}
+                        fileToRename={filesStore.fontFileToRename}
                     />
                 </When>
                 <When condition={this.props.filesStore!.activeTab == FilesTab.IMAGES_TAB}>
@@ -90,6 +105,14 @@ export class FilesPage extends React.Component<FilesPageProps> {
                         infoPanelOpened={filesStore.imageInfoPanelOpened}
                         onInfoPanelClose={this.onImageInfoPanelClose}
                         onInfoPanelOpen={this.onImageInfoPanelOpen}
+                        onOpenInExternalEditor={this.onOpenImageFileInExternalEditor}
+                        onLocateFileInExplorer={this.onLocateImageFileInExplorer}
+                        isRenameFileDialogOpen={filesStore.renameImageFileDialogOpened}
+                        onCancelRenamingFileDialog={filesStore.cancelRenamingImageFile}
+                        onRenameFile={filesStore.startRenamingImageFile}
+                        onAcceptRenamingFileDialog={this.onAcceptRenamingImageFileDialog}
+                        checkFileExists={this.checkImageFileExists}
+                        fileToRename={filesStore.imageFileToRename}
                     />
                 </When>
             </div>
@@ -233,5 +256,80 @@ export class FilesPage extends React.Component<FilesPageProps> {
 
     onImageInfoPanelOpen = () => {
         this.props.filesStore!.imageInfoPanelOpened = true;
+    };
+
+    onOpenSourceFileInExternalEditor = (fileName: string) => {
+        this.props.filesStore!.openSourceFileInExternalEditor(
+            this.props.workspaceStore!.workspacePaths!,
+            fileName,
+        );
+    };
+
+    onOpenFontFileInExternalEditor = (fileName: string) => {
+        this.props.filesStore!.openFontFileInExternalEditor(
+            this.props.workspaceStore!.workspacePaths!,
+            fileName,
+        );
+    };
+
+    onOpenImageFileInExternalEditor = (fileName: string) => {
+        this.props.filesStore!.openImageFileInExternalEditor(
+            this.props.workspaceStore!.workspacePaths!,
+            fileName,
+        );
+    };
+
+    onLocateSourceFileInExplorer = (fileName: string) => {
+        this.props.filesStore!.locateSourceFileInExplorer(
+            this.props.workspaceStore!.workspacePaths!,
+            fileName,
+        );
+    };
+
+    onLocateFontFileInExplorer = (fileName: string) => {
+        this.props.filesStore!.locateFontFileInExplorer(
+            this.props.workspaceStore!.workspacePaths!,
+            fileName,
+        );
+    };
+
+    onLocateImageFileInExplorer = (fileName: string) => {
+        this.props.filesStore!.locateImageFileInExplorer(
+            this.props.workspaceStore!.workspacePaths!,
+            fileName,
+        );
+    };
+
+    onAcceptRenamingSourceFileDialog = async (fileName: string) => {
+        return this.props.filesStore!.completeRenamingSourceFile(
+            this.props.workspaceStore!.workspacePaths!,
+            fileName,
+        );
+    };
+
+    onAcceptRenamingFontFileDialog = async (fileName: string) => {
+        return this.props.filesStore!.completeRenamingFontFile(
+            this.props.workspaceStore!.workspacePaths!,
+            fileName,
+        );
+    };
+
+    onAcceptRenamingImageFileDialog = async (fileName: string) => {
+        return this.props.filesStore!.completeRenamingImageFile(
+            this.props.workspaceStore!.workspacePaths!,
+            fileName,
+        );
+    };
+
+    checkSourceFileExists = (value: string): boolean => {
+        return this.props.filesStore!.sourceFileNamesList.includes(value);
+    };
+
+    checkFontFileExists = (value: string): boolean => {
+        return this.props.filesStore!.fontFileNamesList.includes(value);
+    };
+
+    checkImageFileExists = (value: string): boolean => {
+        return this.props.filesStore!.imageFileNamesList.includes(value);
     };
 }
