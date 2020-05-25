@@ -37,7 +37,7 @@ interface FontFileTabPageProps {
 export const FontFileTabPage = (props: FontFileTabPageProps) => {
     return (
         <div className="FontFileTabPage">
-            {props.fileToDelete && (
+            {!!props.fileToDelete && (
                 <ConfirmDeleteFileDialog
                     darkTheme={props.darkTheme}
                     fileName={props.fileToDelete}
