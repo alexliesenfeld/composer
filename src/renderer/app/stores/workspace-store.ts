@@ -74,11 +74,7 @@ export class WorkspaceStore {
             return;
         }
 
-        await this.configService.writeWorkspaceConfigToPath(
-            this.configPath!,
-            this.workspaceConfig!,
-        );
-
+        await this.saveWorkspaceSilently();
         showSuccessNotification('Saved');
     }
 
@@ -116,11 +112,7 @@ export class WorkspaceStore {
             return;
         }
 
-        await this.configService.writeWorkspaceConfigToPath(
-            this.configPath!,
-            this.workspaceConfig!,
-        );
-
+        await this.saveWorkspaceSilently();
         await this.workspaceService.startIDE(this.workspaceConfig!, this.workspacePaths);
     }
 
@@ -146,9 +138,23 @@ export class WorkspaceStore {
         runInAction(() => {
             this.workspaceConfig = userConfig;
             this.configPath = configPath;
+        });
+        this.registerWorkspaceInRecentlyOpenedWorkspaces();
+    }
+
+    private async saveWorkspaceSilently(): Promise<void> {
+        await this.configService.writeWorkspaceConfigToPath(
+            this.configPath!,
+            this.workspaceConfig!,
+        );
+        this.registerWorkspaceInRecentlyOpenedWorkspaces();
+    }
+
+    private registerWorkspaceInRecentlyOpenedWorkspaces(): void {
+        runInAction(() => {
             this.recentlyOpenedWorkspaces = LocalStorageAdapter.registerRecentlyOpenedWorkspace(
-                userConfig.projectName,
-                configPath,
+                this.workspaceConfig!.projectName,
+                this.configPath!,
             );
         });
     }
