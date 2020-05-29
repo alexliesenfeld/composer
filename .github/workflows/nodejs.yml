@@ -23,7 +23,7 @@ jobs:
           node-version: 12.x
       - run: npm ci
       - run: npm run prod
-      - run: npm test
+      - run: npm run test:coverage
         env:
           CI: true
       - uses: codecov/codecov-action@v1
