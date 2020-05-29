@@ -2,6 +2,8 @@
 <p align="center"><b>A productivity tool for iPlug 2 projects</b></p>
 <p align="center">
     <a href="https://github.com/alexliesenfeld/composer/actions"><img src="https://github.com/alexliesenfeld/composer/workflows/Build/badge.svg?branch=master"></a>
+    <a href="https://codecov.io/gh/alexliesenfeld/composer"><img src="https://codecov.io/gh/alexliesenfeld/composer/branch/master/graph/badge.svg"></a>
+    <a href="https://deepscan.io/dashboard#view=project&tid=9446&pid=11977&bid=179978"><img src="https://deepscan.io/api/teams/9446/projects/11977/branches/179978/badge/grade.svg"></a>
 </p>
 
 # Composer
