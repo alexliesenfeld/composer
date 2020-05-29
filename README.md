@@ -2,6 +2,7 @@
 <p align="center"><b>A productivity tool for iPlug 2 projects</b></p>
 <p align="center">
     <a href="https://github.com/alexliesenfeld/composer/actions"><img src="https://github.com/alexliesenfeld/composer/workflows/Build/badge.svg?branch=master"></a>
+    <a href="https://codecov.io/gh/alexliesenfeld/composer"><img src="https://codecov.io/gh/alexliesenfeld/composer/branch/master/graph/badge.svg"></a>
 </p>
 
 # Composer
