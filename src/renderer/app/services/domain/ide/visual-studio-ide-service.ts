@@ -1,6 +1,6 @@
 import { AssertionError } from '@/renderer/app/model/errors';
 import { PluginFormat, WorkspaceConfig } from '@/renderer/app/model/workspace-config';
-import { IdeService, VariableNameTranslator } from '@/renderer/app/services/domain/ide/ide-service';
+import { IdeService } from '@/renderer/app/services/domain/ide/ide-service';
 import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 import { FilesService } from '@/renderer/app/services/domain/files-service';
 import { logActivity } from '@/renderer/app/services/ui/logging-service';

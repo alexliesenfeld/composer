@@ -1,22 +1,15 @@
-import { SelectInput } from '@/renderer/app/components/SelectInput';
 import { When } from '@/renderer/app/components/When';
 import {
     ActionsPanel,
     ActionsPanelProps,
 } from '@/renderer/app/containers/pages/welcome/components/ActionsPanel';
-import { IPlugPluginType } from '@/renderer/app/model/workspace-config';
-import { showWarningNotification } from '@/renderer/app/services/ui/notification-service';
 import { AppStore } from '@/renderer/app/stores/app-store';
 import { WorkspaceStore } from '@/renderer/app/stores/workspace-store';
-import { enumValues } from '@/renderer/app/util/type-utils';
 import {
     Button,
     Card,
     Divider,
-    FormGroup,
     H6,
-    Icon,
-    InputGroup,
     ITreeNode,
     PanelStack,
     Popover,

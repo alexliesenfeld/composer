@@ -1,5 +1,4 @@
-import { AppStore } from '@/renderer/app/stores/app-store';
-import {SettingsStore} from '@/renderer/app/stores/settings-store';
+import { SettingsStore } from '@/renderer/app/stores/settings-store';
 import { inject, observer } from 'mobx-react';
 import * as React from 'react';
 
