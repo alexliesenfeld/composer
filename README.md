@@ -75,3 +75,4 @@ iPlug 2 is a complex framework that is still under heavy development. It comes p
 `Composer` is free software: you can redistribute it and/or modify it under the terms of the MIT Public License.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT Public License for more details.
+
