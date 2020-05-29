@@ -91,5 +91,9 @@ rendererConfig.plugins = [
         'process.env': {},
     }),
 ];
+// This is added because chokidar packaging was not working on macOS. See https://github.com/yan-foto/electron-reload/issues/71
+rendererConfig.externals = {
+    fsevents: "require('fsevents')",
+};
 
 module.exports = [mainConfig, rendererConfig];
