@@ -1,8 +1,7 @@
-
 <p align="center"><img height="150" src="https://github.com/alexliesenfeld/composer/raw/master/art/logo-256.png"></p>
 <p align="center"><b>A productivity tool for iPlug 2 projects</b></p>
 <p align="center">
-    <a><img src="https://github.com/alexliesenfeld/composer/workflows/Build/badge.svg?branch=master"></a>
+    <a href="https://github.com/alexliesenfeld/composer/actions"><img src="https://github.com/alexliesenfeld/composer/workflows/Build/badge.svg?branch=master"></a>
 </p>
 
 # Composer
