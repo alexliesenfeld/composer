@@ -45,7 +45,7 @@ To create IDE projects, Composer uses the two examples `IPlugEffect` and `IPlugI
 Composer will allow you to change different aspects of your iPlug project in the configuration section. This section more or less maps the `config.h` file in regular iPlug projects. Please note that `config.h` is automatically generated each time you start your IDE from within Composer. It is therefore not part of the `Sources` directory. As all other generated files, you will find `config.h` inside the `generated` filter (Visual Studio) inside your IDE.  
 
 ## Feature Roadmap
-This project is in development. The majority of features is still missing. Currently, the following features are scoped for development and will be developed in the following order:
+At this moment, this repository contains a very early version of the project. The majority of features is still missing. Currently, the following features are scoped for development and will be developed in the following order:
 
 - [x] Windows support
 - [x] Visual Studio 2019 support
