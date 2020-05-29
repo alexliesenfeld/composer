@@ -66,3 +66,7 @@ At this moment, this repository contains a very early version of the project. Th
 ## Limitations
 iPlug 2 is a complex framework that is still under heavy development. It comes packed with a lot of features and often provides multiple alternative solutions for a problem. To limit complexity, Composer is a very opinionated tool with a reduced set of supported iPlug functionality. As such, it may not meet the requirements for every project. It will try to provide functionality based on what is commonly perceived as "best practice", however. 
 
+# License
+`Composer` is free software: you can redistribute it and/or modify it under the terms of the MIT Public License.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT Public License for more details.
