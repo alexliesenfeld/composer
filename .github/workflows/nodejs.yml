@@ -4,10 +4,7 @@
 name: Build
 
 on:
-  # Turned off for now
-  # showLoadingScreen:
-  #  branches: [ master ]
-  pull_request:
+  push:
     branches: [ master ]
 
 jobs:
