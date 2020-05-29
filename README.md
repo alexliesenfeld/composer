@@ -21,7 +21,7 @@ You can ignore the warnings that are raised during the build. When the build fin
 ### Project directory structure 
 If you create a new composer project, you will see the following file structure inside the project directory: 
 
-``` shell
+```
 -- Builds           # Directory that contains the generated IDE project files 
 -- Dependencies     # Directory that contains all dependencies, such as iPlug, VST SDK, etc.
 -- Sources          # Directory that contains your source files
