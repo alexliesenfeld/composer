@@ -2,7 +2,7 @@ import { CustomNumericInput } from '@/renderer/app/components/CustomNumericInput
 import { WorkspaceAttributeFormGroup } from '@/renderer/app/components/WorkspaceAttributeFormGroup';
 import { ValidationErrors } from '@/renderer/app/model/validation';
 import { WorkspaceConfigKey } from '@/renderer/app/services/domain/config-validator';
-import { Card, Divider, Elevation, H5, NumericInput } from '@blueprintjs/core';
+import { Card, Divider, Elevation, H5 } from '@blueprintjs/core';
 
 import * as React from 'react';
 
