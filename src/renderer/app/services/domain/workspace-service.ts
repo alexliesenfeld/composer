@@ -1,4 +1,3 @@
-import { OperationFailedError } from '@/renderer/app/model/errors';
 import {
     IPlugPluginType,
     PluginFormat,

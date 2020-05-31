@@ -1,5 +1,5 @@
 import { ElectronContext } from '@/renderer/app/model/electron-context';
-import { Classes, IProps } from '@blueprintjs/core';
+import { Classes } from '@blueprintjs/core';
 import * as React from 'react';
 
 export interface ElectronFileInputProps {
