@@ -29,11 +29,7 @@ import {
     writeFile,
 } from '@/renderer/app/util/file-utils';
 import * as git from '@/renderer/app/util/git-utils';
-import {
-    multiline,
-    parseVersionNumber,
-    prependFill
-} from '@/renderer/app/util/string-utils';
+import { multiline, parseVersionNumber, prependFill } from '@/renderer/app/util/string-utils';
 import { enumValues } from '@/renderer/app/util/type-utils';
 import * as path from 'path';
 
@@ -117,8 +113,10 @@ export class WorkspaceService {
 
         for (const filePath of filePaths) {
             const variableName = this.getVariableNameForFile(filePath);
+            const targetPath = path.join(fontsDir, path.basename(filePath));
             await this.addFontToConfigH(paths, filePath, variableName);
-            await createHardLink(filePath, path.join(fontsDir, path.basename(filePath)));
+            await deleteFileIfExists(targetPath);
+            await createHardLink(filePath, targetPath);
             await this.ideService.addFontFileToIdeProject(paths, variableName);
         }
     }
@@ -132,8 +130,10 @@ export class WorkspaceService {
 
         for (const filePath of filePaths) {
             const variableName = this.getVariableNameForFile(filePath);
+            const targetPath = path.join(imagesDir, path.basename(filePath));
             await this.addImageToConfigH(paths, filePath, variableName);
-            await createHardLink(filePath, path.join(imagesDir, path.basename(filePath)));
+            await deleteFileIfExists(targetPath);
+            await createHardLink(filePath, targetPath);
             await this.ideService.addImageFileToIdeProject(paths, variableName);
         }
     }
