@@ -164,8 +164,12 @@ export class WorkspaceStore {
             return 'Please select a project directory';
         }
 
-        const filesInDirectory = await Fsx.readdir(projectDir);
-        if (filesInDirectory && filesInDirectory.length > 0) {
+        const ignoreFiles = ['.git', '.gitignore'];
+
+        const rawDirectoryContents = await Fsx.readdir(projectDir);
+        const directoryContents = rawDirectoryContents.filter((e) => !ignoreFiles.includes(e));
+
+        if (directoryContents && directoryContents.length > 0) {
             return 'The directory of a new project must be empty';
         }
     }
