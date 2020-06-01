@@ -92,10 +92,9 @@ missing. It is planned to implement the following features in the future (in pre
 - [ ] iOS support
 
 ## Limitations
-iPlug 2 is a complex framework that is still under heavy development. It comes packed with a lot of features and often 
-provides multiple alternative solutions for a problem. To limit complexity, Composer is a very opinionated tool with a 
-reduced set of supported iPlug functionality. As such, it may not meet the requirements for every project. It will try 
-to provide functionality based on what is commonly perceived as "best practice", however. 
+iPlug 2 is a complex framework that is still under heavy development. To limit complexity, Composer is a very 
+opinionated tool with a reduced set of supported iPlug functionality. As such, it may not meet the requirements 
+for every project. 
 
 # License
 `Composer` is free software: you can redistribute it and/or modify it under the terms of the MIT Public License.
