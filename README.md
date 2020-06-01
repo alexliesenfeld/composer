@@ -7,7 +7,7 @@
 </p>
 
 # Composer
-Composer is a productivity tool and project manager for iPlug 2. It helps you to organize and decouple your code and resources from iPlug and its dependencies more effectively. Furthermore, it manages dependencies for you, so you do not need to download or configure any IDE projects yourself. All artifacts, such as project configuration, files, etc. are automatically kept in-sync across all operating systems and as IDEs. 
+Composer is a productivity tool and project manager for iPlug 2. It helps you to organize and decouple your code and resources from iPlug and its dependencies more effectively. Furthermore, it manages dependencies for you, so you do not need to download or configure any IDE projects yourself. Files and project configuration are automatically kept in-sync across all operating systems and as IDEs. 
 
 ## Installation
 There are no prebuilt binaries yet, but you can build the project very easily yourself.
