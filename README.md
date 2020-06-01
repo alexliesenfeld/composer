@@ -59,9 +59,8 @@ To create IDE projects, Composer uses the two examples `IPlugEffect` and `IPlugI
 as prototypes. This means that Composer uses one of these example projects to generate the basement for all IDE 
 project files. In fact, it uses the `duplicate.py` script shipped with iPlug as a part of the file generation 
 process, but modifies the generated result to meet the users configuration. This allows Composer to keep up with 
-the developments made in the iPlug repository and reduces maintanance overhead associated with version upgrades. 
-Which prototype will be selected is based on the plugin type you choose(initially selected when creating a new project, 
-can be changed later in the configuration section). 
+the developments made in the iPlug repository and reduces maintenance overhead associated with version upgrades. 
+Which prototype will be selected is based on the plugin type you choose. 
 
 ### Generated Configuration
 Composer will allow you to change different aspects of your iPlug project in the configuration section. This section 
