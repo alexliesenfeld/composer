@@ -51,7 +51,7 @@ automatically by Composer when missing, so there is usually no need to store the
 to remove them if you need to rebuild everything from scratch.
 
 After project initialization, the `Source` and `Resources` directories will already contain some initial files 
-based on the selected prototype (please see next section).
+based on the selected prototype (please see next section). It is safe to replace these with your own files if you wish.
 
 ### Prototypes
 
