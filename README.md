@@ -7,11 +7,14 @@
 </p>
 
 # Composer
-Composer is a productivity tool and project manager for iPlug 2. It helps you to organize and decouple your code and resources from iPlug and its dependencies more effectively. Furthermore, it manages dependencies for you, so you do not need to download or configure any IDE projects yourself. Files and project configuration are automatically kept in-sync across all operating systems and IDEs. 
+Composer is a productivity tool and project manager for iPlug 2. It helps you to organize your code and resource files 
+so that they are decoupled from iPlug and its dependencies more effectively. Furthermore, Composer manages some 
+fundamental dependencies for you, so you do not need to download them or configure IDE projects yourself. 
 
 ## Installation
-There are no prebuilt binaries yet, but you can build the project very easily yourself.
-To build it, you need to have NodeJS (version 10 or higher) installed on your machine. You can build the binaries as follows:
+There are no prebuilt binaries yet, but you can build Composer yourself very easily.
+The only prerequisite is having Node.js (version 10 or higher) installed on your machine. 
+You can build the binaries as follows:
 
 ```sh
 git clone https://github.com/alexliesenfeld/composer
@@ -21,12 +24,15 @@ npm run prod
 npm run build:win
 ```
 
-You can ignore the warnings that are raised during the build. When the build finishes, you can find an Installer file named `Composer-<version>.exe` inside the `out` directory. Execute this file to install Composer.
+When the build finishes, you can find an installer file named `Composer-<version>.exe` inside the `out` directory. 
+Execute this file to install Composer. You can ignore the warnings raised during the build for now. 
 
 ## Getting Started
 
 ### Creating a new Composer project
-When you open Composer, a welcome page will be presented to you that will allow you to create a new project. Once a project has been created and automatically initialized, you will find the following file structure inside the project directory: 
+When you open Composer, a welcome page will be presented to you that will allow you to create a new project. Once a 
+project has been created and automatically initialized, you will find the following file structure inside the project 
+directory: 
 
 ```
 -- Builds           # A directory that contains the generated IDE project files. 
@@ -37,21 +43,35 @@ When you open Composer, a welcome page will be presented to you that will allow 
   |-- Images
 composer.json       # Composer project file
 ```
-Please note that, ideally, you should not modify the project directory manually. The entire directory is managed by Composer for you.
 
-You probably want to add the `Builds` and the `Dependencies` directory to your `.gitignore` file. They are generated automatically by Composer when missing, so there is usually no need to store them in version control. It is also safe to remove them if you need to rebuild everything from scratch.
+Please note that you should not modify the project directory manually. The entire directory is managed by Composer.
 
-After project initialization, the `Sources` and `Resources` directories will already contain some initial files based on the selected prototype (please see next section).
+You probably want to add the `Build` and the `Dependencies` directory to your `.gitignore` file. They are generated 
+automatically by Composer when missing, so there is usually no need to store them in version control. It is also safe 
+to remove them if you need to rebuild everything from scratch.
+
+After project initialization, the `Source` and `Resources` directories will already contain some initial files 
+based on the selected prototype (please see next section).
 
 ### Prototypes
 
-To create IDE projects, Composer uses the two examples `IPlugEffect` and `IPlugInstrument` that are shipped with iPlug as prototypes. This means that Composer uses one of these example projects to generate the basement for all IDE project files. In fact, it uses the `duplicate.py` script shipped with iPlug as a part of the file generation process, but modifies the generated result to meet the users configuration. This allows Composer to keep up with the developments made in the iPlug repository and reduces maintanance overhead associated with version upgrades. Which prototype will be selected is based on the plugin type you choose(initially selected when creating a new project, can be changed later in the configuration section). 
+To create IDE projects, Composer uses the two examples `IPlugEffect` and `IPlugInstrument` that are shipped with iPlug 
+as prototypes. This means that Composer uses one of these example projects to generate the basement for all IDE 
+project files. In fact, it uses the `duplicate.py` script shipped with iPlug as a part of the file generation 
+process, but modifies the generated result to meet the users configuration. This allows Composer to keep up with 
+the developments made in the iPlug repository and reduces maintanance overhead associated with version upgrades. 
+Which prototype will be selected is based on the plugin type you choose(initially selected when creating a new project, 
+can be changed later in the configuration section). 
 
 ### Generated Configuration
-Composer will allow you to change different aspects of your iPlug project in the configuration section. This section more or less maps the `config.h` file in regular iPlug projects. Please note that `config.h` is automatically generated each time you start your IDE from within Composer. It is therefore not part of the `Sources` directory. As all other generated files, you will find `config.h` inside the `generated` filter (Visual Studio) inside your IDE.  
+Composer will allow you to change different aspects of your iPlug project in the configuration section. This section 
+more or less maps the `config.h` file in regular iPlug projects. Please note that `config.h` is automatically generated
+each time you start your IDE from within Composer. It is therefore not part of the `Sources` directory. As all other 
+generated files, you will find `config.h` inside the `generated` filter (Visual Studio) inside your IDE.  
 
 ## Feature Roadmap
-At this moment, this repository contains a very early version of the project. The majority of features is still missing. Currently, the following features are scoped for development and will be developed in the following order:
+At this moment, this repository contains a very early version of the project. The majority of features is still missing.
+Currently, the following features are scoped for development and will be developed in the following order:
 
 - [x] Windows support
 - [x] Visual Studio 2019 support
@@ -70,10 +90,14 @@ At this moment, this repository contains a very early version of the project. Th
 - [ ] iOS support
 
 ## Limitations
-iPlug 2 is a complex framework that is still under heavy development. It comes packed with a lot of features and often provides multiple alternative solutions for a problem. To limit complexity, Composer is a very opinionated tool with a reduced set of supported iPlug functionality. As such, it may not meet the requirements for every project. It will try to provide functionality based on what is commonly perceived as "best practice", however. 
+iPlug 2 is a complex framework that is still under heavy development. It comes packed with a lot of features and often 
+provides multiple alternative solutions for a problem. To limit complexity, Composer is a very opinionated tool with a 
+reduced set of supported iPlug functionality. As such, it may not meet the requirements for every project. It will try 
+to provide functionality based on what is commonly perceived as "best practice", however. 
 
 # License
 `Composer` is free software: you can redistribute it and/or modify it under the terms of the MIT Public License.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT Public License for more details.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied 
+warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT Public License for more details.
 
