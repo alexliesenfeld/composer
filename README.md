@@ -46,7 +46,7 @@ composer.json       # Composer project file
 
 Please note that you should not modify the project directory manually. The entire directory is managed by Composer.
 
-You probably want to add the `Build` and the `Dependencies` directory to your `.gitignore` file. They are generated 
+You probably want to add the `Build` and `Dependencies` directory to your `.gitignore` file. They are generated 
 automatically by Composer when missing, so there is usually no need to store them in version control. It is also safe 
 to remove them if you need to rebuild everything from scratch.
 
