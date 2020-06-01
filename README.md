@@ -27,6 +27,9 @@ npm run build:win
 When the build finishes, you can find an installer file named `Composer-<version>.exe` inside the `out` directory. 
 Execute this file to install Composer. You can ignore the warnings raised during the build for now. 
 
+*Note that only Windows and Visual Studio are supported at this moment*. However, macOS and Xcode support will follow 
+soon (see feature roadmap below).
+
 ## Getting Started
 
 ### Creating a new Composer project
@@ -69,8 +72,8 @@ each time you start your IDE from within Composer. It is therefore not part of t
 generated files, you will find `config.h` inside the `generated` filter (Visual Studio) inside your IDE.  
 
 ## Feature Roadmap
-At this moment, this repository contains a very early version of the project. The majority of features is still missing.
-Currently, the following features are scoped for development and will be developed in the following order:
+At the moment, this repository contains a very early version of the project. The majority of features is still 
+missing. It is planned to implement the following features in the future (in presented order):
 
 - [x] Windows support
 - [x] Visual Studio 2019 support
