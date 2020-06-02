@@ -15,7 +15,7 @@ overhead that usually comes with dependency upgrades, such as iPlug itself or so
 ## Installation
 There are no prebuilt binaries yet, but you can build Composer yourself very easily.
 The only prerequisite is having Node.js (version 10 or higher) installed on your machine. 
-You can build the binaries as follows:
+You can then build the binaries from the CLI as follows:
 
 ```sh
 git clone https://github.com/alexliesenfeld/composer
@@ -28,12 +28,12 @@ npm run build:win
 When the build finishes, you can find an installer file named `Composer-<version>.exe` inside the `out` directory. 
 Execute this file to install Composer. You can ignore the warnings raised during the build for now. 
 
-*Note that only Windows and Visual Studio are supported at this moment*. However, macOS and Xcode support will follow 
-soon (see feature roadmap below).
+*Note that only Windows and Visual Studio 2019 are supported at this moment*. However, macOS and Xcode support will 
+follow soon (see feature roadmap).
 
 ## Getting Started
 
-### Creating a new Composer project
+### Creating a Composer project
 When you open Composer, a welcome page will be presented to you that will allow you to create a new project. Once a 
 project has been created and automatically initialized, you will find the following file structure inside the project 
 directory: 
@@ -48,14 +48,16 @@ directory:
 composer.json       # Composer project file
 ```
 
-Please note that you should not modify the project directory manually. The entire directory is managed by Composer.
+Please note that you should not modify the above files and directories manually. The entire project directory is 
+managed by Composer. It is safe to add more files and directories to the project directory, however.
 
 You probably want to add the `Build` and `Dependencies` directory to your `.gitignore` file. They are generated 
 automatically by Composer when missing, so there is usually no need to store them in version control. It is also safe 
 to remove them if you need to rebuild everything from scratch.
 
 After project initialization, the `Source` and `Resources` directories will already contain some initial files 
-based on the selected prototype (please see next section). It is safe to replace these with your own files if you wish.
+based on the selected prototype (please see next section). It is safe to replace them with your own files if you wish. 
+However, you should not copy the files to the project folder directly but use Composer to add the files to the project.
 
 ### Prototypes
 
@@ -87,7 +89,7 @@ missing. It is planned to implement the following features in the future (in pre
 - [ ] Graphics backend configuration
 - [ ] Custom dependency sources
 - [ ] VST2 support
-- [ ] Composer console application
+- [ ] CLI application
 - [ ] Building Installers
 - [ ] AAX support 
 - [ ] iOS support
