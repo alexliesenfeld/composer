@@ -12,11 +12,11 @@ files from IDE projects and its dependencies. It also manages some fundamental d
 do not need to download them or configure IDE projects yourself. Composer aims to reduce most of the configuration 
 overhead that usually comes with dependency upgrades, such as iPlug itself or some audio SDKs. 
 
+## Demo
 <p align="center">
     <a href="https://raw.githubusercontent.com/alexliesenfeld/composer/master/art/screenshots/demogif.gif"><img width="100%" src="https://raw.githubusercontent.com/alexliesenfeld/composer/master/art/screenshots/demogif.gif"></a>
     <a href="https://raw.githubusercontent.com/alexliesenfeld/composer/master/art/screenshots/demogif.gif">Download Video</a>
 </p>
-
 
 ## Installation
 There are no prebuilt binaries yet, but you can build Composer yourself very easily.
