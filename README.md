@@ -15,7 +15,7 @@ overhead that usually comes with dependency upgrades, such as iPlug itself or so
 ## Demo
 <p align="center">
     <a href="https://raw.githubusercontent.com/alexliesenfeld/composer/master/art/screenshots/demogif.gif"><img width="100%" src="https://raw.githubusercontent.com/alexliesenfeld/composer/master/art/screenshots/demogif.gif"></a>
-    <a href="https://raw.githubusercontent.com/alexliesenfeld/composer/master/art/screenshots/demogif.gif">Download Video</a>
+    <a href="https://youtu.be/pSfJBmz-Ess">Watch on YouTube</a>
 </p>
 
 ## Installation
