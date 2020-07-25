@@ -54,7 +54,8 @@ export class WorkspaceService {
 
         if (!skipDependencies) {
             if (await this.shouldSetupIPlug2Dependencies(paths)) {
-                await this.downloadIPlug2DependenciesFromGithub(paths);
+                // For now, ignore downloading prebuilt dependencies
+                // await this.downloadIPlug2DependenciesFromGithub(paths);
             }
 
             if (await this.shouldSetupVst3Sdk(paths, config)) {
@@ -359,7 +360,7 @@ export class WorkspaceService {
                 `#define PLUG_HEIGHT ${config.uiHeight}`,
                 `#define PLUG_FPS ${config.fps}`,
                 `#define PLUG_SHARED_RESOURCES 0`,
-                ``,
+                `#define PLUG_HOST_RESIZE 0`,
                 ``,
                 `#define BUNDLE_NAME "${config.macOsBundleName}"`,
                 `#define BUNDLE_MFR "${config.macOsBundleManufacturer}"`,

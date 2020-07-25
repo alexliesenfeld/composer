@@ -4,7 +4,7 @@ import { WorkspacePaths } from '@/renderer/app/services/domain/common/paths';
 import { ConfigService } from '@/renderer/app/services/domain/config-service';
 import { WorkspaceService } from '@/renderer/app/services/domain/workspace-service';
 import { withLoadingScreen } from '@/renderer/app/services/ui/loading-screen-service';
-import { LocalStorageAdapter } from '@/renderer/app/services/ui/local-storagea-dapter';
+import { LocalStorageAdapter } from '@/renderer/app/services/ui/local-storage-adapter';
 import {
     showSuccessNotification,
     showWarningNotification,
