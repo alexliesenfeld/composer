@@ -221,8 +221,8 @@ export class FilesStore {
             properties: ['multiSelections'],
             filters: [
                 {
-                    extensions: ['h', 'hpp', 'cpp'],
-                    name: 'Source Files (*.h,*.hpp,*.cpp)',
+                    extensions: ['h', 'c', 'hpp', 'cpp'],
+                    name: 'Source Files (*.h,*.c,*.hpp,*.cpp)',
                 },
             ],
         });

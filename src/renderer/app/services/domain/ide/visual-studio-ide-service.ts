@@ -394,6 +394,7 @@ export class VisualStudioIdeService implements IdeService {
             case '.h':
             case '.hpp':
                 return `<ClInclude Include="${relativeFilePath}" />`;
+            case '.c':
             case '.cpp':
                 return `<ClCompile Include="${relativeFilePath}" />`;
             default:

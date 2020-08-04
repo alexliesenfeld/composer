@@ -44,6 +44,8 @@ export class FileBrowser extends React.Component<FileBrowserProps> {
             case '.h':
             case '.hpp':
                 return HEADER;
+            case '.c':
+                return CLEAN;
             case '.cpp':
                 return CLEAN;
             case '.ttf':

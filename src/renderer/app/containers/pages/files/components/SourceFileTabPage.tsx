@@ -46,7 +46,7 @@ export const SourceFileTabPage = (props: SourceFileTabPageProps) => {
                     onAccept={props.onAcceptCreateFileDialog}
                     onCancel={props.onCancelCreateFileDialog}
                     fileExists={props.checkFileExists}
-                    allowedFileExtensions={['.h', '.hpp', '.cpp']}
+                    allowedFileExtensions={['.h', '.c', '.hpp', '.cpp']}
                 />
             )}
 
@@ -59,7 +59,7 @@ export const SourceFileTabPage = (props: SourceFileTabPageProps) => {
                     onAccept={props.onAcceptRenamingFileDialog}
                     onCancel={props.onCancelRenamingFileDialog}
                     fileExists={props.checkFileExists}
-                    allowedFileExtensions={['.h', '.hpp', '.cpp']}
+                    allowedFileExtensions={['.h',  '.c', '.hpp', '.cpp']}
                 />
             )}
 
